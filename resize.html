@@ -1,0 +1,65 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="full-screen" content="yes"/>
+<meta name="screen-orientation" content="portrait"/>
+<meta name="x5-fullscreen" content="true"/>
+<meta name="360-fullscreen" content="true"/>
+<title>resize</title>
+<style>
+body, canvas, div {
+-moz-user-select:none;
+-webkit-user-select:none;
+-ms-user-select:none;
+-khtml-user-select:none;
+-webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+}
+body{margin:0px;padding:0px;background:#000;}
+</style>
+<script src="getPageSize.js"></script>
+</head>
+
+<body>
+<canvas id="gameCanvas" height="660" width="340" style="background-color:#333;position:absolute;"></canvas>
+<script>
+var cvs = document.getElementById('gameCanvas');
+var ctx = cvs.getContext('2d');
+ctx.fillStyle='red';
+ctx.fillRect(0,0,100,100);
+
+var resize = function(dom){
+	var pageSize = GetPageSize();
+	var dw = dom.offsetWidth,
+		dh = dom.offsetHeight,
+		cw = pageSize.WinW,
+		ch = pageSize.WinH;
+	var w = 0,h = 0;
+
+	if(cw > dw){
+		h = dh*(cw / dw);
+	}else{
+		h = dh/(dw / cw);
+	}
+	
+	if(ch > dh){
+		w = dw*(ch / dh);
+	}else{
+		w = dw/(dh / ch);
+	}
+
+	w = Math.min(w,cw);
+	h = Math.min(h,ch);
+
+	dom.style.width = w+"px";
+	dom.style.height = h+"px";
+	dom.style.left = '50%';
+	dom.style.marginLeft = -w*0.5 + "px";	
+};
+
+window.onload = function(){ resize(cvs); }
+window.onresize = function(){ resize(cvs); }
+
+</script>
+</body>
+</html>
