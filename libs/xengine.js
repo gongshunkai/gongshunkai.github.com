@@ -483,6 +483,12 @@
 			for(var i=0,ltns;ltns=this.listeners[i++];){
 				ltns.enabled && ltns.onAfterRender();
 			}
+			
+			FrameState.update();
+			var self = this;
+			this.timer = setTimeout(function(){
+					self.mainloop();					  
+			},60 / 1000);
 		},
 		//执行游戏
 		run:function(fps,fn){
@@ -491,11 +497,9 @@
 				spf = fps / 1000;
 			//开启帧数追踪
 			FrameState.start();
-			this.timer = setInterval(function(){
-				//更新帧状态
-				FrameState.update();
-				!self.paused && self.mainloop();
-			},spf);
+			
+				self.mainloop();
+		
 			//游戏的业务逻辑
 			fn && fn();
 		},
