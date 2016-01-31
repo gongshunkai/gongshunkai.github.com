@@ -7,8 +7,7 @@ var Player = Shooter.extend({
 		options || (options = {});
 		this._super(options);
 		this.color = options.color || 'black';
-		this.hp = options.hp || 1;
-		this.life = options.life || 1;
+		this.life = options.life || 0;
 		this.groupID = 0;
 		this.targetID = 1;
 		this.updateState();
@@ -38,11 +37,10 @@ var Player = Shooter.extend({
 			//检测是否碰撞到敌机
 			var robj = player.owner.rObjs;
 			for(var i=0;i<robj.length;i++){
-				if(player.isCalcCollide&&robj[i].isCalcCollide&&(robj[i].targetID==player.groupID||robj[i].groupID==2)){
+				if(player.isCalcCollide&&robj[i].isCalcCollide&&(robj[i].targetID==player.groupID)){
 					//检测是否碰撞
 					if(player.bBox.isCollide(robj[i].bBox)){
 						player.onCollide(robj[i]);
-						robj[i].onCollide(player);
 						break;
 					}
 				}
@@ -52,13 +50,12 @@ var Player = Shooter.extend({
 		dState.enter = function(){
 			var o = this.ctx.owner;
 			if(--o.life>0){
-				o.isVisible = false;
-				o.owner.createBoom(o.x,o.y,function(){
-					o.sCtx.change("free");
-				});
-			}else{
-				o.owner.isOver = true;
+				o.sCtx.change("free");
 			}
 		};
+	},
+	onCollide:function(obj){
+		obj.sCtx && obj.sCtx.change("die");
+		this.sCtx.change("die");
 	}
 });

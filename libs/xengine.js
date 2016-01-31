@@ -1,6 +1,7 @@
 //     xengine.js 1.1.2
-
-//     Created by xiangfeng & gongshunkai on 2016/1/12.
+//     Demo Javascript Game Engine
+//     By xiangfeng
+//     Please contact to xiangfenglf@163.com if you hava any question
 
 (function(root, factory) {
 
@@ -114,6 +115,43 @@
 		// And make this class extendable
 		Class.extend = arguments.callee;
 		return Class;
+	};
+
+
+
+	var GetPageSize = function(){
+		var scrW, scrH;
+		if(root.innerHeight && root.scrollMaxY){
+			// Mozilla
+			scrW = root.innerWidth + root.scrollMaxX;
+			scrH = root.innerHeight + root.scrollMaxY;
+		}else if(document.body.scrollHeight > document.body.offsetHeight){
+			// all but IE Mac
+			scrW = document.body.scrollWidth;
+			scrH = document.body.scrollHeight;
+		}else if(document.body){ // IE Mac
+			scrW = document.body.offsetWidth;
+			scrH = document.body.offsetHeight;
+		}
+	
+		var winW, winH;
+		if(root.innerHeight){ // all except IE
+			winW = root.innerWidth;
+			winH = root.innerHeight;
+		}else if(document.documentElement && document.documentElement.clientHeight){
+			// IE 6 Strict Mode
+			winW = document.documentElement.clientWidth; 
+			winH = document.documentElement.clientHeight;
+		}else if(document.body){ // other
+			winW = document.body.clientWidth;
+			winH = document.body.clientHeight;
+		}
+	
+		// for small pages with total size less then the viewport
+		var pageW = (scrW<winW) ? winW : scrW;
+		var pageH = (scrH<winH) ? winH : scrH;
+	
+		return{PageW:pageW, PageH:pageH, WinW:winW, WinH:winH};
 	};
 
 
@@ -275,6 +313,112 @@
 			sDLG:function(eName,fn){setDelegatedEvent(eName,fn);},
 			dDLG:function(eName){delDelegatedEvent(eName);},
 			sMode:function(mode){_M.isMoveCacheEnable = (mode===1);}//0:立即模式，1:缓冲模式
+		};
+	})();
+	
+	//触摸类
+	var Touch = xengine.Touch = (function(){
+		var _T = {
+			x:0,
+			y:0,  
+			ox:0,
+			oy:0,
+			ts:0,//触摸状态,
+			target:null,
+			isTouchCacheEnable:false,//是否启用记录移动点缓存
+			cache:[],//记录触摸移动点缓存
+			dlgEvent:{"start":null,"move":null,"end":null}//代理事件处理
+		};   
+		//默认记录30个点的缓存
+		var _MAX_POINT_CACHE = 60;
+		//设置目标
+		var setTarget = function(e){
+			_T.target = e.target;
+		}
+		//设置触摸位置
+		var setPos = function(e){
+			_T.x = e.pageX;
+			_T.y = e.pageY;
+		}
+		//设置触摸状态
+		var setTouchState = function(flag){
+			_T.ts = flag;
+		}
+		//添加点到Cache中
+		var addToMPCache = function(x,y){
+			if(_T.cache.length > _MAX_POINT_CACHE){
+				_T.cache.shift();
+				_T.cache.shift();
+			}
+			_T.cache.push(x);
+			_T.cache.push(y);
+		}
+		//获取缓冲区中最前的坐标，缓冲模式下用
+		var get = function(){ 
+			var x = _T.cache.shift(),
+		 		y = _T.cache.shift();
+			return [x,y];
+		}
+		//清除所有缓存
+		var clearCache = function(){
+			_T.cache=[];
+		}
+		//设置事件代理
+		var setDelegatedEvent = function(eName,fn){
+			_T.dlgEvent[eName] = fn;
+		}
+		//删除事件代理
+		var delDelegatedEvent = function(eName){
+			_T.dlgEvent[eName] = null;
+		}
+		//设置是否可用
+		var setEnabled = function(flag){
+			if(flag){
+				document.ontouchstart = doStart;
+				document.ontouchmove = doMove;
+				document.ontouchend = doEnd;
+			}else{
+				document.ontouchstart = null;
+				document.ontouchmove = null;
+				document.ontouchend = null;
+			} 	 		 
+		}
+		var doStart = function(e){
+			setTouchState(1);
+			setTarget(e);
+			var touch = e.touches[0]; //获取第一个触点
+			_T.ox = touch.pageX;
+			_T.oy = touch.pageY;
+			_T.dlgEvent.start && _T.dlgEvent.start(e);
+		}
+		var doMove = function(e){
+			setPos(e.touches[0]);
+			setTarget(e);
+			if(_T.isTouchCacheEnable){
+				addToMPCache(_T.x,_T.y);
+			}
+			_T.dlgEvent.move && _T.dlgEvent.move(e);
+		}
+		var doEnd = function(e){
+			setTouchState(0);
+			setTarget(e);
+			_T.dlgEvent.end && _T.dlgEvent.end(e);
+		}
+		//初始化
+		setEnabled(true);
+		return {
+			gTarget:function(){return _T.target;},
+			gPos:function(v3){v3.x = _T.x;v3.y = _T.y;},
+			gX:function(){return _T.x},
+			gY:function(){return _T.y},
+			gState:function(){return _T.ts; },
+			gXOff:function(){return _T.x-_T.ox},
+			gYOff:function(){return _T.y-_T.oy},
+			gCPT:function(){ return get();},
+			cCHE:function(){ clearCache();},
+			sDLG:function(eName,fn){setDelegatedEvent(eName,fn);},
+			dDLG:function(eName){delDelegatedEvent(eName);},
+			sMode:function(mode){_T.isTouchCacheEnable = (mode===1);}//0:立即模式，1:缓冲模式
 		};
 	})();
    
@@ -485,10 +629,10 @@
 			}
 		},
 		//执行游戏
-		run:function(fps,fn){
+		run:function(fun,fps){
 			fps = fps || 60;
 			var self = this,
-				spf = fps / 1000;
+				spf = (1000/fps) || 0;
 			//开启帧数追踪
 			FrameState.start();
 			this.timer = setInterval(function(){
@@ -497,15 +641,19 @@
 				!self.paused && self.mainloop();
 			},spf);
 			//游戏的业务逻辑
-			fn && fn();
+			fun && fun();
 		},
 		//暂停游戏
 		pause:function(){
-			this.paused = !this.paused;
+			this.paused = true;
+		},
+		//继续游戏
+		resume:function(){
+			this.paused = false;
 		},
 		//终止游戏
 		stop:function(){
-			clearTimeout(this.timer);
+			clearInterval(this.timer);
 		}
 	});
 
@@ -525,10 +673,6 @@
 			this.w = options.w || 320;
 			this.h = options.h || 200;
 			this.color = options.color || "black";
-			//场景容器
-			this.holder = document.createElement('div');
-			this.holder.id = "sc_" + this.name;
-			this.holder.style = "position:absolute;overflow:hidden;left:0px;top:0px";
 			//绑定的canvas元素,以后的精灵都在这个canvas上进行绘制
 			this.cvs = document.createElement('canvas');
 			this.cvs.id = "cv_" + this.name;
@@ -537,8 +681,7 @@
 			this.setPos();
 			this.setSize();
 			this.setColor(this.color);
-			this.holder.appendChild(this.cvs);
-			document.body.appendChild(this.holder);
+			document.body.appendChild(this.cvs);
 			//记录所有的渲染对象
 			this.rObjs = [];
 			//命名的渲染对象，便于根据名称快速查找对象
@@ -619,22 +762,47 @@
 		setPos:function(x,y){
 			this.x = x||this.x;
 			this.y = y||this.y;
-			this.holder.style.left = this.x + "px";
-			this.holder.style.top = this.y + "px";
+			this.cvs.style.left = this.x + "px";
+			this.cvs.style.top = this.y + "px";
 		},
 		//设置大小
 		setSize:function(w,h){
 			this.w = w||this.w;
 			this.h = h||this.h;
-			this.holder.style.width = this.w + "px";
-			this.holder.style.height = this.h  + "px";
 			this.cvs.setAttribute("width",this.w);
 			this.cvs.setAttribute("height",this.h);
 		},
 		//设置canvas背景
 		setColor:function(color){
 			this.color = color  || "black";
-			this.holder.style.backgroundColor = this.color;
+			this.cvs.style.backgroundColor = this.color;
+		},
+		resize:function(){
+			var pageSize = GetPageSize();
+			var dw = this.w,
+				dh = this.h,
+				cw = pageSize.WinW,
+				ch = pageSize.WinH;
+			var w = 0,h = 0;
+		
+			if(cw > dw){
+				h = dh*(cw / dw);
+			}else{
+				h = dh/(dw / cw);
+			}
+			
+			if(ch > dh){
+				w = dw*(ch / dh);
+			}else{
+				w = dw/(dh / ch);
+			}
+		
+			w = Math.min(w,cw);
+			h = Math.min(h,ch);
+		
+			this.cvs.style.width = w+"px";
+			this.cvs.style.height = h+"px";
+			this.cvs.style.left = cw*0.5 - w*0.5 + "px";
 		},
 		//清除canvas背景
 		clear:function(){
@@ -642,38 +810,38 @@
 		},
 		//显示
 		show:function(){
-			this.holder.style.display = 'block';
+			this.cvs.style.display = 'block';
 		},
 		//隐藏
 		hide:function(){
-			this.holder.style.display = 'none';
+			this.cvs.style.display = 'none';
 		},
 		//淡出
 		fadeOut:function(time,fn){
-			//this.holder.fadeOut(time,fn);
+			//this.cvs.fadeOut(time,fn);
 		},
 		//淡入
 		fadeIn:function(time,fn){
-			//this.holder.fadeIn(time,fn);
+			//this.cvs.fadeIn(time,fn);
 		},
 		//设置背景,pattern:0(居中),1(拉伸),默认(平铺)
 		setBGImg:function(imgURL,pattern){
-			this.holder.style.backgroundImage = "url(" + imgURL + ")";
+			this.cvs.style.backgroundImage = "url(" + imgURL + ")";
 			switch(pattern){
 				case 0:
-					this.holder.style.backgroundRepeat = "no-repeat";
-					this.holder.style.backgroundPosition = "center";
+					this.cvs.style.backgroundRepeat = "no-repeat";
+					this.cvs.style.backgroundPosition = "center";
 					break;
 				case 1:
-					this.holder.style.backgroundSize = this.w + "px " + this.h + "px ";
+					this.cvs.style.backgroundSize = this.w + "px " + this.h + "px ";
 					break;
 			}
 		},
 		//清除相关所有资源
 		clean:function(){
 			this.listeners = null;
-			this.holder.parentNode.removeChild(this.holder);
-			this.cvs = this.holder = this.ctx = null;
+			this.cvs.parentNode.removeChild(this.cvs);
+			this.cvs = this.ctx = null;
 		}
 	});
 	
@@ -688,40 +856,34 @@
 			//以堆栈方式保存所有场景，最后的元素为栈顶
 			this.scenes = [];
 		},
-		//运行场景
-		runScene:function(scene){
-			if(this.namedScenes[scene.name] == undefined){
-				this.add(scene);
-			}else{
-				this.bringToFirst(scene);
-			}
-		},
 		//场景重排序
 		sortSceneIdx:function(){
 			for(var i=0,len=this.scenes.length;i<len;i++){
 				var sc = this.scenes[i];
-				sc.holder.style.zIndex = i;
+				sc.cvs.style.zIndex = i;
 			}
 		},
 		//压入scene场景
-		add:function(scene){
-			this.scenes.push(scene);
-			this.namedScenes[scene.name] = scene;
-			this.sortSceneIdx();
+		push:function(scene){
+			if(!this.getScene(scene.name)){
+				this.scenes.push(scene);
+				this.namedScenes[scene.name] = scene;
+				this.sortSceneIdx();
+			} 
 		},
 		//移除顶部场景
 		pop:function(){
 			var sc = this.scenes.pop();
 			if(sc!=null){
-				sc.clean();
-				delete this.namedScenes[sc.name];
+				sc.clean();			 
+				delete this.namedScenes[sc.name]; 
 				this.sortSceneIdx();
 			}
-		},
+		}, 
 		//删除场景
 		remove:function(scene){
-			scene.clean();
-			delete this.namedScenes[scene.name];
+			scene.clean();		
+			delete this.namedScenes[scene.name]; 
 			var idx = this.getIdx(scene);
 			this.scenes.splice(idx,1);
 			this.sortSceneIdx();
@@ -729,7 +891,7 @@
 		//交换场景位置
 		swap:function(from,to){
 			if(from>=0&&from<=this.scenes.length-1
-				&&to>=0&&to<=this.scenes.length-1){
+			&&to>=0&&to<=this.scenes.length-1){
 				var sc = this.scenes[from];
 				this.scenes[from] = this.scenes[to];
 				this.scenes[to] = sc;
@@ -737,15 +899,15 @@
 			}
 		},
 		//获取某个场景的索引
-		getIdx:function(scene){
-			return scene.holder.style.zIndex;
+		getIdx:function(scene){		  
+			return scene.cvs.css("z-index");		
 		},
 		//把某个场景移动到最顶部
 		bringToFirst:function(scene){
 			var idx = this.getIdx(scene);
 			if(idx!=this.scenes.length-1){
 				this.scenes.splice(idx,1);
-				this.scenes[this.scenes.length] = scene;
+				this.scenes[this.scenes.length] = scene;	
 				this.sortSceneIdx();
 			}
 		},
@@ -763,27 +925,27 @@
 			var idx = this.getIdx(scene);
 			if(idx>0){
 				this.swap(idx,idx-1);
-			}
+			}		 
 		},
 		//场景前移
 		forward:function(scene){
 			var idx = this.getIdx(scene);
-			if(idx<this.scenes.length){
+			if(idx<this.scenes.length){			 
 				this.swap(idx,idx+1);
 			}
 		},
 		//根据名称获取场景
 		getScene:function(name){
 			return this.namedScenes[name];
-		},
+		}, 
 		//获取当前场景,顶部场景为当前场景
 		getCurrentScene:function(){
 			return this.scenes[this.scenes.length-1];
-		},
+		}, 
 		//清除所有场景
 		clearAll:function(){
 			for(var i in this.scenes){
-				this.scenes[i].clean();
+				this.scenes[i].clean(); 
 			}
 			this.namedScenes = {};
 			this.scenes = [];
@@ -817,9 +979,9 @@
 			//z-index,数字越小越先渲染
 			this.zIdx = options.zIdx || 0;
 			//是否可见
-			this.isVisible = options.isVisible || true;
+			this.isVisible = !!options.isVisible;
 			//是否可移除
-			this.canRemove = options.canRemove || false;
+			this.canRemove = !!options.canRemove;
 		},
 		//设置位置
 		moveTo:function(x,y){
@@ -852,15 +1014,23 @@
 		},
 		//判断鼠标当前坐标是否在当前渲染对象区域中
 		isMouseIn:function(){
-			var x = Mouse.gX(),
-				y = Mouse.gY();
-			var gx = this.owner.x,
-				gy = this.owner.y;
+			var x = Mouse.gX() || Touch.gX(),
+				y = Mouse.gY() || Touch.gY();
+			var gx = this.owner.cvs.offsetLeft,
+				gy = this.owner.cvs.offsetTop,
+				gw = this.owner.cvs.offsetWidth,
+				gh = this.owner.cvs.offsetHeight;
 			//转换鼠标坐标到游戏窗口坐标系
+			
+			var bw = gw > this.owner.w ? gw / this.owner.w : this.owner.w / gw,
+				bh = gh > this.owner.h ? gh / this.owner.h : this.owner.h / gh;
 			var cd = [x-gx,y-gy];
-			var hw = this.w*0.5,
+			var cd0 = gw > this.owner.w ? parseInt(cd[0]*bw) : parseInt(cd[0] / bw),
+				cd1 = gh > this.owner.h ? parseInt(cd[1]*bh) : parseInt(cd[1] / bh);
+				hw = this.w*0.5,
 				hh = this.h*0.5;
-			return cd[0] >= this.x - hw && cd[0] <= this.x + hw && cd[1] >= this.y-hh && cd[1] <= this.y + hh;
+			//alert(cd0);
+			return cd0 >= this.x - hw && cd0 <= this.x + hw && cd1 >= this.y - hh && cd1 <= this.y + hh;
 		}
 	});
 
@@ -1040,11 +1210,11 @@
 			this.anims = null;
 			this.animsCtrl = new FrameCtrl();
 			//是否水平反向
-			this.isXFlip = options.isXFlip || false;
+			this.isXFlip = !!options.isXFlip;
 			//是否垂直反向
-			this.isYFlip = options.isYFlip || false;
-			this.scaleX = options.scaleX || 1;
-			this.scaleY = options.scaleY || 1;
+			this.isYFlip = !!options.isYFlip;
+			this.scaleX = options.scaleX || 0;
+			this.scaleY = options.scaleY || 0;
 			//包围盒
 			this.bBox = null;
 			//tagPoint

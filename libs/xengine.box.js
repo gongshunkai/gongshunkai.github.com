@@ -64,12 +64,12 @@
 				this._super(x,y);
 			},
 			collided:function(tBox){
-				var nx = this.x-this.hw,
-					ny = this.y-this.hh,
+				var nx = this.x,
+					ny = this.y,
 					mx = this.x+this.hw,
 					my = this.y+this.hh,
-					nx1 = tBox.x-tBox.hw,
-					ny1 = tBox.y-tBox.hh,
+					nx1 = tBox.x,
+					ny1 = tBox.y,
 					mx1 = tBox.x+tBox.hw,
 					my1 = tBox.y+tBox.hh;
 				if(nx>mx1||mx<nx1)return false;
@@ -80,7 +80,7 @@
 				ctx.beginPath();
 				ctx.lineWidth = 2;
 				ctx.strokeStyle = this.c;
-				ctx.strokeRect(this.x-this.hw,this.y-this.hh,this.hw*2,this.hh*2);
+				ctx.strokeRect(this.x,this.y,this.hw,this.hh);
 			}
 		}),
 		//凸多边形包围盒

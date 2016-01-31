@@ -1,10 +1,9 @@
 ﻿var cfg = {
-	"player":{"w":110,"h":70,"scale":0.4,"tags":[[19,-15,"b3","cb0",90]],"bBox":[17,24]},
-	"enemy":{"w":100,"h":120,"scale":0.2,"speed":0.2,"tags":[[10,20,"b3","cb0",100]],"bBox":[17,24]},
-	"bullet":{"w":5,"h":15,"speed":2},
+	"player":{"w":110,"h":70,"scale":0.4,"tags":[[19,-15,"b3","cb0",15]],"bBox":[0,0]},
+	"enemy":{"w":100,"h":120,"scale":0.2,"speed":2,"tags":[[10,20,"b3","cb0",15]],"bBox":[0,0]},
+	"bullet":{"w":5,"h":15,"speed":10},
 	"enemyNum":0,
-	"life":1,
-	"hp":1,
+	"life":3,
 	"maxLev":2,
 	"level":1,
 	"score":0,
@@ -29,11 +28,18 @@ var Scene = xengine.Scene.extend({
 		options || (options = {});
 		this._super(options);
 		this.player = null;
+		this.layer = null;
+		this.menu = null;
+		this.restart = null;
 		this.bulletPool = [];
+		this.isAttack = true;
 		this.isXFlip = true;
 		this.initFn();
 		this.createPlayer();
 		this.createEnemy();
+		this.createText();
+		this.createMenu();
+		this.resize();
 	},
 	initFn:function(){
 		this.cbFn = {
@@ -49,8 +55,8 @@ var Scene = xengine.Scene.extend({
 			w:pcfg.w*pcfg.scale,
 			h:pcfg.h*pcfg.scale,
 			color:'white',
+			isVisible:true,
 			life:cfg.life,
-			hp:cfg.hp,
 			bSpeed:-cfg.bullet.speed,
 			tags:pcfg.tags,
 			bBox:pcfg.bBox
@@ -78,9 +84,11 @@ var Scene = xengine.Scene.extend({
 						w:ecfg.w*ecfg.scale,
 						h:ecfg.h*ecfg.scale,
 						color:eColor,
+						isVisible:true,
 						bSpeed:cfg.bullet.speed,
 						tags:ecfg.tags,
-						bBox:ecfg.bBox
+						bBox:ecfg.bBox,
+						posDx:ecfg.speed
 					});
 					enemy.moveTo(eOffX*j + j*enemy.w + (this.w-(enemy.w+eOffX)*lev[i].length) * 0.5, eOffY+i*enemy.h);
 					enemy.posX = enemy.x;
@@ -91,7 +99,7 @@ var Scene = xengine.Scene.extend({
 			}
 		}
 		
-		var layer = new Layer({
+		this.layer = new Layer({
 			x:(ecfg.w*ecfg.scale+eOffX*2)*lev[0].length,
 			y:300,
 			w:ecfg.w*ecfg.scale,
@@ -99,13 +107,12 @@ var Scene = xengine.Scene.extend({
 			dx:ecfg.speed,
 			color:'white'
 		});
-		this.addChild(layer);
+		this.addChild(this.layer);
 	},
 	//创建子弹
 	createBullet:function(options){
-		options || (options = {});
 		var bcfg = cfg.bullet;				 
-		var bul = this.bulletPool.shift() || new Bullet();
+		var bul = this.bulletPool.shift() || new Bullet(options);
 		this.addChild(bul);
 
 		bul.w=bcfg.w;
@@ -113,112 +120,35 @@ var Scene = xengine.Scene.extend({
 		bul.moveTo(options.x || 0,options.y || 0);
 		bul.dx = options.dx || 0;
 		bul.dy = options.dy || 0;
-		bul.color=options.color || 'black';
+		bul.isVisible = true;
+	},
+	createText:function(){
+		var text = new Text({
+			isVisible:true			
+		});
+		this.addChild(text);
+	},
+	createMenu:function(){
+		this.menu = new Menu({
+			w:this.w,
+			h:200,
+			x:0,
+			y:this.h*0.5-200*0.5,
+			color:'rgba(0,0,0,0.8)',
+			zIdx:20,
+			isVisible:false
+		});
+		this.addChild(this.menu);
+		this.restart = new Restart({
+			w:40,
+			h:40,
+			x:200,
+			y:300,
+			r:20,
+			color:'white',
+			zIdx:21,
+			isVisible:false
+		});
+		this.addChild(this.restart);
 	}
 });
-
-
-
-
-
-/*var Galaxian = xengine.Class.extend({
-	init:function(){
-		var Scene = xengine.Scene.extend({
-			init:function(options){
-				options || (options = {});
-				this._super(options);
-				
-				var pcfg = cfg.player;
-				var player = new Player({
-					scaleX:pcfg.scale,
-					scaleY:pcfg.scale,
-					w:pcfg.w*pcfg.scale,
-					h:pcfg.h*pcfg.scale,
-					color:'white',
-					life:cfg.life,
-					hp:cfg.hp
-				});
-				player.moveTo((sc.w-pcfg.w*pcfg.scale) * 0.5,sc.h-pcfg.h*pcfg.scale*0.5);
-				
-				this.addChild(player);
-				_player = player;
-			}
-		});
-		var sc = new Scene({w:400,h:500});
-		xengine.director.runScene(sc);
-	},
-	loadLevel:function(sc){
-		 var self = this
-
-		//根据配置数据创建敌人
-        function createEnemy(sc) {
-			//获取当前级别
-            var lev = self.cfg.level,
-                cfg = self.cfg["lev" + lev],
-                ecfg = self.cfg.enemy;
-	
-			var eOffX = 3;
-            var eOffY = 80;
-            for (var i = 0; i < cfg.length; i++) {
-				var eColor = ColorUtil.rgb(MathUtil.randInt(100,255),MathUtil.randInt(100,255),MathUtil.randInt(100,255));
-                for (var j = 0; j < cfg[i].length; j++) {
-                    var eData = cfg[i][j];
-                    if (eData > 0) {
-                        var enemy = new Enemy({
-							hp:eData,
-							scaleX:ecfg.scale,
-							scaleY:ecfg.scale,
-							w:ecfg.w*ecfg.scale,
-							h:ecfg.h*ecfg.scale,
-							color:eColor
-						});
-                        enemy.moveTo(eOffX*j + j*enemy.w + (sc.w-(enemy.w+eOffX)*cfg[i].length) * 0.5, eOffY+i*enemy.h);
-						enemy.posX = enemy.x;
-						enemy.posY = enemy.y;
-                        ++self.cfg.enemyNum;
-						sc.addChild(enemy);
-                    }
-                }
-            }
-			
-			var layer = new Layer({
-				x:(ecfg.w*ecfg.scale+eOffX*2)*cfg[0].length,
-				y:300,
-				w:ecfg.w*ecfg.scale,
-				h:ecfg.h*ecfg.scale,
-				color:'white'
-			});
-			sc.addChild(layer);
-        }
-
-		//创建敌人
-        createEnemy(sc);
-		//复位游戏
-        //this.resetGame();
-	},
-	//创建子弹
-	createBullet:function(x,y,bClass,param){
-		var bul = new Bullet(
-							 
-							 
-							 
-		var bul = cache.shift() || new Bullet();
-		sc.addChild(b);
-		
-		b.x=player.x+player.w*0.5-2.5;
-		b.y=player.y-player.h;
-		b.w=5;
-		b.h=15;
-		b.dx = 0;
-		b.dy = -3;
-		b.color='white';
-		cache.push(b);
-		
-		
-		
-		
-		bul.moveTo(x,y);
-		bul.dx = param.dx;
-		bul.dy = param.dy;
-	}
-});*/

@@ -9,12 +9,12 @@ var Enemy = Shooter.extend({
 		this.hp = options.hp || 1;
 		this.posX = options.posX || 0;
 		this.posY = options.posY || 0;
-		this.targetX = options.targetX || 0;
-		this.targetY = options.targetY || 0;
+		this.posDx = options.posDx || 0;
 		this.color = options.color || 'black';
+		this.attackCount = 0;
 		this.sCtx = new xengine.StateContext(this);
 		this.addState();
-		this.updateState();
+		this.updateState(this);
 		this.sCtx.change("free");
 	},
 	addState:function(){
@@ -42,7 +42,11 @@ var Enemy = Shooter.extend({
 		ctx.fill();
 	},
 	isAttack:function(){
-		return this.attack;
+		if(this.owner.isAttack && this.attackCount++ == 50){
+			this.attackCount = 0;
+			return !MathUtil.randInt(0,this.owner.rObjs.length);
+		}
+		return false;
 	},
 	isRestore:function(){
 		var hw = this.w * 0.5,
@@ -69,53 +73,39 @@ var Enemy = Shooter.extend({
 		}
 		return false;*/
 	},
-	moveStep:function(){
-		
+	moveStep:function(){	
 		this._super();
-		this.posX += this.dx;
+		this.posX += this.owner.isXFlip ? this.posDx : -this.posDx;
 	},
 	//被子弹击中事件
 	onCollide:function(bullet){
-		/*if(this.getAnim("hurt")!=null){
-			this.setCAnim("hurt");
-			this.hCount = 5;
-		}
-		this._super(bullet);*/
+		this._super(bullet);
 	},
 	//更新自由移动状态
-	updateState:function(){
+	updateState:function(e){
 		var freeState = this.sCtx.get("free");
 		var dState = this.sCtx.get("die");
 		freeState.enter = function(){
-			var e = this.ctx.owner;
-			e.dx = 0.2;
+			e.dx = e.posDx;
 			e.dy = 0;
 			e.x = e.posX;
 			e.y = e.posY;
 		};
+		freeState.change = function(){
+			if(e.isAttack()){
+				e.sCtx.change("attack");
+			}
+		};
 		freeState.update = function(){
-			var e = this.ctx.owner;
-			e.dx = e.owner.isXFlip ? 0.2 : -0.2;
+			e.dx = e.owner.isXFlip ? e.posDx : -e.posDx;
 			//移动
 			e.moveStep();
 		};
 		//修改死亡状态
 		dState.enter = function(){
-			var o = this.ctx.owner;
-			//加分
-			if(o.groupID == 1){
-				cfg.score+=o.score;
-			}		  
-			var ox = o.x,oy = o.y;
-			//创建爆破效果
-			o.owner.createBoom(o.x,o.y,function(){
-				//死亡后奖励
-				if(o.gCfg.rw!=null){
-					var rw = o.owner.createRObj(Reward.ClassName,[ShootGame.cfg.sDef[o.gCfg.rw]]);
-					rw.moveTo(ox,oy);
-				}
-			});
-			o.owner.removeRObj(o);
+			e.owner.removeChild(e);
+			cfg.enemyNum--;
+			cfg.score++;
 		};
 	}
 });
@@ -139,13 +129,14 @@ var Layer = xengine.Sprite.extend({
 			var eCache = [];
 			var obj = this.owner.rObjs;
 			for(var i=0,o;o=obj[i++];){
-				if(o.groupID!=1){ continue; }
-				eCache.push(o.posX);
+				if(o.groupID==1){
+					eCache.push(o.posX);
+				}
 			}
 			if(this.owner.isXFlip){
-				this.x = Math.min.apply(Math,eCache);
-			}else{
 				this.x = Math.max.apply(Math,eCache);
+			}else{
+				this.x = Math.min.apply(Math,eCache);
 			}
 		}
 		this.moveStep();
@@ -158,11 +149,10 @@ var Layer = xengine.Sprite.extend({
 
 //定义进攻状态类
 var AttackState = xengine.State.extend({
-	timer:new Date(),
 	enter:function(){
 		++this.ctx.owner.zIdx;
-		this.ctx.owner.dx = (this.ctx.owner.targetX - this.ctx.owner.x) / 300;
-		this.ctx.owner.dy = (this.ctx.owner.targetY - this.ctx.owner.y) / 300;
+		this.ctx.owner.dx = (this.ctx.owner.owner.player.x + this.ctx.owner.w*0.5 - this.ctx.owner.x) / Math.abs(this.ctx.owner.posDx * 30);
+		this.ctx.owner.dy = (this.ctx.owner.owner.player.y - this.ctx.owner.y) / Math.abs(this.ctx.owner.posDx * 30);
 	},
 	change:function(){
 		if(this.ctx.owner.isRestore()){
@@ -182,7 +172,6 @@ var AttackState = xengine.State.extend({
 //定义返回队列状态类
 var RestoreState = xengine.State.extend({
 	enter:function(){
-		this.ctx.owner.attack = false;
 		this.ctx.owner.y = 0;	
 	},
 	change:function(){
@@ -194,8 +183,8 @@ var RestoreState = xengine.State.extend({
 		}
 	},
 	update:function(){
-		this.ctx.owner.dx = (this.ctx.owner.posX - this.ctx.owner.x) / 150;
-		this.ctx.owner.dy = (this.ctx.owner.posY - this.ctx.owner.y) / 150;
+		this.ctx.owner.dx = (this.ctx.owner.posX - this.ctx.owner.x) / Math.abs(this.ctx.owner.posDx * 10);
+		this.ctx.owner.dy = (this.ctx.owner.posY - this.ctx.owner.y) / Math.abs(this.ctx.owner.posDx * 10);
 		this.ctx.owner.moveStep();
 	}
 });

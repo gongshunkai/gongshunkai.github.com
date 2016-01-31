@@ -19,8 +19,8 @@ var Shooter = xengine.Sprite.extend({
 		this.sCtx = new xengine.StateContext(this);
 		this.addState();
 		this.sCtx.change("free");
-		var hw = (options.bBox&&options.bBox[0])||this.w*0.5,
-			hh = (options.bBox&&options.bBox[1])||this.h*0.5;
+		var hw = (options.bBox&&options.bBox[0])||this.w,
+			hh = (options.bBox&&options.bBox[1])||this.h;
 		this.bBox = new xengine.ABBox(this.x,this.y,hw,hh);
 		//是否进行碰撞检测
 		this.isCalcCollide = true;
@@ -37,7 +37,7 @@ var Shooter = xengine.Sprite.extend({
 		var tags = (tagIdx==null)?this.tags:this.tags[tagIdx];
 		for(var i = 0;i<tags.length;i++){
 			var tag = tags[i],
-				param = {"os":this,"targetID":this.targetID,"x":this.x+tag[0],"y":this.y+tag[1],"dx":0,"dy":this.dy+this.bSpeed,"color":this.color};
+				param = {"os":this,"attack":1,"targetID":this.targetID,"x":this.x+tag[0],"y":this.y+tag[1],"dx":0,"dy":this.dy+this.bSpeed,"color":this.color};
 			this.tagCurCount[i] = this.tagCurCount[i]||0;
 			//如果可以发射
 			if(this.tagCurCount[i]++==tag[4]){
@@ -55,7 +55,7 @@ var Shooter = xengine.Sprite.extend({
 		this.sCtx.update();
 		//超出屏幕下端则删除
 		if(this.y>0){
-			this.offScreenRemove();
+			//this.offScreenRemove();
 		}
 	},
 	//被子弹击中会触发事件
@@ -76,6 +76,6 @@ DieState = xengine.State.extend({
 		var o = this.ctx.owner;
 		//创建爆破效果
 		//o.owner.createBoom(o.x,o.y);
-		o.owner.removeRObj(o);
+		//o.owner.removeRObj(o);
 	}
 });

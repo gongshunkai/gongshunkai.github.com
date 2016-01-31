@@ -1,81 +1,77 @@
-xengine.game.addListener(new xengine.EventListener({
-	"beforeRender":function(){
-		
-	},
-	"afterRender":function(){
-		
-	}
-}));
-xengine.game.run(-1,function(){
-
+xengine.game.run(function(){
+	
 	var sc = new Scene({w:400,h:500,color:'#222'});
-	xengine.director.runScene(sc);
+	xengine.director.push(sc);
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//var galaxian = new Galaxian();
-	
-	/*var sc = new xengine.Scene({w:400,h:500});
-	xengine.director.runScene(sc);
-	
-	var pcfg = cfg.player;
-	var pScale = 0.4;
-	var player = new Player();
-	player.scaleX = pScale;
-	player.scaleY = pScale;
-	player.moveTo((sc.w-pcfg.w*pScale) * 0.5,sc.h-pcfg.h*pScale*0.5);
-	player.w = pcfg.w*pScale;
-	player.h = pcfg.h*pScale;
-	player.color = 'white';
-	sc.addChild(player);
-	_player = player;*/
-	
-	//loadLevel(sc);
-	
-	
-	
-	
-	setInterval(function(){
-		for(var i=0,obj;obj=sc.rObjs[i++];){
-			var r = MathUtil.randInt(0,sc.rObjs.length - 1);
-			if(r || obj.groupID != 1){ continue; }
-			obj.targetX = sc.player.x;
-			obj.targetY = sc.player.y;
-			obj.sCtx.change("attack");
+	sc.addListener(new xengine.EventListener({
+		"beforeRender":function(){
+			
+		},
+		"afterRender":function(){
+			if(sc.player.life < 1){
+				sc.menu.isVisible = true;
+				sc.restart.isVisible = true;
+				sc.isAttack = false;
+			}
+			if(cfg.level > cfg.maxLev){
+				sc.menu.isVisible = true;
+				sc.restart.isVisible = true;
+				sc.isAttack = false;
+			}
+			if(cfg.enemyNum < 1 && cfg.level <= cfg.maxLev){
+				cfg.level++;
+				sc.isXFlip = true;
+				sc.removeChild(sc.layer);
+				sc.createEnemy();
+			}
 		}
-	},500);
-	/*setInterval(function(){
-		var b = cache.shift() || new Bullet();
-		sc.addChild(b);
-		
-		b.x=player.x+player.w*0.5-2.5;
-		b.y=player.y-player.h;
-		b.w=5;
-		b.h=15;
-		b.dx = 0;
-		b.dy = -3;
-		b.color='white';
-		cache.push(b);
-	},500);*/
-		
+	}));
 		
 	var posX = 0;
+	//鼠标事件
 	xengine.Mouse.sDLG("down",function(e){							  
-		posX = e.clientX - sc.player.x;
-			
+		posX = e.clientX - sc.player.x;	
 	});
 	xengine.Mouse.sDLG("move",function(e){								  
 		if(xengine.Mouse.gBtnState(e.button) && e.clientX-posX > sc.x+sc.player.w*0.5 && e.clientX-posX < sc.w-sc.player.w*1.5){
 			sc.player.x = e.clientX-posX;
-		}	
+		}
 	});
-});
+	xengine.Mouse.sDLG("click",function(e){
+										//alert(sc.restart.isMouseIn());
+		if(sc.restart.isMouseIn()){
+			//alert('restart');
+		}
+	});
+	//触摸事件
+	xengine.Touch.sDLG("start",function(e){							  
+		var touch = e.touches[0]; //获取第一个触点
+		posX = touch.clientX - sc.player.x;
+	});
+	xengine.Touch.sDLG("move",function(e){								  
+		var touch = e.touches[0]; //获取第一个触点
+		if(xengine.Touch.gState() && touch.clientX-posX > sc.x+sc.player.w*0.5 && touch.clientX-posX < sc.w-sc.player.w*1.5){
+			sc.player.x = touch.clientX-posX;
+		}
+	});
+	
+	/*document.ontouchstart = function(e){
+		var touch = e.touches[0]; //获取第一个触点
+		posX = touch.pageX - sc.player.x;
+		
+		document.ontouchmove = function(e){
+			var touch = e.touches[0]; //获取第一个触点
+			if(touch.pageX-posX > sc.x+sc.player.w*0.5 && touch.pageX-posX < sc.w-sc.player.w*1.5){
+				sc.player.x = touch.pageX-posX;
+			}
+		};
+		document.ontouchend = function(){
+			document.ontouchmove = null;
+		};
+	};*/
+	
+	window.onresize = function(){ sc.resize(); }
+},30);
+
+
 						   
