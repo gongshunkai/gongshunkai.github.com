@@ -10,7 +10,7 @@ var Bullet = xengine.Sprite.extend({
 		this.attack = options.attack || 0;
 		this.targetID = options.targetID || 0;
 		this.os = options.os || null;
-		this.bBox = new xengine.ABBox(this.x,this.y,this.w,this.h);
+		this.bBox = new xengine.ABBox(this.x,this.y,this.w*0.5,this.h*0.5);
 	},
 	update:function(){
 		this._super();
@@ -29,8 +29,11 @@ var Bullet = xengine.Sprite.extend({
 		}
 	},
 	render:function(ctx){
+		ctx.translate(this.x,this.y);
+		var hw = 0.5 * this.w,
+			hh = 0.5 * this.h;
 		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x,this.y,this.w,this.h);
+		ctx.fillRect(-hw,-hh,this.w,this.h);
 	},
 	offScreenRemove:function(){
 		var hw = this.w * 0.5,

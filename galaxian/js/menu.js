@@ -9,13 +9,16 @@ var Menu = xengine.Sprite.extend({
 		this.color = options.color || 'black';
 	},
 	render:function(ctx){
+		ctx.translate(this.x,this.y);
+		var hw = this.w * 0.5,
+			hh = this.h * 0.5;
 		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x,this.y,this.w,this.h);
+		ctx.fillRect(-hw,-hh,this.w,this.h);
 		ctx.font = '30px Arial';
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
-		ctx.fillText('Score:' + cfg.score,200,200);
-		ctx.fillText('Game Over',200,250);
+		ctx.fillText('Score:' + this.owner.score,0,-50);
+		ctx.fillText('Game Over',0,0);
 		
 	}
 });
@@ -43,12 +46,5 @@ var Restart = xengine.Sprite.extend({
 		ctx.lineTo(205,291);
 		ctx.lineTo(197,296);
 		ctx.fill();
-	/*	ctx.translate(this.x,this.y);
-		var hw = 0,
-			hh = 0;
-		ctx.fillStyle = 'white';
-		ctx.beginPath();
-		ctx.arc(-hw,-hh,this.r,0,360*Math.PI/180,true);
-		ctx.fill();*/
 	}
 });

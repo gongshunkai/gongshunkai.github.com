@@ -19,8 +19,8 @@ var Shooter = xengine.Sprite.extend({
 		this.sCtx = new xengine.StateContext(this);
 		this.addState();
 		this.sCtx.change("free");
-		var hw = (options.bBox&&options.bBox[0])||this.w,
-			hh = (options.bBox&&options.bBox[1])||this.h;
+		var hw = (options.bBox&&options.bBox[0])||this.w*0.5,
+			hh = (options.bBox&&options.bBox[1])||this.h*0.5;
 		this.bBox = new xengine.ABBox(this.x,this.y,hw,hh);
 		//是否进行碰撞检测
 		this.isCalcCollide = true;
@@ -72,10 +72,4 @@ FreeState = xengine.State.extend({
 });
 //定义死亡状态类
 DieState = xengine.State.extend({
-	enter:function(){
-		var o = this.ctx.owner;
-		//创建爆破效果
-		//o.owner.createBoom(o.x,o.y);
-		//o.owner.removeRObj(o);
-	}
 });

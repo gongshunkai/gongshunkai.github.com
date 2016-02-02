@@ -1,9 +1,9 @@
-//     xengine.box plugin
-
-//     Created by xiangfeng & gongshunkai on 2016/1/24.
-
-//     包围盒类
-
+/*!
+ * xengine.box plugin
+ * By xiangfeng
+ * Please contact to xiangfenglf@163.com if you hava any question
+ * xengine 包围盒类
+ */
 (function(root,xengine){
 	xengine.fn.extend(xengine, {
 		//包围盒抽象类
@@ -64,12 +64,12 @@
 				this._super(x,y);
 			},
 			collided:function(tBox){
-				var nx = this.x,
-					ny = this.y,
+				var nx = this.x-this.hw,
+					ny = this.y-this.hh,
 					mx = this.x+this.hw,
 					my = this.y+this.hh,
-					nx1 = tBox.x,
-					ny1 = tBox.y,
+					nx1 = tBox.x-tBox.hw,
+					ny1 = tBox.y-tBox.hh,
 					mx1 = tBox.x+tBox.hw,
 					my1 = tBox.y+tBox.hh;
 				if(nx>mx1||mx<nx1)return false;
@@ -80,7 +80,7 @@
 				ctx.beginPath();
 				ctx.lineWidth = 2;
 				ctx.strokeStyle = this.c;
-				ctx.strokeRect(this.x,this.y,this.hw,this.hh);
+				ctx.strokeRect(this.x-this.hw,this.y-this.hh,this.hw*2,this.hh*2);
 			}
 		}),
 		//凸多边形包围盒

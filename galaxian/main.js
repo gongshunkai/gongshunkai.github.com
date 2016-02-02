@@ -8,21 +8,22 @@ xengine.game.run(function(){
 			
 		},
 		"afterRender":function(){
+			//处理游戏过关
+			if(cfg.enemyNum < 1){
+				if(sc.level > cfg.maxLev){
+					sc.menu || sc.createMenu();
+					sc.isAttack = false;
+				}else{
+					++sc.level;
+					sc.isXFlip = true;
+					sc.removeChild(sc.layer);
+					sc.createEnemy();
+				}
+			}
+			//处理游戏结束
 			if(sc.player.life < 1){
-				sc.menu.isVisible = true;
-				sc.restart.isVisible = true;
+				sc.menu || sc.createMenu();
 				sc.isAttack = false;
-			}
-			if(cfg.level > cfg.maxLev){
-				sc.menu.isVisible = true;
-				sc.restart.isVisible = true;
-				sc.isAttack = false;
-			}
-			if(cfg.enemyNum < 1 && cfg.level <= cfg.maxLev){
-				cfg.level++;
-				sc.isXFlip = true;
-				sc.removeChild(sc.layer);
-				sc.createEnemy();
 			}
 		}
 	}));
@@ -33,14 +34,14 @@ xengine.game.run(function(){
 		posX = e.clientX - sc.player.x;	
 	});
 	xengine.Mouse.sDLG("move",function(e){								  
-		if(xengine.Mouse.gBtnState(e.button) && e.clientX-posX > sc.x+sc.player.w*0.5 && e.clientX-posX < sc.w-sc.player.w*1.5){
+		if(xengine.Mouse.gBtnState(e.button) && e.clientX-posX > sc.x+sc.player.w && e.clientX-posX < sc.w-sc.player.w){
 			sc.player.x = e.clientX-posX;
 		}
 	});
-	xengine.Mouse.sDLG("click",function(e){
-										//alert(sc.restart.isMouseIn());
-		if(sc.restart.isMouseIn()){
-			//alert('restart');
+	xengine.Mouse.sDLG("click",function(e){								
+		if(sc.restart && sc.restart.isMouseIn()){
+			sc.clearAll();
+			sc.loadGame();
 		}
 	});
 	//触摸事件
@@ -50,7 +51,7 @@ xengine.game.run(function(){
 	});
 	xengine.Touch.sDLG("move",function(e){								  
 		var touch = e.touches[0]; //获取第一个触点
-		if(xengine.Touch.gState() && touch.clientX-posX > sc.x+sc.player.w*0.5 && touch.clientX-posX < sc.w-sc.player.w*1.5){
+		if(xengine.Touch.gState() && touch.clientX-posX > sc.x+sc.player.w && touch.clientX-posX < sc.w-sc.player.w){
 			sc.player.x = touch.clientX-posX;
 		}
 	});
@@ -61,7 +62,7 @@ xengine.game.run(function(){
 		
 		document.ontouchmove = function(e){
 			var touch = e.touches[0]; //获取第一个触点
-			if(touch.pageX-posX > sc.x+sc.player.w*0.5 && touch.pageX-posX < sc.w-sc.player.w*1.5){
+			if(touch.pageX-posX > sc.x+sc.player.w && touch.pageX-posX < sc.w-sc.player.w){
 				sc.player.x = touch.pageX-posX;
 			}
 		};

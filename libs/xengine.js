@@ -1,16 +1,19 @@
 //     xengine.js 1.1.2
-//     Demo Javascript Game Engine
+//     Simple Javascript Game Engine
 //     By xiangfeng
 //     Please contact to xiangfenglf@163.com if you hava any question
 
 (function(root, factory) {
 
-
-	root.xengine = factory(root, {});
-
-
-}(this, function(root, xengine) {
-
+	if (typeof define === 'function' && define.amd){
+		define(['exports'], function(exports){
+			root.xengine = factory(root, exports);
+		});
+	}else{
+		root.xengine = factory(root, {});
+	}
+	
+}(this, function(root, xengine){
 
 	var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
 
@@ -24,7 +27,6 @@
 	var idCounter = 0;
 
 	xengine.VERSION = '1.1.2';
-
 
 
 	xengine.fn = {
@@ -783,26 +785,18 @@
 				dh = this.h,
 				cw = pageSize.WinW,
 				ch = pageSize.WinH;
-			var w = 0,h = 0;
-		
-			if(cw > dw){
-				h = dh*(cw / dw);
-			}else{
-				h = dh/(dw / cw);
-			}
-			
-			if(ch > dh){
-				w = dw*(ch / dh);
-			}else{
-				w = dw/(dh / ch);
-			}
-		
-			w = Math.min(w,cw);
-			h = Math.min(h,ch);
+
+			var bw = cw > dw ? cw / dw : 1 / (dw / cw),
+				bh = ch > dh ? ch / dh : 1 / (dh / ch);
+
+			var w = Math.min(dw*bh,cw),
+				h = Math.min(dh*bw,ch);
 		
 			this.cvs.style.width = w+"px";
 			this.cvs.style.height = h+"px";
+			this.cvs.style.top = ch*0.5 - h*0.5 + "px";
 			this.cvs.style.left = cw*0.5 - w*0.5 + "px";
+			this.cvs.style.position="absolute";
 		},
 		//清除canvas背景
 		clear:function(){
@@ -945,7 +939,7 @@
 		//清除所有场景
 		clearAll:function(){
 			for(var i in this.scenes){
-				this.scenes[i].clean(); 
+				this.scenes[i].clean();
 			}
 			this.namedScenes = {};
 			this.scenes = [];
@@ -1013,24 +1007,26 @@
 			return;
 		},
 		//判断鼠标当前坐标是否在当前渲染对象区域中
-		isMouseIn:function(){
+		isMouseIn:function(){	
 			var x = Mouse.gX() || Touch.gX(),
 				y = Mouse.gY() || Touch.gY();
 			var gx = this.owner.cvs.offsetLeft,
 				gy = this.owner.cvs.offsetTop,
 				gw = this.owner.cvs.offsetWidth,
 				gh = this.owner.cvs.offsetHeight;
-			//转换鼠标坐标到游戏窗口坐标系
-			
-			var bw = gw > this.owner.w ? gw / this.owner.w : this.owner.w / gw,
-				bh = gh > this.owner.h ? gh / this.owner.h : this.owner.h / gh;
+				
+			var bw = gw > this.owner.w ? gw / this.owner.w : 1 / (this.owner.w / gw),
+				bh = gh > this.owner.h ? gh / this.owner.h : 1 / (this.owner.h / gh);	
+				
+			//转换鼠标坐标到游戏窗口坐标系	
 			var cd = [x-gx,y-gy];
-			var cd0 = gw > this.owner.w ? parseInt(cd[0]*bw) : parseInt(cd[0] / bw),
-				cd1 = gh > this.owner.h ? parseInt(cd[1]*bh) : parseInt(cd[1] / bh);
-				hw = this.w*0.5,
-				hh = this.h*0.5;
-			//alert(cd0);
-			return cd0 >= this.x - hw && cd0 <= this.x + hw && cd1 >= this.y - hh && cd1 <= this.y + hh;
+					
+			var	hw = this.w*bw*0.5,
+				hh = this.h*bh*0.5,
+				hx = this.x*bw,
+				hy = this.y*bh;
+				
+			return cd[0] >= hx - hw && cd[0] <= hx + hw && cd[1] >= hy - hh && cd[1] <= hy + hh;
 		}
 	});
 
@@ -1213,8 +1209,8 @@
 			this.isXFlip = !!options.isXFlip;
 			//是否垂直反向
 			this.isYFlip = !!options.isYFlip;
-			this.scaleX = options.scaleX || 0;
-			this.scaleY = options.scaleY || 0;
+			this.scaleX = options.scaleX || 1;
+			this.scaleY = options.scaleY || 1;
 			//包围盒
 			this.bBox = null;
 			//tagPoint

@@ -1,7 +1,6 @@
 ﻿/*!
- * xengine
- * Copyright 2012 xiangfeng
- * Released under the MIT license
+ * xengine.xutil plugin
+ * By xiangfeng
  * Please contact to xiangfenglf@163.com if you hava any question
  * xengine 工具类
  */

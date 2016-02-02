@@ -10,8 +10,8 @@ var Enemy = Shooter.extend({
 		this.posX = options.posX || 0;
 		this.posY = options.posY || 0;
 		this.posDx = options.posDx || 0;
+		this.speed = options.speed || 0;
 		this.color = options.color || 'black';
-		this.attackCount = 0;
 		this.sCtx = new xengine.StateContext(this);
 		this.addState();
 		this.updateState(this);
@@ -20,60 +20,39 @@ var Enemy = Shooter.extend({
 	addState:function(){
 		this._super();
 		this.sCtx.add(new AttackState("attack", this.sCtx));
-		this.sCtx.add(new RestoreState("restore", this.sCtx));
+		this.sCtx.add(new ReturnState("return", this.sCtx));
 	},
 	render:function(ctx){
 		ctx.beginPath();
 		ctx.translate(this.x,this.y);
 		ctx.scale(this.scaleX,this.scaleY);
-		ctx.moveTo(20,0);
+		ctx.moveTo(-30,-60);
+		ctx.lineTo(-50,-40);
+		ctx.lineTo(-18,0);
+		ctx.lineTo(-40,30);
+		ctx.lineTo(-20,50);
 		ctx.lineTo(0,20);
-		ctx.lineTo(32,60);
-		ctx.lineTo(10,90);
-		ctx.lineTo(30,110);
-		ctx.lineTo(50,80);
-		ctx.lineTo(70,110);
-		ctx.lineTo(90,90);
-		ctx.lineTo(67,60);
-		ctx.lineTo(100,20);
-		ctx.lineTo(80,0);
-		ctx.lineTo(50,40);
+		ctx.lineTo(20,50);
+		ctx.lineTo(40,30);
+		ctx.lineTo(17,0);
+		ctx.lineTo(50,-40);
+		ctx.lineTo(30,-60);
+		ctx.lineTo(0,-20);
 		ctx.fillStyle = this.color;
 		ctx.fill();
 	},
 	isAttack:function(){
-		if(this.owner.isAttack && this.attackCount++ == 50){
-			this.attackCount = 0;
-			return !MathUtil.randInt(0,this.owner.rObjs.length);
-		}
-		return false;
+		return this.owner.isAttack && !MathUtil.randInt(0,this.owner.rObjs.length);
 	},
-	isRestore:function(){
+	isReturn:function(){
 		var hw = this.w * 0.5,
 			hh = this.h * 0.5;
-		return this.x < -hw || this.x > this.owner.w + hw || this.y < -hh || this.y > this.owner.h + hh
+		return this.x < -hw || this.x > this.owner.w + hw || this.y < -hh || this.y > this.owner.h + hh;
 	},
-	isRun:function(){
-		var x = parseInt(this.x);
-		var y = parseInt(this.y);
-		return x*1.5 >= this.posX && x+this.w*-1.5 <= this.posX+this.w && y*1.5 >= this.posY && y+this.h*-1.5 <= this.posY+this.h;
+	isFree:function(){
+		return this.x >= this.posX-this.w*0.5 && this.x <= this.posX+this.w*0.5 && this.y >= this.posY-this.h*0.5 && this.y <= this.posY+this.h*0.5;
 	},
-	isCollide:function(){
-		/*for(var i=0;i<cache.length;i++){
-			if(MathUtil.isInRect(this.x,this.y,this.x+this.w,this.y+this.h,cache[i].x,cache[i].y,cache[i].x+cache[i].w,cache[i].y+cache[i].h)){
-				cache[i].owner.removeChild(cache[i]);
-				cache.splice(i,1);
-				--this.lev;
-				return true;
-			}
-		}
-		if(MathUtil.isInRect(this.x,this.y,this.x+this.w,this.y+this.h,_player.x,_player.y,_player.x+_player.w,_player.y+_player.h)){
-			_player.owner.removeChild(_player);
-			return true;
-		}
-		return false;*/
-	},
-	moveStep:function(){	
+	moveStep:function(){
 		this._super();
 		this.posX += this.owner.isXFlip ? this.posDx : -this.posDx;
 	},
@@ -90,22 +69,26 @@ var Enemy = Shooter.extend({
 			e.dy = 0;
 			e.x = e.posX;
 			e.y = e.posY;
+			this.hCount = 50;
 		};
 		freeState.change = function(){
-			if(e.isAttack()){
-				e.sCtx.change("attack");
+			if(--this.hCount < 1){
+				if(e.isAttack()){
+					e.sCtx.change("attack");
+				}else{
+					this.hCount = 50;
+				}
 			}
 		};
 		freeState.update = function(){
 			e.dx = e.owner.isXFlip ? e.posDx : -e.posDx;
-			//移动
 			e.moveStep();
 		};
 		//修改死亡状态
 		dState.enter = function(){
 			e.owner.removeChild(e);
-			cfg.enemyNum--;
-			cfg.score++;
+			++e.owner.score;
+			--cfg.enemyNum;
 		};
 	}
 });
@@ -123,7 +106,7 @@ var Layer = xengine.Sprite.extend({
 	update:function(){
 		var w = this.owner.w;
 		//到达边界改变速度方向
-		if(this.x<this.w||this.x>w-this.w*2){
+		if(this.x<this.w*2||this.x>w-this.w*2){
 			this.owner.isXFlip = !this.owner.isXFlip;
 			this.dx = -this.dx;
 			var eCache = [];
@@ -142,8 +125,11 @@ var Layer = xengine.Sprite.extend({
 		this.moveStep();
 	},
 	render:function(ctx){
+		ctx.translate(this.x,this.y);
+		var hw = this.w * 0.5,
+			hh = this.h * 0.5;
 		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x,this.y,this.w,this.h);
+		ctx.fillRect(-hw,-hh,this.w,this.h);
 	}
 });
 
@@ -151,15 +137,12 @@ var Layer = xengine.Sprite.extend({
 var AttackState = xengine.State.extend({
 	enter:function(){
 		++this.ctx.owner.zIdx;
-		this.ctx.owner.dx = (this.ctx.owner.owner.player.x + this.ctx.owner.w*0.5 - this.ctx.owner.x) / Math.abs(this.ctx.owner.posDx * 30);
-		this.ctx.owner.dy = (this.ctx.owner.owner.player.y - this.ctx.owner.y) / Math.abs(this.ctx.owner.posDx * 30);
+		this.ctx.owner.dx = (this.ctx.owner.owner.player.x - this.ctx.owner.x) / this.ctx.owner.speed;
+		this.ctx.owner.dy = (this.ctx.owner.owner.player.y - this.ctx.owner.y) / this.ctx.owner.speed;
 	},
 	change:function(){
-		if(this.ctx.owner.isRestore()){
-			this.ctx.change("restore");
-		}
-		if(this.ctx.owner.isCollide() && this.ctx.owner.lev < 1){
-			this.ctx.change("die");
+		if(this.ctx.owner.isReturn()){
+			this.ctx.change("return");
 		}
 	},
 	update:function(){
@@ -169,22 +152,19 @@ var AttackState = xengine.State.extend({
 	}
 });
 
-//定义返回队列状态类
-var RestoreState = xengine.State.extend({
+//定义返回状态类
+var ReturnState = xengine.State.extend({
 	enter:function(){
 		this.ctx.owner.y = 0;	
 	},
 	change:function(){
-		if(this.ctx.owner.isRun()){
+		if(this.ctx.owner.isFree()){
 			this.ctx.change("free");
-		}
-		if(this.ctx.owner.isCollide() && this.ctx.owner.lev < 1){
-			this.ctx.change("die");
 		}
 	},
 	update:function(){
-		this.ctx.owner.dx = (this.ctx.owner.posX - this.ctx.owner.x) / Math.abs(this.ctx.owner.posDx * 10);
-		this.ctx.owner.dy = (this.ctx.owner.posY - this.ctx.owner.y) / Math.abs(this.ctx.owner.posDx * 10);
+		this.ctx.owner.dx = (this.ctx.owner.posX - this.ctx.owner.x) / (this.ctx.owner.speed * 0.5);
+		this.ctx.owner.dy = (this.ctx.owner.posY - this.ctx.owner.y) / (this.ctx.owner.speed * 0.5);
 		this.ctx.owner.moveStep();
 	}
 });

@@ -8,10 +8,11 @@ var Text = xengine.Sprite.extend({
 		this._super(options);
 	},
 	render:function(ctx){
+		ctx.translate(this.x,this.y);
 		ctx.font = '20px Arial';
 		ctx.fillStyle = 'red';
-		ctx.fillText('Life:' + this.owner.player.life,20,30);
-		ctx.fillText('Level:' + cfg.level,160,30);
-		ctx.fillText('Score:' + cfg.score,300,30);
+		ctx.fillText('Life:' + this.owner.player.life,-170,0);
+		ctx.fillText('Level:' + this.owner.level,-40,0);
+		ctx.fillText('Score:' + this.owner.score,100,0);
 	}
 });

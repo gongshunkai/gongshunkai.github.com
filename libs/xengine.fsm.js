@@ -1,9 +1,9 @@
-//     xengine.resource plugin
-
-//     Created by xiangfeng & gongshunkai on 2016/1/14.
-
-//     游戏状态机类
-
+/*!
+ * xengine.fsm plugin
+ * By xiangfeng
+ * Please contact to xiangfenglf@163.com if you hava any question
+ * xengine 游戏状态机类
+ */
 (function(root,xengine){
 	xengine.fn.extend(xengine, {
 		//状态抽象类

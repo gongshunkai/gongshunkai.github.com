@@ -16,13 +16,13 @@ var Player = Shooter.extend({
 		ctx.beginPath();
 		ctx.translate(this.x,this.y);
 		ctx.scale(this.scaleX,this.scaleY);
-		ctx.moveTo(55,0);
-		ctx.lineTo(0,50);
-		ctx.lineTo(20,70);
-		ctx.lineTo(42,50);
-		ctx.lineTo(68,50);
-		ctx.lineTo(90,70);
-		ctx.lineTo(110,50);
+		ctx.moveTo(0,-27.5);
+		ctx.lineTo(-55,22.5);
+		ctx.lineTo(-35,42.5);
+		ctx.lineTo(-13,22.5);
+		ctx.lineTo(13,22.5);
+		ctx.lineTo(35,42.5);
+		ctx.lineTo(55,22.5);
 		ctx.fillStyle = this.color;
 		ctx.fill();
 	},
@@ -50,7 +50,16 @@ var Player = Shooter.extend({
 		dState.enter = function(){
 			var o = this.ctx.owner;
 			if(--o.life>0){
-				o.sCtx.change("free");
+				o.color = 'red';
+			}else{
+				o.owner.removeChild(o);
+			}
+			this.hCount = 5;
+		};
+		dState.update = function(){
+			if(--this.hCount<1){
+				this.ctx.owner.color = 'white';
+				this.ctx.owner.sCtx.change("free");
 			}
 		};
 	},

@@ -1,6 +1,6 @@
 ﻿var cfg = {
-	"player":{"w":110,"h":70,"scale":0.4,"tags":[[19,-15,"b3","cb0",15]],"bBox":[0,0]},
-	"enemy":{"w":100,"h":120,"scale":0.2,"speed":2,"tags":[[10,20,"b3","cb0",15]],"bBox":[0,0]},
+	"player":{"w":110,"h":70,"scale":0.4,"tags":[[0,-15,"b3","cb0",10]],"bBox":[15,10]},
+	"enemy":{"w":100,"h":120,"scale":0.2,"freeSpeed":2,"attackSpeed":50,"tags":[[0,15,"b3","cb0",15]],"bBox":[10,10]},
 	"bullet":{"w":5,"h":15,"speed":10},
 	"enemyNum":0,
 	"life":3,
@@ -27,6 +27,12 @@ var Scene = xengine.Scene.extend({
 	init:function(options){
 		options || (options = {});
 		this._super(options);
+		this.loadGame();
+	},
+	//加载游戏
+	loadGame:function(){
+		this.level = cfg.level;
+		this.score = cfg.score;
 		this.player = null;
 		this.layer = null;
 		this.menu = null;
@@ -38,7 +44,6 @@ var Scene = xengine.Scene.extend({
 		this.createPlayer();
 		this.createEnemy();
 		this.createText();
-		this.createMenu();
 		this.resize();
 	},
 	initFn:function(){
@@ -47,6 +52,7 @@ var Scene = xengine.Scene.extend({
 			"cb1":this.createCirBullet
 		};		  
 	},
+	//创建玩家
 	createPlayer:function(){
 		var pcfg = cfg.player;
 		this.player = new Player({
@@ -61,12 +67,13 @@ var Scene = xengine.Scene.extend({
 			tags:pcfg.tags,
 			bBox:pcfg.bBox
 		});
-		this.player.moveTo((this.w-pcfg.w*pcfg.scale) * 0.5,this.h-pcfg.h*pcfg.scale*2);		
+		this.player.moveTo((this.w-pcfg.w*pcfg.scale/1.5) * 0.5,this.h-pcfg.h*pcfg.scale*2.5);
 		this.addChild(this.player);
 	},
+	//创建敌人
 	createEnemy:function(){
 		//获取当前级别
-		var level = cfg.level,
+		var level = this.level,
 			lev = cfg["lev" + level],
 			ecfg = cfg.enemy;
 
@@ -88,7 +95,8 @@ var Scene = xengine.Scene.extend({
 						bSpeed:cfg.bullet.speed,
 						tags:ecfg.tags,
 						bBox:ecfg.bBox,
-						posDx:ecfg.speed
+						posDx:ecfg.freeSpeed,
+						speed:ecfg.attackSpeed
 					});
 					enemy.moveTo(eOffX*j + j*enemy.w + (this.w-(enemy.w+eOffX)*lev[i].length) * 0.5, eOffY+i*enemy.h);
 					enemy.posX = enemy.x;
@@ -104,7 +112,7 @@ var Scene = xengine.Scene.extend({
 			y:300,
 			w:ecfg.w*ecfg.scale,
 			h:ecfg.h*ecfg.scale,
-			dx:ecfg.speed,
+			dx:ecfg.freeSpeed,
 			color:'white'
 		});
 		this.addChild(this.layer);
@@ -124,19 +132,22 @@ var Scene = xengine.Scene.extend({
 	},
 	createText:function(){
 		var text = new Text({
+			x:this.w*0.5,
+			y:30,
 			isVisible:true			
 		});
 		this.addChild(text);
 	},
+	//创建菜单
 	createMenu:function(){
 		this.menu = new Menu({
 			w:this.w,
 			h:200,
-			x:0,
-			y:this.h*0.5-200*0.5,
+			x:this.w*0.5,
+			y:this.h*0.5,
 			color:'rgba(0,0,0,0.8)',
 			zIdx:20,
-			isVisible:false
+			isVisible:true
 		});
 		this.addChild(this.menu);
 		this.restart = new Restart({
@@ -147,7 +158,7 @@ var Scene = xengine.Scene.extend({
 			r:20,
 			color:'white',
 			zIdx:21,
-			isVisible:false
+			isVisible:true
 		});
 		this.addChild(this.restart);
 	}
