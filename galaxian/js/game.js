@@ -31,6 +31,7 @@ var Scene = xengine.Scene.extend({
 	},
 	//加载游戏
 	loadGame:function(){
+		this.enemyNum = cfg.enemyNum;
 		this.level = cfg.level;
 		this.score = cfg.score;
 		this.player = null;
@@ -101,7 +102,7 @@ var Scene = xengine.Scene.extend({
 					enemy.moveTo(eOffX*j + j*enemy.w + (this.w-(enemy.w+eOffX)*lev[i].length) * 0.5, eOffY+i*enemy.h);
 					enemy.posX = enemy.x;
 					enemy.posY = enemy.y;
-					++cfg.enemyNum;
+					++this.enemyNum;
 					this.addChild(enemy);
 				}
 			}

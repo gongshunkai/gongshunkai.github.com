@@ -88,7 +88,7 @@ var Enemy = Shooter.extend({
 		dState.enter = function(){
 			e.owner.removeChild(e);
 			++e.owner.score;
-			--cfg.enemyNum;
+			--e.owner.enemyNum;
 		};
 	}
 });

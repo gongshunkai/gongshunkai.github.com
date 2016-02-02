@@ -9,7 +9,7 @@ xengine.game.run(function(){
 		},
 		"afterRender":function(){
 			//处理游戏过关
-			if(cfg.enemyNum < 1){
+			if(sc.enemyNum < 1){
 				if(sc.level > cfg.maxLev){
 					sc.menu || sc.createMenu();
 					sc.isAttack = false;
