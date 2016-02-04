@@ -4,9 +4,11 @@
 //从引擎的Sprite继承
 var Menu = xengine.Sprite.extend({
 	init:function(options){
-		options || (options = {});
+		var params = {color:'black'};
+		options = xengine.fn.extend(params, options || {});
+		
 		this._super(options);
-		this.color = options.color || 'black';
+		this.color = options.color;
 	},
 	render:function(ctx){
 		ctx.translate(this.x,this.y);
@@ -25,10 +27,12 @@ var Menu = xengine.Sprite.extend({
 
 var Restart = xengine.Sprite.extend({
 	init:function(options){
-		options || (options = {});
+		var params = {color:'black',r:0};
+		options = xengine.fn.extend(params, options || {});
+		
 		this._super(options);
-		this.color = options.color || 'black';
-		this.r = options.r || 0;
+		this.color = options.color;
+		this.r = options.r;
 	},
 	render:function(ctx){
 		ctx.fillStyle = this.color;

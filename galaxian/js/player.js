@@ -4,10 +4,12 @@
 //从引擎的Sprite继承
 var Player = Shooter.extend({
 	init:function(options){
-		options || (options = {});
+		var params = {color:'black',life:1};
+		options = xengine.fn.extend(params, options || {});
+		
 		this._super(options);
-		this.color = options.color || 'black';
-		this.life = options.life || 0;
+		this.color = options.color;
+		this.life = options.life;
 		this.groupID = 0;
 		this.targetID = 1;
 		this.updateState();

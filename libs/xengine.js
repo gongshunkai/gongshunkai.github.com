@@ -666,15 +666,17 @@
 	var Scene = xengine.Scene = Class.extend();
 	xengine.fn.extend(Scene.prototype, Events, {
 		init:function(options){
-			options || (options = {});
+			var params = {name:xengine.fn.uniqueId('scene'),x:0,y:0,w:320,h:200,color:'black'};
+			options = xengine.fn.extend(params, options || {});
+			
 			//场景名称
-			this.name = options.name|| xengine.fn.uniqueId('scene');
+			this.name = options.name;
 			//位置信息
-			this.x = options.x || 0;
-			this.y = options.y || 0;
-			this.w = options.w || 320;
-			this.h = options.h || 200;
-			this.color = options.color || "black";
+			this.x = options.x;
+			this.y = options.y;
+			this.w = Math.max(1,options.w);
+			this.h = Math.max(1,options.h);
+			this.color = options.color;
 			//绑定的canvas元素,以后的精灵都在这个canvas上进行绘制
 			this.cvs = document.createElement('canvas');
 			this.cvs.id = "cv_" + this.name;
@@ -952,26 +954,28 @@
 
 	var RenderObj = Class.extend({
 		init:function(options){
-			options || (options = {});
-			this.name = options.name || xengine.fn.uniqueId('renderObj');
+			var params = {name:xengine.fn.uniqueId('renderObj'),x:0,y:0,w:0,h:0,dx:0,dy:0,vx:0,vy:0,deg:0,zIdx:0,isVisible:true,canRemove:false};
+			options = xengine.fn.extend(params, options || {});
+			
+			this.name = options.name;
 			//拥有者,指向场景对象
 			this.owner = null;
 			//x,y方向坐标
-			this.x = options.x || 0;
-			this.y = options.y || 0;
+			this.x = options.x;
+			this.y = options.y;
 			//对象宽度和高度
-			this.w = options.w || 0;
-			this.h = options.h || 0;
+			this.w = Math.max(1,options.w);
+			this.h = Math.max(1,options.h);
 			//x,y方向的速度
-			this.dx = options.dx || 0;
-			this.dy = options.dy || 0;
+			this.dx = options.dx;
+			this.dy = options.dy;
 			//x,y方向的加速度
-			this.vx = options.vx || 0;
-			this.vy = options.vy || 0;
+			this.vx = options.vx;
+			this.vy = options.vy;
 			//角度
-			this.deg = options.deg || 0;
+			this.deg = options.deg;
 			//z-index,数字越小越先渲染
-			this.zIdx = options.zIdx || 0;
+			this.zIdx = options.zIdx;
 			//是否可见
 			this.isVisible = !!options.isVisible;
 			//是否可移除
@@ -1036,15 +1040,17 @@
 
 	var Frames = xengine.Frames = Class.extend({
 		init:function(options){
-			options || (options = {});
+			var params = {name:xengine.fn.uniqueId('frames'),duration:50,img:null};
+			options = xengine.fn.extend(params, options || {});
+			
 			//帧动画名称
-			this.name = options.name || xengine.fn.uniqueId('frames');;
+			this.name = options.name;
 			//帧动画每帧所持续的时间
-			this.duration = options.duration || 50;//默认每帧持续50毫秒
+			this.duration = Math.max(1,options.duration);//默认每帧持续时间(毫秒)
 			//保存每帧位置，和持续时间信息
 			this.frames = [];
 			//对应的动画帧序列图,
-			this.img = options.img || null;
+			this.img = options.img;
 		},
 		//添加帧数据
 		add:function(x,y,w,h,img,dur){
@@ -1200,7 +1206,9 @@
 
 	var Sprite = xengine.Sprite = RenderObj.extend({
 		init:function(options){
-			options || (options = {});
+			var params = {isXFlip:false,isYFlip:false,scaleX:1,scaleY:1};
+			options = xengine.fn.extend(params, options || {});
+			
 			this._super(options);
 			//帧动画集合对象
 			this.anims = null;
@@ -1209,8 +1217,8 @@
 			this.isXFlip = !!options.isXFlip;
 			//是否垂直反向
 			this.isYFlip = !!options.isYFlip;
-			this.scaleX = options.scaleX || 1;
-			this.scaleY = options.scaleY || 1;
+			this.scaleX = Math.abs(options.scaleX);
+			this.scaleY = Math.abs(options.scaleY);
 			//包围盒
 			this.bBox = null;
 			//tagPoint

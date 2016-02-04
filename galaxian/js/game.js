@@ -62,7 +62,6 @@ var Scene = xengine.Scene.extend({
 			w:pcfg.w*pcfg.scale,
 			h:pcfg.h*pcfg.scale,
 			color:'white',
-			isVisible:true,
 			life:cfg.life,
 			bSpeed:-cfg.bullet.speed,
 			tags:pcfg.tags,
@@ -92,7 +91,6 @@ var Scene = xengine.Scene.extend({
 						w:ecfg.w*ecfg.scale,
 						h:ecfg.h*ecfg.scale,
 						color:eColor,
-						isVisible:true,
 						bSpeed:cfg.bullet.speed,
 						tags:ecfg.tags,
 						bBox:ecfg.bBox,
@@ -114,7 +112,8 @@ var Scene = xengine.Scene.extend({
 			w:ecfg.w*ecfg.scale,
 			h:ecfg.h*ecfg.scale,
 			dx:ecfg.freeSpeed,
-			color:'white'
+			color:'white',
+			isVisible:false
 		});
 		this.addChild(this.layer);
 	},
@@ -129,13 +128,11 @@ var Scene = xengine.Scene.extend({
 		bul.moveTo(options.x || 0,options.y || 0);
 		bul.dx = options.dx || 0;
 		bul.dy = options.dy || 0;
-		bul.isVisible = true;
 	},
 	createText:function(){
 		var text = new Text({
 			x:this.w*0.5,
-			y:30,
-			isVisible:true			
+			y:30		
 		});
 		this.addChild(text);
 	},
@@ -147,8 +144,7 @@ var Scene = xengine.Scene.extend({
 			x:this.w*0.5,
 			y:this.h*0.5,
 			color:'rgba(0,0,0,0.8)',
-			zIdx:20,
-			isVisible:true
+			zIdx:20
 		});
 		this.addChild(this.menu);
 		this.restart = new Restart({
@@ -158,8 +154,7 @@ var Scene = xengine.Scene.extend({
 			y:300,
 			r:20,
 			color:'white',
-			zIdx:21,
-			isVisible:true
+			zIdx:21
 		});
 		this.addChild(this.restart);
 	}

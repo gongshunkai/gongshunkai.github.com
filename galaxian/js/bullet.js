@@ -4,12 +4,14 @@
 //从引擎的Sprite继承
 var Bullet = xengine.Sprite.extend({
 	init:function(options){
-		options || (options = {});
+		var params = {color:'black',attack:1,targetID:1,os:null};
+		options = xengine.fn.extend(params, options || {});
+
 		this._super(options);
-		this.color = options.color || 'black';
-		this.attack = options.attack || 0;
-		this.targetID = options.targetID || 0;
-		this.os = options.os || null;
+		this.color = options.color;
+		this.attack = Math.max(1,options.attack);
+		this.targetID = options.targetID;
+		this.os = options.os;
 		this.bBox = new xengine.ABBox(this.x,this.y,this.w*0.5,this.h*0.5);
 	},
 	update:function(){

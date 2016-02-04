@@ -4,14 +4,16 @@
 //从引擎的Sprite继承
 var Enemy = Shooter.extend({
 	init:function(options){
-		options || (options = {});
+		var params = {hp:1,posX:0,posY:0,posDx:0,speed:0,color:'black'};
+		options = xengine.fn.extend(params, options || {});
+		
 		this._super(options);
-		this.hp = options.hp || 1;
-		this.posX = options.posX || 0;
-		this.posY = options.posY || 0;
-		this.posDx = options.posDx || 0;
-		this.speed = options.speed || 0;
-		this.color = options.color || 'black';
+		this.hp = options.hp;
+		this.posX = options.posX;
+		this.posY = options.posY;
+		this.posDx = options.posDx;
+		this.speed = options.speed;
+		this.color = options.color;
 		this.sCtx = new xengine.StateContext(this);
 		this.addState();
 		this.updateState(this);

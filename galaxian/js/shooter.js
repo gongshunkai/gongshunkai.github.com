@@ -4,13 +4,15 @@
 //从引擎的Sprite继承
 var Shooter = xengine.Sprite.extend({
 	init:function(options){
-		options || (options = {});
+		var params = {bSpeed:0,tags:[]};
+		options = xengine.fn.extend(params, options || {});
+		
 		this._super(options);
 
 		//子弹速度
-		this.bSpeed = options.bSpeed || 0;
+		this.bSpeed = options.bSpeed;
 		//绑定的射击点
-		this.tags = options.tags || [];
+		this.tags = options.tags;
 		this.tagCurCount = new Array(this.tags.length);
 		//分组groupID = 1表示敌人 0:表示玩家
 		this.groupID = 1;
