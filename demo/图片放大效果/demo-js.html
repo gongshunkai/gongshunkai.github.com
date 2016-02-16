@@ -1,0 +1,48 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>图片放大效果</title>
+<script src="../libs/jutil.js"></script>
+<script src="js/zoompic.js"></script>
+<style>
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+.izImage, .izViewer{border:1px solid #000;}
+.izImage{width:430px;height:430px;position:relative;}
+.izImage span{width:430px;height:430px;text-align:center;vertical-align:middle;display:table-cell;}
+.izImage img{max-width:430px;max-height:430px;}
+.izViewer{width:430px;height:430px;position:absolute;visibility:hidden;overflow:hidden;}
+.izViewer img{position:absolute;}
+
+</style>
+</head>
+
+<body>
+<div id="idImage" class="izImage">
+	<div id="idHandle" style="background: rgb(255, 255, 255) none repeat scroll 0% 0%; opacity: 0.5; filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50);padding: 0px; margin: 0px; position: absolute; visibility:hidden"></div>
+	<span><img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!1809646474.jpg_430x430q90.jpg"></span>
+</div>
+
+<div id="idViewer" class="izViewer">
+	<img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!1809646474.jpg">
+</div>
+
+<script>
+var zp = new ZoomPic('idImage','idViewer','idHandle');
+
+var minImg = zp._image.querySelector('img');
+var maxImg = zp._viewer.children[0];
+	
+minImg.onload = function(){
+	zp.minLeft = this.offsetLeft;
+	zp.minTop = this.offsetTop;
+	zp.minWidth = this.width;
+	zp.minHeight = this.height;
+};
+maxImg.onload = function(){
+	zp.maxWidth = this.width;
+	zp.maxHeight = this.height;
+};
+</script>
+</body>
+</html>

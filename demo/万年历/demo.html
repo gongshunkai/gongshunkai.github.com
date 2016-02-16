@@ -1,0 +1,118 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>万年历</title>
+<script src="../libs/jutil.js"></script>
+<script src="calendar.js"></script>
+<style type="text/css">
+
+.Calendar {
+	font-family:Verdana;
+	font-size:12px;
+	background-color:#e0ecf9;
+	text-align:center;
+	width:200px;
+	height:160px;
+	padding:10px;
+	line-height:1.5em;
+}
+.Calendar a{
+	color:#1e5494;
+}
+
+.Calendar table{
+	width:100%; 
+	border:0;
+}
+
+.Calendar table thead{color:#acacac;}
+
+.Calendar table td {
+	font-size: 11px;
+	padding:1px;
+}
+#idCalendarPre{
+	cursor:pointer;
+	float:left;
+	padding-right:5px;
+}
+#idCalendarNext{
+	cursor:pointer;
+	float:right;
+	padding-right:5px;
+}
+#idCalendar td.onToday {
+	font-weight:bold;
+	color:#C60;
+}
+#idCalendar td.onSelect {
+	font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div class="Calendar">
+  <div id="idCalendarPre">&lt;&lt;</div>
+  <div id="idCalendarNext">&gt;&gt;</div>
+  <span id="idCalendarYear"></span>年 <span id="idCalendarMonth"></span>月
+  <table cellspacing="0">
+    <thead>
+      <tr>
+        <td>日</td>
+        <td>一</td>
+        <td>二</td>
+        <td>三</td>
+        <td>四</td>
+        <td>五</td>
+        <td>六</td>
+      </tr>
+    </thead>
+    <tbody id="idCalendar">
+    </tbody>
+  </table>
+</div>
+
+<input id="idCalendarPreYear" type="button" value="上一年" />
+<input id="idCalendarNow" type="button" value="当前月" />
+<input id="idCalendarNextYear" type="button" value="下一年" />
+<script>
+var cale = new Calendar("idCalendar", {
+    SelectDay: new Date().setDate(10),
+    onSelectDay: function(o){
+		o.className = "onSelect";
+	},
+    onToday: function(o){
+		o.className = "onToday";
+	},
+    onFinish: function(){
+        document.getElementById("idCalendarYear").innerHTML = this.Year;
+		document.getElementById("idCalendarMonth").innerHTML = this.Month;
+        /*var flag = [10,15,20];
+        for(var i = 0, len = flag.length; i < len; i++){
+            this.Days[flag[i]].innerHTML = "<a href='javascript:void(0);' onclick=\"alert('日期是:"+this.Year+"/"+this.Month+"/"+flag[i]+"');return false;\">" + flag[i] + "</a>";
+        }*/
+    }
+});
+
+document.getElementById("idCalendarPre").onclick = function(){
+	cale.DateList.preMonth.call(cale);
+}
+document.getElementById("idCalendarNext").onclick = function(){
+	cale.DateList.nextMonth.call(cale);
+}
+
+document.getElementById("idCalendarPreYear").onclick = function(){
+	cale.DateList.preYear.call(cale);
+}
+document.getElementById("idCalendarNextYear").onclick = function(){
+	cale.DateList.nextYear.call(cale);
+}
+
+document.getElementById("idCalendarNow").onclick = function(){
+	cale.DateList.nowMonth.call(cale);
+}
+</script>
+</body>
+</html>

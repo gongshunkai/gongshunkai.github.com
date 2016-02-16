@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>定点滑移(鼠标点击)并计算两点间连线的倾斜角</title>
+<style>
+#player{width:50px;height:50px;background:#009966;position:absolute;left:50%;top:100px;text-align:center;}
+</style>
+</head>
+
+<body>
+<div id="player">↑↑↑</div>
+<script>
+var Slippage = function(){
+	this.init.apply(this,arguments);
+};
+Slippage.prototype = {
+	//初始化
+	init:function(player,options){
+		options || (options = {});
+		this.player = document.getElementById(player);
+		this.timer = null;
+		this.x = options.x || 0;
+		this.y = options.y || 0;
+		this.w = options.w || 1;
+		this.h = options.h || 1;
+		this.step = options.step || 1;
+		this.dx = 0;
+		this.dy = 0;
+		this.mx = 0;
+		this.my = 0;
+		this.deg = 0;
+	},
+	//游戏主循环
+	mainloop:function(){
+		this.update();
+		this.render();
+	},
+	//执行游戏
+	run:function(fun,fps){
+		fps = fps || 60;
+		var self = this,
+			spf = (1000/fps) || 0;
+		
+		this.timer = setInterval(function(){
+			self.mainloop();
+		},spf);
+		//游戏的业务逻辑
+		fun && fun();
+	},
+	//更新
+	update:function(){
+		this.x = this.player.offsetLeft;
+		this.y = this.player.offsetTop;
+		this.move();
+	},
+	//渲染
+	render:function(){
+		this.player.setAttribute("style","left:" + (this.x + this.dx) + "px;top:" + (this.y + this.dy) + "px;-moz-transform:rotate(" + this.deg + "deg);-webkit-transform:rotate(" + this.deg + "deg);");	
+	},
+	//移动
+	move:function(){
+		this.dx = this.getStep(this.mx, this.x + this.w*0.5);
+		this.dy = this.getStep(this.my, this.y + this.h*0.5);
+
+		if (this.dx == 0 && this.dy == 0) {
+			//达到目标位置执行
+		}
+	},
+	//旋转
+	rotate:function(){
+		var start = {x:this.x + this.w*0.5,y:this.y + this.h*0.5},
+			end = {x:this.mx,y:this.my};
+		this.deg = this.getAngle(start,end)-90;
+	},
+	//计算滑动变化率
+	getStep:function(iTarget, iNow) {
+		var iStep = (iTarget - iNow) / this.step;
+		if (iStep == 0){ return 0; }
+		if (Math.abs(iStep) < 1){ return (iStep > 0 ? 1 : -1); }
+		return iStep;
+  	},
+	//计算两点间连线的倾斜角
+	getAngle:function(start,end){
+		var diff_x = start.x - end.x,
+			diff_y = start.y - end.y;
+		//返回角度,不是弧度
+		return Math.atan2(diff_y,diff_x)*180/Math.PI;
+	}
+};
+
+var slip = new Slippage("player",{
+	w:50,
+	h:50,
+	step:10
+});
+
+slip.mx = slip.offsetLeft;
+slip.my = slip.offsetTop;
+
+slip.run(function(){
+	document.onclick = function(e){
+		slip.mx = e.clientX;
+		slip.my = e.clientY;
+		slip.rotate();
+	};
+},30);
+</script>
+</body>
+</html>

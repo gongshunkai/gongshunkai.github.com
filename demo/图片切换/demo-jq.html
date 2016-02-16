@@ -1,0 +1,189 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>图片切换</title>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="../libs/jquery.util.js"></script>
+<script src="jq/RevealTrans.js"></script>
+<style>
+body{font-family: Arial,"宋体","微软雅黑","黑体", Verdana, sans-serif;font-size: 12px;line-height:24px;}
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+h1, h2, h3, h4, h5, h6 {font-size: 100%;margin: 0;padding: 0;}
+em, i {font-style: normal;}
+img {border: 0;}
+.clear {clear: both;}
+.border {border: 1px solid #E8E8E8;}
+
+.slider{width:500px;height:300px;}
+.status{width:490px;height:30px;background:#CCCCCC;padding:5px 5px 0px 5px}
+.slider img{width:500px;height:300px;}
+.slider ul {display:none}
+.status .txt{float:left;}
+.status .num{float:right;}
+.status .num li{width:20px;height:20px;float:left;background:#00CCFF;color:#FFFFFF;margin-left:2px;margin-right:2px;text-align: center;cursor: pointer;}
+.status .num li.on{background:#FF0000}
+#idPicList img{cursor:pointer;width:65px;height:50px;filter:alpha(opacity=50);-moz-opacity: .5;opacity: .5;border:0;margin:10px;}
+#idPicList img.on{filter:alpha(opacity=100);-moz-opacity: 1;opacity: 1;}
+</style>
+</head>
+
+<body>
+<div class="slider" id="idSlider">
+<ul>
+<a href="http://www.baidu.com"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1uW.aHpXXXXXJXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="百度" /></a>
+<a href="http://www.sohu.com"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/TB1.KcRHFXXXXbQXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="淘宝" /></a>
+<a href="http://www.163.com"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1Xo9rGXXXXXcMXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="网易" /></a>
+<a href="http://www.sina.com.cn"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i4/TB1Qd2jHVXXXXbRXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="新浪" /></a>
+</ul>
+</div>
+<div class="status" id="idStatus">
+<p class="txt" id="idTxt">
+</p>
+<ul class="num" id="idNum">
+</ul>
+</div>
+
+<script>
+
+var rvt = new RevealTrans("#idSlider",{
+Duration:0
+});
+//添加变换对象
+rvt.container.find('ul a').each(function(){
+	rvt.Add($(this).children().attr('src'), $(this).children().attr('alt'), $(this).attr('href'));
+});
+
+var oText = $("#idTxt"),
+	arrImg = [];
+
+var oNum = $("#idNum"),
+	arrNum = [];
+
+//设置图片列表
+$.each(rvt.List, function(i,o){
+	//图片式
+	//var img = $('<img>');
+	//img.attr({'src':o['img'],'alt':o['text']});
+	//arrImg[i] = img;
+	//oList.append(img);
+	//按钮式
+	var li = $('<li></li>');
+	li.html(i + 1);
+	arrNum[i] = li;
+	oNum.append(li);
+	//事件设置
+	li.on('mouseover',function(){
+		rvt.Auto = false; rvt.Index = i; rvt.Start();
+	}).on('mouseout',function(){
+		rvt.Auto = true; rvt.Start();
+	});
+});
+
+//设置图片列表样式 文本显示区域
+rvt.onShow = function(){
+	var i = this.Index, list = this.List[i];
+	//图片式
+	//$.each(arrImg, function(){ $(this).removeClass(); }); arrImg[i].addClass('on');
+	//按钮式
+	$.each(arrNum, function(){ $(this).removeClass(); }); arrNum[i].addClass('on');
+	//文本区域
+	oText.html(!!list.url ? "<a href='" + list.url + "' target='_blank'>" + list.text + "</a>" : list.text);
+};
+
+//文本显示区域
+oText.on('mouseover',function(){
+	rvt.Auto = false; rvt.Stop();
+}).on('mouseout',function(){
+	rvt.Auto = true; rvt.Start();
+});
+
+rvt.Start();
+
+</script>
+
+
+
+<div class="slider" id="idSlider2">
+<ul>
+<a href="http://www.baidu.com"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1uW.aHpXXXXXJXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="百度" /></a>
+<a href="http://www.sohu.com"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/TB1.KcRHFXXXXbQXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="淘宝" /></a>
+<a href="http://www.163.com"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1Xo9rGXXXXXcMXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="网易" /></a>
+<a href="http://www.sina.com.cn"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i4/TB1Qd2jHVXXXXbRXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="新浪" /></a>
+</ul>
+</div>
+<div class="status" id="idStatus2">
+<p class="txt" id="idTxt2">
+</p>
+<ul class="num" id="idNum2">
+</ul>
+</div>
+<div id="idPicList"></div>
+
+<script>
+
+var rvt2 = new RevealTrans("#idSlider2",{
+Duration:0
+});
+//添加变换对象
+rvt2.container.find('ul a').each(function(){
+	rvt2.Add($(this).children().attr('src'), $(this).children().attr('alt'), $(this).attr('href'));
+});
+
+
+var oList2 = $("#idPicList"),
+	oText2 = $("#idTxt2"),
+	arrImg2 = [];
+
+var oNum2 = $("#idNum2"),
+	arrNum2 = [];
+
+//设置图片列表
+$.each(rvt2.List, function(i,o){
+	//图片式
+	var img = $('<img>');
+	img.attr({'src':o['img'],'alt':o['text']});
+	arrImg2[i] = img;
+	oList2.append(img);
+	//按钮式
+	var li = $('<li></li>');
+	li.html(i + 1);
+	arrNum2[i] = li;
+	oNum2.append(li);
+	//事件设置
+	img.on('mouseover',function(){
+		rvt2.Auto = false; rvt2.Index = i; rvt2.Start();
+	}).on('mouseout',function(){
+		rvt2.Auto = true; rvt2.Start();
+	});
+	li.on('mouseover',function(){
+		rvt2.Auto = false; rvt2.Index = i; rvt2.Start();
+	}).on('mouseout',function(){
+		rvt2.Auto = true; rvt2.Start();
+	});
+});
+
+//设置图片列表样式 文本显示区域
+rvt2.onShow = function(){
+	var i = this.Index, list = this.List[i];
+	//图片式
+	$.each(arrImg2, function(){ $(this).removeClass(); }); arrImg2[i].addClass('on');
+	//按钮式
+	$.each(arrNum2, function(){ $(this).removeClass(); }); arrNum2[i].addClass('on');
+	//文本区域
+	oText2.html(!!list.url ? "<a href='" + list.url + "' target='_blank'>" + list.text + "</a>" : list.text);
+};
+
+//文本显示区域
+oText2.on('mouseover',function(){
+	rvt2.Auto = false; rvt2.Stop();
+}).on('mouseout',function(){
+	rvt2.Auto = true; rvt2.Start();
+});
+
+rvt2.Start();
+
+</script>
+
+</body>
+</html>

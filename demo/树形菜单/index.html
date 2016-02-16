@@ -1,0 +1,68 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>树形菜单</title>
+<script src="../libs/jutil.js"></script>
+<script src="tree.js"></script>
+<style>
+body{font-family: Arial,"宋体","微软雅黑","黑体", Verdana, sans-serif;font-size: 12px;}
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+h1, h2, h3, h4, h5, h6 {font-size: 100%;margin: 0;padding: 0;	}
+em, i {font-style: normal;}
+img {border: 0;vertical-align:bottom}
+.clear {clear: both;}
+#divTree span,#divTree2 span,#divTree3 span{cursor:default;height:18px;line-height:18px;white-space:nowrap;display:block;float:left;
+*display:inline-block;*float:none;_display:inline-block;_float:none;_margin-bottom:4px;}
+</style>
+</head>
+<body>
+<div id="divTree" style="width:240px;border:solid 1px #99bbe8;overflow:auto;height:400px;float:left;position:relative;">
+	<div id="divZZ" style="z-index:9999; background:#fff;filter:alpha(opacity:100);opacity:1.0;position:absolute;padding:5px;background:#fff; border:solid 1px #99bbe8;margin:1px;">
+		正在加载，请稍候...
+	</div>
+</div>
+		
+<script type="text/javascript">
+var unit = [  
+{id:1,pid:0,text:{title:'A',url:'http://www.baidu.com',checked:true}},  
+{id:2,pid:4,text:{title:"E[父C]",url:'http://www.taobao.com',checked:true}},  
+{id:3,pid:7,text:{title:"G[父F]",url:'http://www.163.com',checked:false}},  
+{id:4,pid:1,text:{title:"C[父A]",url:'http://www.sina.com.cn',checked:true}},  
+{id:5,pid:6,text:{title:"D[父B]",url:'http://www.sohu.com',checked:false}},  
+{id:6,pid:0,text:{title:'B',url:'http://www.qq.com',checked:false}},  
+{id:7,pid:4,text:{title:"F[父C]",url:'http://www.tianya.com',checked:false}}];
+
+var t = new Tree("divTree",unit,{
+    showLine:true,
+	showCheckBox:true,
+	openChecked:true
+});
+
+t.onShow = function(){
+
+   if(1 == t.loadTimes){
+		window.setTimeout(jutil.bind(t,t.GetTreeData), 500);
+		document.getElementById('divZZ').innerHTML = '正在加载第一层，请稍候...';
+	} else if(2 == t.loadTimes){
+		window.setTimeout(jutil.bind(t,t.GetTreeData), 500);
+		document.getElementById('divZZ').innerHTML = '正在加载第二层，请稍候...';
+	} else if(3 == t.loadTimes){
+		window.setTimeout(jutil.bind(t,t.GetTreeData), 500);
+		document.getElementById('divZZ').innerHTML = '正在加载第三层，请稍候...';
+	} else if(4 == t.loadTimes){
+		window.setTimeout(jutil.bind(t,t.GetTreeData), 500);
+		document.getElementById('divZZ').innerHTML = '正在加载第四层，请稍候...';
+	}else if(5 == t.loadTimes){
+		document.getElementById('divZZ').style.display = "none";
+		//t.OpenLevel(4);
+	}
+}
+t.Start();
+</script>
+
+
+
+
+</body>
+</html>

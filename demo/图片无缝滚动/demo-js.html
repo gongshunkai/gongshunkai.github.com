@@ -1,0 +1,152 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>图片无缝滚动</title>
+<script src="../libs/jutil.js"></script>
+<script src="js/sliderbox.js"></script>
+<style>
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+img {border: 0}
+.clear {clear: both;}
+
+.sliderbox{width:630px;}
+.slider{float:left;position: relative;overflow:hidden;width:590px;height:80px;}
+.slider ul{position:absolute;width:auto;height:80px;}
+.slider ul li{width:78px;height:78px;margin:0 9.5px;float:left;text-align:center;vertical-align:middle;display:table-cell;border:1px solid #000;cursor:pointer}
+.slider ul li img{max-width:78px;max-height:78px;}
+.arrow-btn{width:18px;height:78px;border:solid #666666 1px;cursor:pointer}
+#btn-left{background:rgba(0, 0, 0, 0) url("4.gif") no-repeat scroll left center;float:left;}
+#btn-right{background:rgba(0, 0, 0, 0) url("5.gif") no-repeat scroll right center;float:right;}
+
+
+.sliderbox2{height:630px;}
+.slider2{position: relative;overflow:hidden;width:80px;height:590px;}
+.slider2 ul{position:absolute;width:80px;height:auto;}
+.slider2 ul li{width:78px;height:78px;margin:9.5px 0;float:left;text-align:center;vertical-align:middle;display:table-cell;border:1px solid #000;cursor:pointer}
+.slider2 ul li img{max-width:78px;max-height:78px;}
+.arrow-btn2{width:78px;height:18px;border:solid #666666 1px;cursor:pointer}
+#btn-top{background:url("6.gif") no-repeat scroll center top;}
+#btn-bottom{background:url("7.gif") no-repeat scroll center bottom;}
+</style>
+</head>
+
+<body>
+<div class="sliderbox">
+	<div id="btn-left" class="arrow-btn"></div>
+	<div id="thumbnail" class="slider">
+		<ul>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-
+
+item_pic.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB24N_JhVXXXXXBXpXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i1/1809646474/TB25fYVhVXXXXaJXXXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB2SdD3hVXXXXX1XXXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-
+
+item_pic.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+		</ul>
+	</div>
+	<div id="btn-right" class="arrow-btn"></div>
+</div>
+
+<div class="clear"></div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<div class="sliderbox2">
+	<div id="btn-top" class="arrow-btn2"></div>
+	<div id="thumbnail2" class="slider2">
+		<ul>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-
+
+item_pic.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB24N_JhVXXXXXBXpXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i1/1809646474/TB25fYVhVXXXXaJXXXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB2SdD3hVXXXXX1XXXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-
+
+item_pic.jpg_430x430q90.jpg"></a></li>
+			<li><a href="javascript:;"><img 
+
+src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!
+
+1809646474.jpg_430x430q90.jpg"></a></li>
+		</ul>
+	</div>
+	<div id="btn-bottom" class="arrow-btn2"></div>
+</div>
+
+<script>
+var sb = new SliderBox('thumbnail',{
+	Vertical:false
+});
+
+document.getElementById('btn-left').onclick = function(){
+	sb.currState.buttonLeft.call(sb);
+};
+document.getElementById('btn-right').onclick = function(){
+	sb.currState.buttonRight.call(sb);
+};
+
+
+
+var sb2 = new SliderBox('thumbnail2');
+
+document.getElementById('btn-top').onclick = function(){
+	sb2.currState.buttonLeft.call(sb2);
+};
+document.getElementById('btn-bottom').onclick = function(){
+	sb2.currState.buttonRight.call(sb2);
+};
+	
+</script>
+</body>
+</html>

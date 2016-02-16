@@ -1,0 +1,70 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>横向瀑布流</title>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="../libs/jquery.mousewheel.js"></script>
+<script src="../libs/jquery.util.js"></script>
+<script src="jq/flow.js"></script>
+<style>
+html{ height:100%;}
+body{ height:100%;overflow-x:scroll;overflow-y:hidden;}
+*{ padding:0; margin:0;}
+img {border: 0}
+#ligne1,#ligne2,#ligne3{height:30%}
+#ligne1 img,#ligne2 img,#ligne3 img{float:left;height:100%;}
+.reda{ position:relative; height:100%; float:left; overflow:hidden;}
+.reda img{ position:absolute; height:100%;}
+.reda a{ display:block; float:left; height:100%;}
+.reda .datas{ position:absolute; bottom:0; left:0; width:100%; z-index:2;color:#FFFFFF}
+.datas h1{ line-height:40px; height:30px; overflow:hidden;}
+.datas p{ line-height:30px; height:30px; overflow:hidden;}
+.sharing{ position:absolute; background:#333; bottom:-70px; height:70px; width:100%;}
+</style>
+</head>
+
+<body>
+<input type="button" id="addImg" value="增加图片" />
+<div id="flow" style="min-width:100%; height:100%;">
+	<div id="ligne1"></div>
+	<div id="ligne2"></div>
+	<div id="ligne3"></div>
+</div>
+<script>	
+var flow = new Flow("#flow",["#ligne1","#ligne2","#ligne3"]);
+
+var unit = [{url:"a1.html",img:"picture1.jpg",title:"标题1",desc:"描述1"},{url:"a2.html",img:"picture2.jpg",title:"标题2",desc:"描述2"},{url:"a3.html",img:"picture3.jpg",title:"标题3",desc:"描述3"},{url:"a4.html",img:"picture4.jpg",title:"标题4",desc:"描述4"},{url:"a5.html",img:"picture5.jpg",title:"标题5",desc:"描述5"}];
+
+
+flow.resize();
+
+$(window).on("resize", function() {
+	flow.resize();
+});
+
+
+$(window).on("scroll", function() {
+	if ($(document).width() - $(window).scrollLeft() - $(window).width() < 5) {
+		for(var i=0,elem;elem=unit[i++];){
+			flow.add(elem);
+		}
+	}
+});
+
+
+for(var i=0,elem;elem=unit[i++];){
+	flow.add(elem);
+}
+
+$('#addImg').on("click", function() {
+	for(var i=0,elem;elem=unit[i++];){
+		flow.add(elem);
+	}
+});
+
+$(document).on("mousewheel", function(e){ flow.wheelCtrl(e);});
+
+</script>
+</body>
+</html>

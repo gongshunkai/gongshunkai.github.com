@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>爆炸效果</title>
+<script src="../../libs/jutil.js"></script>
+<style>
+#a1{width:100px;height:100px;background:#996666;position:absolute;top:200px;left:500px;}
+</style>
+</head>
+
+<body>
+<div id="a1"></div>
+<input type="button" id="button1" value="爆炸" />
+<script>
+var Bomb = function(obj,num){
+	var curStyle = jutil.currentStyle;
+		ot = parseInt(curStyle(obj)['top']),
+		ol = parseInt(curStyle(obj)['left']),
+		ow = parseInt(curStyle(obj)['width']),
+		oh = parseInt(curStyle(obj)['height']),
+		oc = curStyle(obj)['backgroundColor'];
+	
+	var new_ow = ow / num,
+		new_oh = oh / num;
+
+	return function(){
+		var cache = [];
+		
+		for(var i=0;i<num;i++){
+			for(var y=0;y<num;y++){
+				var div = document.createElement('div');
+				div.style.left = (ol + new_ow * y) + "px";
+				div.style.top = (ot + new_oh * i) + "px";	
+				div.style.width = new_ow + "px";
+				div.style.height = new_oh + "px";
+				div.style.backgroundColor = oc;
+				div.style.position = 'absolute';
+				cache.push(div);
+			}
+		}
+	
+		jutil.each(cache,function(o,i){
+			document.body.appendChild(o);
+			var anim = jutil.animation(o,{
+				runTime:100,
+				tween:jutil.Tween.Quart.easeOut
+			});
+			var top = (o.offsetTop * Math.random() * 2) + "px";
+			var left = (o.offsetLeft * Math.random() * 2) + "px";
+			anim.play({top:top,left:left,width:'0px',height:'0px',opacity:'0'},function(){
+				document.body.removeChild(o);
+			});	
+		});
+	}
+};
+
+var obj = document.getElementById('a1');
+obj.style.display = 'none';
+var timer = null;
+
+var b = Bomb(obj,10);
+
+jutil.addEvent(document.getElementById('button1'), "click", function() {
+	if(timer){
+		return;
+	}
+	timer = setTimeout(function(){
+		b();
+		clearTimeout(timer);
+		timer = null;
+	},500);
+});
+</script>
+</body>
+</html>

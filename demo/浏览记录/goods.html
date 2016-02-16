@@ -1,0 +1,95 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>浏览记录</title>
+<script src="../libs/jutil.js"></script>
+<script src="history.js"></script>
+<style>
+body{font-family: Arial,"宋体","微软雅黑","黑体", Verdana, sans-serif;font-size: 14px;line-height:24px;}
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+h1, h2, h3, h4, h5, h6 {font-size: 100%;margin: 0;padding: 0;}
+em, i {font-style: normal;}
+img {border: 0;}
+.clear {clear: both;}
+#goodsItem{}
+.goods{float:left;margin:5px}
+.goods img{width:200px;}
+#history{width:130px;border:#e0e0e0 solid 1px}
+#history img{width:110px;}
+#history div{padding:10px}
+#history ul{background:#e0e0e0;height:30px;padding:5px}
+#history ul h3{float:left;}
+#history ul a{float:right;}
+</style>
+</head>
+
+<body>
+<div id="goodsItem">
+<div class="goods">
+<a href="goods.html?id=1" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1uW.aHpXXXXXJXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="10元" title="商品1"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1uW.aHpXXXXXJXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="商品1" /></a>
+<p><a href="goods.html?id=1" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1uW.aHpXXXXXJXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="10元" title="商品1">商品1</a></p>
+<p>价格:10元</p>
+</div>
+<div class="goods">
+<a href="goods.html?id=2" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/TB1.KcRHFXXXXbQXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="14元" title="商品2"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/TB1.KcRHFXXXXbQXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="商品2" /></a>
+<p><a href="goods.html?id=2" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/TB1.KcRHFXXXXbQXFXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="14元" title="商品2">商品2</a></p>
+<p>价格:14元</p>
+</div>
+<div class="goods">
+<a href="goods.html?id=3" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1Xo9rGXXXXXcMXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="34元" title="商品3"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1Xo9rGXXXXXcMXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="商品3" /></a>
+<p><a href="goods.html?id=3" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i3/TB1Xo9rGXXXXXcMXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="34元" title="商品3">商品3</a></p>
+<p>价格:34元</p>
+</div>
+<div class="goods">
+<a href="goods.html?id=4" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i4/TB1Qd2jHVXXXXbRXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="21元" title="商品4"><img src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i4/TB1Qd2jHVXXXXbRXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" alt="商品4" /></a>
+<p><a href="goods.html?id=4" data-src="https://g-search3.alicdn.com/img/bao/uploaded/i4/i4/TB1Qd2jHVXXXXbRXVXXXXXXXXXX_!!0-item_pic.jpg_250x250.jpg" data-price="21元" title="商品4">商品4</a></p>
+<p>价格:21元</p>
+</div>
+</div>
+<div class="clear"></div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div id="history">
+<ul><h3>浏览记录</h3><a id="clear" href="javascript:;">清空</a></ul>
+</div>
+<script>
+var h = new History("history",{ Expire:5 });
+
+var aList=document.getElementById("goodsItem").getElementsByTagName("a");
+var divList = h.container.getElementsByTagName("div");
+
+var cookieValue = h.getCookie(h.container.id);
+var myobj = eval(cookieValue) || [];
+jutil.each(myobj, function(list){ h.Add(list["img"], list["text"], list["url"], list["price"]); });
+
+document.getElementById("clear").onclick = function(){ 
+ 
+  for(var i=divList.length-1; i>0; i--){
+    h.container.removeChild(divList[i]);
+  }
+  h.delCookie(h.container.id);
+  divList[0].style.display = "block";
+};
+
+jutil.each(aList, function(n,i){
+  n.onclick = function(){ h.setCookie(h.container.id,{text:n.getAttribute('title'),url:n.href,img:n.getAttribute('data-src'),price:n.getAttribute('data-price')}); }
+});
+
+h.onShow = function()
+{
+  if(h.List.length > 0){ divList[0].style.display = "none"; }
+
+  jutil.each(h.List, function(list){
+    var div = document.createElement("div");
+	div.innerHTML = "<a href='" + list["url"] + "'><img src='" + list["img"] + "' /></a><p><a href='" + list["url"] + "'>" + list["text"] + "</a></p><p>" + list["price"] + "</p>";
+	h.container.appendChild(div);
+  });
+};
+
+h.Run();
+</script>
+</body>
+</html>

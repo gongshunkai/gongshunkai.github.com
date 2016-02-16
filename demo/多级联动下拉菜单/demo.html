@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>多级联动下拉菜单</title>
+<script src="../libs/jutil.js"></script>
+<script src="select.js"></script>
+</head>
+
+<body>
+<div class="sel">
+<select id="sel1"></select>
+<select id="sel2"></select>
+<select id="sel3"></select>
+<select id="sel4"></select>
+<select id="sel5"></select>
+</div>
+<script>
+var unit = [  
+{id:1,pid:0,text:"A"},  
+{id:2,pid:4,text:"E[父C]"},  
+{id:3,pid:7,text:"G[父F]"},  
+{id:4,pid:1,text:"C[父A]"},  
+{id:5,pid:6,text:"D[父B]"},  
+{id:6,pid:0,text:"B"},  
+{id:7,pid:4,text:"F[父C]"}];
+var sel=["sel1", "sel2", "sel3", "sel4", "sel5"];
+var val=["1","4","7","3"];
+var cs = new CascadeSelect(sel,unit,{
+    Default:val,
+    Visible:2,
+    ShowEmpty:true,
+    EmptyText:["请选择洲","请选择国家","请选择省","请选择市","请选择区"]
+});
+</script>
+</body>
+</html>

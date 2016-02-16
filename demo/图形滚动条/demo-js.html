@@ -1,0 +1,186 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>图形滚动条</title>
+<script src="../libs/jutil.js"></script>
+<script src="js/ScrollBar.js"></script>
+<style type="text/css">
+#Scrollbar-Container {
+  float:left;
+  margin-left:10px;
+}
+#Scrollbar-Up { 
+  width: 10px; height: 10px;
+  background-color: #CCC;
+  font-size: 0px;
+}
+#Scrollbar-Track {
+  width: 10px; height: 360px;
+  position:relative;
+  background-color: #EEE;
+  margin: 10px 0;
+}
+#Scrollbar-Handle {
+  position: absolute;
+  width: 10px; height: 30px;
+  background-color: #CCC;
+}
+#Scrollbar-Down {
+  width: 10px; height: 10px;
+  background-color: #CCC;
+  font-size: 0px;
+}
+
+
+#Container {
+  float:left;
+  width: 350px;
+  height: 400px;
+  background-color: #EEE;
+}
+#Scroller-Container {
+  position: absolute;
+  top: 0px; left: 0px;
+}
+#News { 
+  position:relative;
+  top: 10px; 
+  overflow: hidden;
+  width: 350px;
+  height: 380px;
+}
+p {
+  margin: 0; padding: 0px 20px 10px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-indent: 20px;
+  color: #777;
+}
+#Tween {
+  position: absolute;
+  top: 0px;
+  left: 400px;
+  width: 100px;
+}
+#Steps {
+  position: absolute;
+  top: 450px;
+  left: 20px;
+  font-family:Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #AAA;
+}
+#Tween a, #Steps a {
+  padding: 5px 10px;
+  display: block;
+  font-family:Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #AAA;
+  text-decoration: none;
+}
+#Tween a:hover, #Steps a:hover {
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+<div id="Container">
+  <div id="News">
+    <div id="Scroller-Container">
+      <p>这样，就可以用Tween.Quad.easeOut取得这个算法了，其他算法也一样处理就行了。</p>
+      <p>接下来就可以利用这个js的Tween来做一些缓动效果了。
+先通过上面的坐标实例说一下算法原理：
+x轴是时间，y轴是当前值，b是y轴的初始值，x轴的初始值是0，t是当前时间。当t（x轴）逐渐增加到达d时，当前值（y轴）会到达目标值（b+c）。
+想详细理解的话可以找资料看看吧（貌似跟数学关系比较大）。</p>
+      <p>下面就介绍如何使用这个Tween了，首先b、c、d三个参数（即初始值，变化量，持续时间）在缓动开始前，是需要先确定好的。</p>
+      <p>举一个简单的例子，一个div要向右缓动，left初始值是50，那么b就是50，要向右移动100，那c就是100，如果知道的是目标值，例如要向右移动到150，那就把目标值150减初始值b就是变化量c了。</p>
+      <p>至于d的设置就比较灵活，只要符合t是从0向d递增（或递减）就可以了。</p>
+      <p>d跟步长配合使用来设置持续时间，例如d设置为100，如果设置步长是1，那么从0到100就有100步，即分100次来完成这个过程，步数越多那么持续时间就越长。</p>
+	  <p>至于t的变化相当于时间的变化，一般是均匀变化的，每次变化都增加一个步长，当t从0递增（或递减）到d时，缓动就结束了。</p>
+	  <p>要注意的是t是从0开始的，设置步长时必须确定t确实能到达d，如果上面的步长是3，那么t就永远都到不了d了。更好的处理是当t等于或超过d之后，就停止定时器并设置当前值为目标值。</p>
+	  <p>了解了Tween的使用后就可以实现动画效果了。继续上面的例子，已经确定b是50，c是100，d是100，步长是1，使用Tween.Quad.easeOut算法。那么可以用以下程序实现缓动：</p>
+	  <p>一个简单的缓动效果就实现了，要实现不同的缓动，只需要使用对应的Tween算法就行了，以前看来遥不可及的效果，现在这么容易就实现了（当然那些算法才是最难的地方）。</p>
+	  <p>这样关于缓动的效果就介绍完了，但其实远远不止这些，我们还可以自己定义一些算法，发挥想象力，做一些好玩的效果。</p>
+	  
+	  
+	  
+	  
+	  <p>这样，就可以用Tween.Quad.easeOut取得这个算法了，其他算法也一样处理就行了。</p>
+      <p>接下来就可以利用这个js的Tween来做一些缓动效果了。
+先通过上面的坐标实例说一下算法原理：
+x轴是时间，y轴是当前值，b是y轴的初始值，x轴的初始值是0，t是当前时间。当t（x轴）逐渐增加到达d时，当前值（y轴）会到达目标值（b+c）。
+想详细理解的话可以找资料看看吧（貌似跟数学关系比较大）。</p>
+      <p>下面就介绍如何使用这个Tween了，首先b、c、d三个参数（即初始值，变化量，持续时间）在缓动开始前，是需要先确定好的。</p>
+      <p>举一个简单的例子，一个div要向右缓动，left初始值是50，那么b就是50，要向右移动100，那c就是100，如果知道的是目标值，例如要向右移动到150，那就把目标值150减初始值b就是变化量c了。</p>
+      <p>至于d的设置就比较灵活，只要符合t是从0向d递增（或递减）就可以了。</p>
+      <p>d跟步长配合使用来设置持续时间，例如d设置为100，如果设置步长是1，那么从0到100就有100步，即分100次来完成这个过程，步数越多那么持续时间就越长。</p>
+	  <p>至于t的变化相当于时间的变化，一般是均匀变化的，每次变化都增加一个步长，当t从0递增（或递减）到d时，缓动就结束了。</p>
+	  <p>要注意的是t是从0开始的，设置步长时必须确定t确实能到达d，如果上面的步长是3，那么t就永远都到不了d了。更好的处理是当t等于或超过d之后，就停止定时器并设置当前值为目标值。</p>
+	  <p>了解了Tween的使用后就可以实现动画效果了。继续上面的例子，已经确定b是50，c是100，d是100，步长是1，使用Tween.Quad.easeOut算法。那么可以用以下程序实现缓动：</p>
+	  <p>一个简单的缓动效果就实现了，要实现不同的缓动，只需要使用对应的Tween算法就行了，以前看来遥不可及的效果，现在这么容易就实现了（当然那些算法才是最难的地方）。</p>
+	  <p>这样关于缓动的效果就介绍完了，但其实远远不止这些，我们还可以自己定义一些算法，发挥想象力，做一些好玩的效果。</p>
+    </div>
+  </div>
+</div>
+
+
+
+<div id="Scrollbar-Container">
+  <div id="Scrollbar-Up"></div>
+  
+  <div id="Scrollbar-Track">
+    <div id="Scrollbar-Handle"></div>
+  </div>
+  
+  <div id="Scrollbar-Down"></div>
+</div>
+
+
+<div id="Tween">
+  <a href="javascript:sb.ScrollTo(0);">scrollTo(0)</a>
+  <a href="javascript:sb.ScrollTo(25);">scrollTo(25)</a>
+  <a href="javascript:sb.ScrollTo(120);">scrollTo(120)</a>
+  <a href="javascript:sb.ScrollTo(350);">scrollTo(350)</a>
+  <a href="javascript:sb.ScrollTo(500);">scrollTo(500)</a>
+  <a href="javascript:sb.ScrollBy(25);">scrollBy(25)</a>
+  <a href="javascript:sb.ScrollBy(50);">scrollBy(50)</a>
+  <a href="javascript:sb.ScrollBy(100);">scrollBy(100)</a>
+  <a href="javascript:sb.ScrollBy(-50);">scrollBy(-50)</a>
+</div>
+
+<div id="Steps">
+  <strong>改变tween算子的缓动方式:</strong>
+  <a href="javascript:;" onClick="sb.Tween=jutil.Tween.Quart.easeOut; sb.addAnim();">[默认缓动]</a>
+  <a href="javascript:;" onClick="sb.Tween=jutil.Tween.Linear; sb.addAnim();">[无缓动]</a>
+  <a href="javascript:;" onClick="sb.Tween=jutil.Tween.Back.easeOut; sb.addAnim();">[方式1]</a>
+  <a href="javascript:;" onClick="sb.Tween=jutil.Tween.Bounce.easeOut; sb.addAnim();">[方式2]</a>
+</div>
+
+<script>
+var sb = new ScrollBar("Scroller-Container","Scrollbar-Track","Scrollbar-Handle",{
+	WheelSpeed:20,
+	HandleHeight: Math.round(document.getElementById("Scrollbar-Track").offsetHeight * document.getElementById("News").offsetHeight / document.getElementById("Scroller-Container").offsetHeight),
+	onMove: function(){
+		var pos = this.GetValue(this.Container.offsetHeight,document.getElementById("News").offsetHeight);
+		this.anim[0].play(this.Vertical ? {"top":pos} : {"left":pos});
+	}
+});
+
+jutil.addEvent(document.getElementById('Scrollbar-Up'), "mousedown", function() {
+	sb.auto = true; sb.RunStep = -Math.abs(sb.RunStep); sb.Moving();
+});
+jutil.addEvent(document.getElementById('Scrollbar-Down'), "mousedown", function() {
+	sb.auto = true; sb.RunStep = Math.abs(sb.RunStep); sb.Moving();
+});
+jutil.addEvent(document.getElementById('Scrollbar-Up'), "mouseup", function() {
+	sb.auto = false;
+});
+jutil.addEvent(document.getElementById('Scrollbar-Down'), "mouseup", function() {
+	sb.auto = false;
+});
+jutil.addEvent(sb.Container, "mousewheel", jutil.bindAsEventListener(this, function(e){ sb.WheelCtrl(e);}));
+</script>
+</body>
+</html>

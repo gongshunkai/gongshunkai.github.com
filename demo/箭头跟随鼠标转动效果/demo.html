@@ -1,0 +1,121 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>箭头跟随鼠标转动效果</title>
+<script src="../libs/jutil.js"></script>
+<style>
+#container{width:900px;}
+#container div{width:86px;height:86px;margin:2px;float:left;text-align:center;line-height:100px;background: url(comp_cristic.jpg);}
+</style>
+</head>
+
+<body>
+<div id="container"></div>
+<script>
+var Follow = jutil.Class.create();
+jutil.extend(Follow.prototype, {
+	initialize:function(container){
+
+		this.container = document.getElementById(container);
+		this.cache = [],x = 0,y = 0;
+		
+		for(var i=0;i<50;i++){
+			var div = document.createElement('div');
+			this.cache.push(div);
+			this.container.appendChild(div);
+		}
+		
+		jutil.addEvent(document, "mousemove", jutil.bindAsEventListener(this, function(e) {
+			this.x = e.clientX,
+			this.y = e.clientY;
+	
+			for(var i=0;i<this.cache.length;i++){
+			
+				var the_pos = iteratorObj(
+					this.calculate('up',i),
+					this.calculate('down',i),
+					this.calculate('left',i),
+					this.calculate('right',i),
+					this.calculate('leftUp',i),
+					this.calculate('leftDown',i),
+					this.calculate('rightUp',i),
+					this.calculate('rightDown',i)
+				);
+				this.cache[i].style.backgroundPosition = the_pos + "px";
+			}
+		}));		
+	},
+	calculate:function(){
+		var level = Array.prototype.shift.call(arguments);
+		return pos[level].apply(this,arguments);
+	}
+});
+
+var pos = {
+	center:-90,
+	up:function(i){
+		if(this.y < this.cache[i].offsetTop){
+			return -430;
+		}
+		return false;
+	},
+	down:function(i){
+		if(this.y > this.cache[i].offsetTop + this.cache[i].offsetHeight){
+			return -688;
+		}
+		return false;
+	},
+	left:function(i){
+		if(this.x < this.cache[i].offsetLeft){
+			return -860;
+		}
+		return false;
+	},
+	right:function(i){
+		if(this.x > this.cache[i].offsetLeft + this.cache[i].offsetWidth){
+			return -258;
+		}
+		return false;
+	},
+	leftUp:function(i){
+		if(this.x < this.cache[i].offsetLeft && this.y < this.cache[i].offsetTop){
+			return -516;
+		}
+		return false;
+	},
+	leftDown:function(i){
+		if(this.x < this.cache[i].offsetLeft && this.y > this.cache[i].offsetTop + this.cache[i].offsetHeight){
+			return -774;
+		}
+		return false;
+	},
+	rightUp:function(i){
+		if(this.x > this.cache[i].offsetLeft + this.cache[i].offsetWidth && this.y < this.cache[i].offsetTop){
+			return -344;
+		}
+		return false;
+	},
+	rightDown:function(i){
+		if(this.x > this.cache[i].offsetLeft + this.cache[i].offsetWidth && this.y > this.cache[i].offsetTop + this.cache[i].offsetHeight){
+			return -602;
+		}
+		return false;
+	}
+};
+
+var iteratorObj = function(){
+	var obj = pos.center;
+    for(var i=0;i<arguments.length;i++){
+        var fn = arguments[i];
+        if(fn !== false){
+            obj = fn;
+		}
+    }
+	return obj;
+};
+
+var f = new Follow('container');
+</script>
+</body>
+</html>

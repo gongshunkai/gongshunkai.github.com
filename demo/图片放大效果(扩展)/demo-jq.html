@@ -1,0 +1,138 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>图片放大效果(扩展)</title>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="../libs/jquery.util.js"></script>
+<script src="jq/sliderbox.js"></script>
+<script src="jq/zoompic.js"></script>
+<style>
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+.izImage, .izViewer{border:1px solid #000;}
+.izImage{width:430px;height:430px;position:relative;}
+.izImage span{width:430px;height:430px;text-align:center;vertical-align:middle;display:table-cell;}
+.izImage img{max-width:430px;max-height:430px;}
+.izViewer{width:430px;height:430px;position:absolute;visibility:hidden;overflow:hidden;}
+.izViewer img{position:absolute;}
+.sliderbox{width:432px;margin-top:10px;}
+.slider{float:left;position: relative;overflow:hidden;width:392px;height:60px;}
+.slider ul{position:absolute;width:auto;height:60px;}
+.slider ul li{width:58px;height:58px;margin:0 9.5px;float:left;text-align:center;vertical-align:middle;display:table-cell;border:1px solid #000;cursor:pointer}
+.slider ul li.current{border:solid 1px #FF0000;}
+.slider ul li img{max-width:58px;max-height:58px;}
+.arrow-btn{width:18px;height:60px;border:solid #666666 1px;cursor:pointer}
+#btn-left{background:url("4.gif") no-repeat scroll left center;float:left;}
+#btn-right{background:url("5.gif") no-repeat scroll right center;float:right;}
+</style>
+</head>
+
+<body>
+<div id="idImage" class="izImage">
+	<div id="idHandle" style="background: rgb(255, 255, 255) none repeat scroll 0% 0%; opacity: 0.5; filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50);padding: 0px; margin: 0px; position: absolute; visibility:hidden"></div>
+</div>
+
+<div id="idViewer" class="izViewer">
+	<img src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-item_pic.jpg_q30.jpg">
+	<img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!1809646474.jpg">
+	<img src="https://img.alicdn.com/imgextra/i3/1809646474/TB24N_JhVXXXXXBXpXXXXXXXXXX_!!1809646474.jpg">
+	<img src="https://img.alicdn.com/imgextra/i1/1809646474/TB25fYVhVXXXXaJXXXXXXXXXXXX_!!1809646474.jpg">
+	<img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2SdD3hVXXXXX1XXXXXXXXXXXX_!!1809646474.jpg">
+	<img src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-item_pic.jpg_q30.jpg">
+	<img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!1809646474.jpg">
+</div>
+
+<div class="sliderbox">
+	<div id="btn-left" class="arrow-btn"></div>
+	<div id="thumbnail" class="slider">
+		<ul>
+			<li class="current"><img src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-item_pic.jpg_430x430q90.jpg"></li>
+			<li><img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!1809646474.jpg_430x430q90.jpg"></li>
+			<li><img src="https://img.alicdn.com/imgextra/i3/1809646474/TB24N_JhVXXXXXBXpXXXXXXXXXX_!!1809646474.jpg_430x430q90.jpg"></li>
+			<li><img src="https://img.alicdn.com/imgextra/i1/1809646474/TB25fYVhVXXXXaJXXXXXXXXXXXX_!!1809646474.jpg_430x430q90.jpg"></li>
+			<li><img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2SdD3hVXXXXX1XXXXXXXXXXXX_!!1809646474.jpg_430x430q90.jpg"></li>
+			<li><img src="https://img.alicdn.com/bao/uploaded/i3/TB1luLdKVXXXXc.aXXXXXXXXXXX_!!0-item_pic.jpg_430x430q90.jpg"></li>
+			<li><img src="https://img.alicdn.com/imgextra/i3/1809646474/TB2Ena7ipXXXXXNXpXXXXXXXXXX_!!1809646474.jpg_430x430q90.jpg"></li>
+		</ul>
+	</div>
+	<div id="btn-right" class="arrow-btn"></div>
+</div>
+
+<script>
+var zp = ZoomPic.extend({
+	init:function(image,viewer,handle){
+		this._super(image,viewer,handle);
+		this.oImage = []; //保存原始图片的数
+	},
+	add:function(o){
+		this.oImage.push(o);
+	},
+	decorator:function(){
+		var self = this,
+			newImage = $('<img>');
+		newImage.on('load',function(){
+			self.maxWidth = $(this).width();
+			self.maxHeight = $(this).height();
+		});
+		this._viewer.empty();
+		this._viewer.append(newImage);
+		newImage.attr('src',this.oImage[0].attr('src'));
+	}
+});
+
+var _zp = new zp('#idImage','#idViewer','#idHandle');
+
+$('#idViewer img').each(function(){
+	_zp.add($(this));
+});
+_zp.decorator();
+
+var sb = SliderBox.extend({
+	init:function(container,options){
+		this._super(container,options);
+		this.decorator();
+	},
+	decorator:function(){
+		var span = $('<span><img></span>');
+		_zp._image.append(span);
+		
+		var self = this,
+			minImg = span.children();
+		minImg.on('load',function(){
+			_zp.minLeft = $(this).position().left;
+			_zp.minTop = $(this).position().top;
+			_zp.minWidth = $(this).width();
+			_zp.minHeight = $(this).height();
+		});
+		
+		minImg.attr('src',this.box.find('.current img').attr('src'));
+		
+		$.each(this.li,function(i){
+			$(this).on('click',function(){
+				_zp.index = i;
+				_zp._image.find('img').attr('src',$(this).find('img').attr('src'));
+				_zp._viewer.find('img').attr('src',_zp.oImage[i].attr('src'));
+				
+				$.each(self.li,function(){
+					$(this).removeClass();
+				});
+				$(this).addClass('current');
+			});		
+		});
+	}
+});
+
+var _sb = new sb('#thumbnail',{
+	Vertical:false
+});
+
+$('#btn-left').on('click',function(){
+	_sb.currState.buttonLeft.call(_sb);
+});
+$('#btn-right').on('click',function(){
+	_sb.currState.buttonRight.call(_sb);
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>折叠菜单</title>
+<script src="../libs/jutil.js"></script>
+<script src="js/navbar.js"></script>
+<style>
+body{font-family: Arial,"宋体","微软雅黑","黑体", Verdana, sans-serif;font-size: 12px;line-height:24px;}
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+h1, h2, h3, h4, h5, h6 {font-size: 100%;margin: 0;padding: 0;}
+em, i {font-style: normal;}
+img {border: 0;}
+.clear {clear: both;}
+.border {border: 1px solid #E8E8E8;}
+.l {float:left;}
+.r {float:right;}
+
+.menubar{background-color: #669;color: #eef;overflow: hidden;width: 160px;}
+.menubar .space {margin-bottom: 3px;}
+.menubar .title {background-color: #88b;border: 1px solid #000;color: #000;font: bold 120% 
+
+Georgia,serif;letter-spacing: 1px;margin: 0 auto;
+width: 90%;height:16px;padding:4px;}
+.menubar .title-hilite {background-color: #447;color: #fff;}
+.menubar .title-hilite .img {opacity: 1;}
+.menubar .title h3{font-size:14px;float: left;}
+.menubar .title img {float: right;height: 12px;opacity: 0.6;width: 12px;margin-top:2px}
+.menubar .section {margin: 0 auto;overflow: hidden;position: relative;width: 92%;}
+.menubar .section .body {-moz-border-bottom-colors: none;-moz-border-left-colors: none;-moz-border-
+
+right-colors: none;-moz-border-top-colors: none;background-color: #aad;border-color: -moz-use-text-color 
+
+#000 #000;border-image: none;border-style: none solid solid;border-width: medium 1px 1px;padding: 
+
+5px;position: relative;}
+.menubar .section .body:hover{background-color: #fff;}
+.menubar .section .body li{cursor:pointer;color:#000;margin-left:5px}
+.menubar .section .body a{ color:#000;text-decoration: none;padding: 1px 50px 1px 4px;}
+.menubar .section .body a.link{color:#000;background-color: #ddd;}
+.menubar .section .body li span {margin-right:5px}
+.menubar .section .body li.item-hilite span {color: #f00;filter: none;opacity: 1;background-color: 
+
+#fff;}
+.menubar .section .body li.item-hilite a{background-color: #88b;border: 1px solid #00f;color: #fff;}	
+</style>
+</head>
+
+<body>
+
+<div id="menubar" class="menubar l">
+
+<div class="space"></div>
+
+<div class="title" title="collapse">
+<h3>栏目一</h3>
+<img class="img" src="images/arrow-up.png">
+</div>
+<div class="section">
+<div class="body">
+<ul>
+<li><span>&gt;&gt;</span><a class="link" href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+</ul>
+</div>
+</div>
+<div class="space"></div>
+
+<div class="title" title="expand">
+<h3>栏目二</h3>
+<img class="img" src="images/arrow-up.png">
+</div>
+<div class="section">
+<div class="body">
+<ul>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+</ul>
+</div>
+</div>
+<div class="space"></div>
+
+<div class="title" title="expand">
+<h3>栏目三</h3>
+<img class="img" src="images/arrow-up.png">
+</div>
+<div class="section">
+<div class="body">
+<ul>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+</ul>
+</div>
+</div>
+<div class="space"></div>
+
+<div class="title" title="expand">
+<h3>栏目四</h3>
+<img class="img" src="images/arrow-up.png">
+</div>
+<div class="section">
+<div class="body">
+<ul>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+<li><span>&gt;&gt;</span><a href="#">分类标题</a></li>
+</ul>
+</div>
+</div>
+<div class="space"></div>
+</div>
+
+<div style="margin-left:50px;margin-top:10px;font-size:14px" class="l">
+<h1><font size="30">javascript折叠菜单</font></h1>
+<br />
+<div class="l">功能说明：</div>
+<div class="r">NavBar初始化需传递2个参数，container(容器)必填项，options(默认属性)可选项。<br />
+container是折叠菜单的元素ID，如：var nb = new NavBar("menubar");<br />
+options有2个属性：EaseStep(滑动持续时间)、Path(图标地址)，如：var nb = new NavBar("menubar",{ EaseStep:30 });<br />
+菜单默认打开/关闭设置class名为title的div元素的title属性，如：div class="title" title="expand" 表示关闭状态，div class="title" title="collapse" 表示打开状态。<br />
+菜单内容选中项：设置a标签class="link"。<br /><br /></div>
+<div class="clear"></div>
+示例下载：<a href="navbar.zip">navbar.zip</a>
+</div>
+
+<script>
+var nb = new NavBar("menubar");
+
+jutil.each(nb.nodeTitle,function(list,i){
+	//把原始高度加入到对象中
+	nb.oh[i] = parseInt(nb.nodeSection[i]["offsetHeight"]);
+	//设置当前状态
+	nb.currState[i] = nb.FSM[list.getAttribute("title")];
+	//添加动画
+	nb.addAnim(nb.nodeSection[i],nb.nodeSection[i].querySelector('.body'));
+	nb.index = i; nb.Run();
+		
+	//设置事件
+	list.onclick = function(){ nb.index = i; nb.Run(); }
+	list.onmouseover = nb.nodeSection[i].onmouseover = function(){ list.className = "title title-hilite"; }
+	list.onmouseout = nb.nodeSection[i].onmouseout = function(){ list.className = "title"; }
+	
+	//设置事件
+	var li = nb.nodeSection[i].getElementsByTagName("li");
+	jutil.each(li,function(o){
+		o.onmouseover = function(){ o.className = "item-hilite"; }
+		o.onmouseout = function(){ o.className = ""; }
+	});
+});
+</script>
+</body>
+</html>
