@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<style>
+#box{width:200px;height:200px;position:absolute;left:50px;top:50px;background:#00CCCC;z-index:99;opacity:0.5}
+.container{position:absolute;border:5px #666666 solid;}
+#container{width:200px;height:200px;left:350px;top:50px;}
+#container2{width:250px;height:250px;left:330px;top:300px;}
+#container3{width:500px;height:500px;left:750px;top:50px;background:#666666;}
+.main{width:200px;height:200px;position:relative;margin-left:auto;margin-right:auto;}
+.main2{background:#000000;margin-top:25px}
+.main3{background:#ffffff;margin-top:150px}
+</style>
+<script src="../libs/jutil.js"></script>
+</head>
+
+<body>
+<div id="box"></div>
+<div id="container" class="container"></div>
+<div id="container2" class="container">
+	<div class="main main2"></div>
+</div>
+<div id="container3" class="container">
+	<div class="main main3"></div>
+</div>
+<script>
+//矩形碰撞检测
+var bBox = function(tBox1,tBox2){
+	var nx1 = tBox1.x,
+		ny1 = tBox1.y,
+		mx1 = tBox1.x+tBox1.w,
+		my1 = tBox1.y+tBox1.h,
+		nx2 = tBox2.x,
+		ny2 = tBox2.y,
+		mx2 = tBox2.x+tBox2.w,
+		my2 = tBox2.y+tBox2.h;
+	if(nx1>mx2||mx1<nx2)return false;
+	if(ny1>my2||my1<ny2)return false;
+	return true;
+};
+
+var box = document.getElementById('box'),
+	container = document.getElementById('container'),
+	container2 = document.getElementById('container2'),
+	container3 = document.getElementById('container3');
+	
+var anim = jutil.animation(box,{tween:jutil.Tween.Elastic.easeOut});
+var drag = jutil.drag(box);
+
+drag.sDLG("onStop",function(){
+	var border = 5;
+	var tBox = {x:box.offsetLeft,y:box.offsetTop,w:box.offsetWidth,h:box.offsetHeight},
+		tBox1 = {x:container.offsetLeft,y:container.offsetTop,w:container.offsetWidth,h:container.offsetHeight},
+		tBox2 = {x:container2.offsetLeft,y:container2.offsetTop,w:container2.offsetWidth,h:container2.offsetHeight},
+		tBox3 = {x:container3.offsetLeft,y:container3.offsetTop,w:container3.offsetWidth,h:container3.offsetHeight};
+	if(bBox(tBox,tBox1)){
+		anim.play({left:tBox1.x+border,top:tBox1.y+border});
+	}else if(bBox(tBox,tBox2)){
+		anim.play({left:(tBox2.x+border)+(tBox2.w-border*2)*0.5-tBox.w*0.5,top:(tBox2.y+border)+(tBox2.h-border*2)*0.5-tBox.h*0.5});
+	}else if(bBox(tBox,tBox3)){
+		anim.play({left:(tBox3.x+border)+(tBox3.w-border*2)*0.5-tBox.w*0.5,top:(tBox3.y+border)+(tBox3.h-border*2)*0.5-tBox.h*0.5},function(){
+			drag.sLimit(true);
+			drag.sMXRect({x:755,y:55,w:1255,h:555});
+		});
+	}
+});
+</script>
+</body>
+</html>

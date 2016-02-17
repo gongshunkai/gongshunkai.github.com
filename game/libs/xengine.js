@@ -123,7 +123,7 @@
 
 	var GetPageSize = function(){
 		var scrW, scrH;
-		if(root.innerHeight && root.scrollMaxY){
+		if(root.innerHeight && root.scrollMaxY) {
 			// Mozilla
 			scrW = root.innerWidth + root.scrollMaxX;
 			scrH = root.innerHeight + root.scrollMaxY;
@@ -131,20 +131,20 @@
 			// all but IE Mac
 			scrW = document.body.scrollWidth;
 			scrH = document.body.scrollHeight;
-		}else if(document.body){ // IE Mac
+		}else if(document.body) { // IE Mac
 			scrW = document.body.offsetWidth;
 			scrH = document.body.offsetHeight;
 		}
 	
 		var winW, winH;
-		if(root.innerHeight){ // all except IE
+		if(root.innerHeight) { // all except IE
 			winW = root.innerWidth;
 			winH = root.innerHeight;
-		}else if(document.documentElement && document.documentElement.clientHeight){
+		}else if (document.documentElement && document.documentElement.clientHeight || document.documentElement.clientWidth) {
 			// IE 6 Strict Mode
 			winW = document.documentElement.clientWidth; 
 			winH = document.documentElement.clientHeight;
-		}else if(document.body){ // other
+		}else if (document.body) { // other
 			winW = document.body.clientWidth;
 			winH = document.body.clientHeight;
 		}

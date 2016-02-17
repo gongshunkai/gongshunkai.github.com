@@ -39,9 +39,11 @@ jutil.extend(ScrollBar.prototype,{
 	this.Handle.style.height = (this.HandleHeight >= this.track_height ? 0 : this.HandleHeight) + "px";
 	this.handle_height = this.Handle.offsetHeight;
 	
-	jutil.drag(this.Handle,{ limit:true,mxContainer:this.Track,lockX:true,onMove:jutil.bind(this,function(){
-		this.GetPos(this.Handle.offsetTop);
-	})});
+	jutil.drag(this.Handle,{ limit:true,mxContainer:this.Track,lockX:true,dlgEvent:{
+		onMove:jutil.bind(this,function(){
+			this.GetPos(this.Handle.offsetTop);
+		})}
+	});
 	jutil.addEvent(this.Track, "mousedown", jutil.bindAsEventListener(this, function(e){ this.ClickCtrl(e);}));
 	this.addAnim();
   },

@@ -637,7 +637,7 @@
 		},
 		drag:function(drag,options){
 			//设置默认属性
-			var params = {handle:null,limit:false,mxLeft:0,mxRight:9999,mxTop:0,mxBottom:9999,mxContainer:null,lockX:false,lockY:false,lock:false,onStart:function(){},onMove:function(){},onStop:function(){}};
+			var params = {handle:null,limit:false,mxLeft:0,mxRight:9999,mxTop:0,mxBottom:9999,mxContainer:null,lockX:false,lockY:false,lock:false,dlgEvent:{"onStart":null,"onMove":null,"onStop":null}};
 			options = extend(params, options || {});
 
 			var handle = options.handle || drag,		//设置触发对象（不设置则使用拖放对象）
@@ -650,9 +650,7 @@
 				lockX = !!options.lockX,				//是否锁定水平方向拖放
 				lockY = !!options.lockY,				//是否锁定垂直方向拖放
 				lock = !!options.lock,					//是否锁定
-				onStart = options.onStart,				//开始移动时执行
-				onMove = options.onMove,				//移动时执行
-				onStop = options.onStop;				//结束移动时执行
+				dlgEvent = options.dlgEvent;			//事件代理
 				
 			var x = 0,
 				y = 0,
@@ -673,9 +671,9 @@
 				marginTop = parseInt(self.currentStyle(drag).marginTop) || 0;
 				//mousemove时移动 mouseup时停止
 				document.onmousemove = self.bindAsEventListener.call(self, document, function(e){ move(e); });	
-				document.onmouseup = function(){ stop(); };
+				document.onmouseup = self.bindAsEventListener.call(self, document, function(e){ stop(e); });	
 				//附加程序
-				onStart();
+				dlgEvent.onStart && dlgEvent.onStart(e);
 			};
 			//修正范围
 			var repair = function() {
@@ -710,12 +708,24 @@
 				if(!lockX){ drag.style.left = iLeft - marginLeft + "px"; }
 				if(!lockY){ drag.style.top = iTop - marginTop + "px"; }
 				//附加程序
-				onMove();
+				dlgEvent.onMove && dlgEvent.onMove(e);
 			};
-			var stop = function(){
+			var stop = function(e){
 				document.onmousemove = null;
 				//附加程序
-				onStop();
+				dlgEvent.onStop && dlgEvent.onStop(e);
+			};
+			var setDelegatedEvent = function(eName,fn){
+				dlgEvent[eName] = fn;
+			};
+			return{
+				sHandle:function(element){ handle = element || drag; },
+				sLimit:function(mode){ limit = (!!mode); },
+				sMXRect:function(rect){mxLeft = parseInt(rect.x); mxRight = parseInt(rect.w); mxTop = parseInt(rect.y); mxBottom = parseInt(rect.h); },
+				sMXContainer:function(element){mxContainer = element || null; },
+				sLockPos:function(v2){ lockX = parseInt(v2.x); lockY = parseInt(v2.y); },
+				sLock:function(mode){ lock = (!!mode); },
+				sDLG:function(eName,fn){ setDelegatedEvent(eName,fn); }
 			};
 		},
 		//通用的惰性单列模式
