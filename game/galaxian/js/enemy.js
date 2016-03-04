@@ -5,7 +5,7 @@
 var Enemy = Shooter.extend({
 	init:function(options){
 		var params = {hp:1,posX:0,posY:0,posDx:0,speed:0,color:'black'};
-		options = xengine.fn.extend(params, options || {});
+		options = xengine.$.extend(params, options || {});
 		
 		this._super(options);
 		this.hp = options.hp;
@@ -44,7 +44,7 @@ var Enemy = Shooter.extend({
 		ctx.fill();
 	},
 	isAttack:function(){
-		return this.owner.isAttack && !MathUtil.randInt(0,this.owner.rObjs.length);
+		return this.owner.isAttack && !xengine.fn.MathUtil.randInt(0,this.owner.rObjs.length);
 	},
 	isReturn:function(){
 		var hw = this.w * 0.5,
@@ -62,6 +62,12 @@ var Enemy = Shooter.extend({
 	onCollide:function(bullet){
 		this._super(bullet);
 	},
+	getStep:function(iTarget, iNow) {
+		var iStep = (iTarget - iNow) / this.speed;
+		if (iStep == 0){ return 0; }
+		if (Math.abs(iStep) < 1){ return (iStep > 0 ? 1 : -1); }
+		return iStep;
+  	},
 	//更新自由移动状态
 	updateState:function(e){
 		var freeState = this.sCtx.get("free");
@@ -139,8 +145,8 @@ var Layer = xengine.Sprite.extend({
 var AttackState = xengine.State.extend({
 	enter:function(){
 		++this.ctx.owner.zIdx;
-		this.ctx.owner.dx = (this.ctx.owner.owner.player.x - this.ctx.owner.x) / this.ctx.owner.speed;
-		this.ctx.owner.dy = (this.ctx.owner.owner.player.y - this.ctx.owner.y) / this.ctx.owner.speed;
+		this.ctx.owner.dx = this.ctx.owner.getStep(this.ctx.owner.owner.player.x,this.ctx.owner.x);
+		this.ctx.owner.dy = this.ctx.owner.getStep(this.ctx.owner.owner.player.y,this.ctx.owner.y);
 	},
 	change:function(){
 		if(this.ctx.owner.isReturn()){
@@ -165,8 +171,8 @@ var ReturnState = xengine.State.extend({
 		}
 	},
 	update:function(){
-		this.ctx.owner.dx = (this.ctx.owner.posX - this.ctx.owner.x) / (this.ctx.owner.speed * 0.5);
-		this.ctx.owner.dy = (this.ctx.owner.posY - this.ctx.owner.y) / (this.ctx.owner.speed * 0.5);
+		this.ctx.owner.dx = this.ctx.owner.getStep(this.ctx.owner.posX,this.ctx.owner.x);
+		this.ctx.owner.dy = this.ctx.owner.getStep(this.ctx.owner.posY,this.ctx.owner.y);
 		this.ctx.owner.moveStep();
 	}
 });

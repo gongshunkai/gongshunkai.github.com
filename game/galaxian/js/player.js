@@ -5,7 +5,7 @@
 var Player = Shooter.extend({
 	init:function(options){
 		var params = {color:'black',life:1};
-		options = xengine.fn.extend(params, options || {});
+		options = xengine.$.extend(params, options || {});
 		
 		this._super(options);
 		this.color = options.color;

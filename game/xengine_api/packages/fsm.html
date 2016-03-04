@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<link href="css/main.css" rel="stylesheet" type="text/css" />
+<style>
+table{margin-bottom:10px}
+td span{color:#FFFFFF;font-weight:bold;}
+.title{margin-bottom:0}
+</style>
+</head>
+
+<body>
+  <table id="State" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.State(状态抽象类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>ctx</td>
+		<td>保存的this指针</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>type</td>
+		<td>状态类型</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>change() </td>
+		<td>调用context changeState方法转换到其他状态</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>update()</td>
+		<td>当前状态的活动</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>enter()</td>
+		<td>退出状态执行</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="StateContext" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.StateContext(状态管理类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>owner</td>
+		<td>和该状态类关联的对象</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>states</td>
+		<td>状态对象</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>currState</td>
+		<td>当前的状态</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>change(type) </td>
+		<td>转换状态</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>get(type)</td>
+		<td>获取状态</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>add(state)</td>
+		<td>注册一个状态类</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>remove(type)</td>
+		<td>销毁一个状态类</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>clear()</td>
+		<td>情况状态类</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>update()</td>
+		<td>该方法在游戏主循环中使用</td>
+		<td></td>
+	  </tr>
+  </table>
+</body>
+</html>

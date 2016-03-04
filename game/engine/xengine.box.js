@@ -5,7 +5,7 @@
  * xengine 包围盒类
  */
 (function(root,xengine){
-	xengine.fn.extend(xengine, {
+	xengine.$.extend(xengine, {
 		//包围盒抽象类
 		BBox:xengine.Class.extend({
 			init:function(x,y){
@@ -34,7 +34,7 @@
 			}
 		})
 	});
-	xengine.fn.extend(xengine, {
+	xengine.$.extend(xengine, {
 		//圆形包围盒
 		RBBox:xengine.BBox.extend({
 			//x,y为圆心坐标，r是半径
@@ -101,7 +101,7 @@
 			collided:function(tBox){
 				var p1 = this.mapToWorld(),
 					p2 = tBox.mapToWorld();
-				return MathUtil.isCollide(p1,p2);
+				return xengine.fn.MathUtil.isCollide(p1,p2);
 			},
 			show:function(ctx){
 				ctx.beginPath();

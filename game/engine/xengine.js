@@ -6,14 +6,14 @@
 (function(root, factory) {
 
 	if (typeof define === 'function' && define.amd){
-		define(['exports'], function(exports){
-			root.xengine = factory(root, exports);
+		define(['jquery','exports'], function($,exports){
+			root.xengine = factory(root, exports, $);
 		});
 	}else{
-		root.xengine = factory(root, {});
+		root.xengine = factory(root, {}, (root.jQuery || root.Zepto || root.ender || root.$));
 	}
 	
-}(this, function(root, xengine){
+}(this, function(root, xengine, $){
 
 	var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
 
@@ -28,17 +28,13 @@
 
 	xengine.VERSION = '1.1.2';
 
+	xengine.$ = $;
 
 	xengine.fn = {
-		extend:function(obj) {
-			for(var i=0,source;source=slice.call(arguments, 1)[i++];){
-				if (source) {
-					for (var prop in source) {
-						obj[prop] = source[prop];
-					}
-				}
+		bind:function(object, fun) {
+			return function() {
+				return fun.apply(object, arguments);
 			}
-			return obj;
 		},
 		has:function(obj, key) {
 			return hasOwnProperty.call(obj, key);
@@ -119,42 +115,6 @@
 		return Class;
 	};
 
-
-
-	var GetPageSize = function(){
-		var scrW, scrH;
-		if(root.innerHeight && root.scrollMaxY) {
-			// Mozilla
-			scrW = root.innerWidth + root.scrollMaxX;
-			scrH = root.innerHeight + root.scrollMaxY;
-		}else if(document.body.scrollHeight > document.body.offsetHeight){
-			// all but IE Mac
-			scrW = document.body.scrollWidth;
-			scrH = document.body.scrollHeight;
-		}else if(document.body) { // IE Mac
-			scrW = document.body.offsetWidth;
-			scrH = document.body.offsetHeight;
-		}
-	
-		var winW, winH;
-		if(root.innerHeight) { // all except IE
-			winW = root.innerWidth;
-			winH = root.innerHeight;
-		}else if (document.documentElement && document.documentElement.clientHeight || document.documentElement.clientWidth) {
-			// IE 6 Strict Mode
-			winW = document.documentElement.clientWidth; 
-			winH = document.documentElement.clientHeight;
-		}else if (document.body) { // other
-			winW = document.body.clientWidth;
-			winH = document.body.clientHeight;
-		}
-	
-		// for small pages with total size less then the viewport
-		var pageW = (scrW<winW) ? winW : scrW;
-		var pageH = (scrH<winH) ? winH : scrH;
-	
-		return{PageW:pageW, PageH:pageH, WinW:winW, WinH:winH};
-	};
 
 
 	// xengine.FrameState
@@ -251,20 +211,20 @@
 		//设置是否可用
 		var setEnabled = function(flag){
 			if(flag){
-				document.oncontextmenu = function(){return false}; 
-				document.onmousemove = doMove;
-				document.onmousedown = doDown;
-				document.onmouseup = doUp;
-				document.onclick = doClick;
-				document.ondblick = doDBClick;
-				document.onmousewheel = doWheel;
+				xengine.$(document).on('contextmenu',function(){return false}); 
+				xengine.$(document).on('mousemove',doMove);
+				xengine.$(document).on('mousedown',doDown);
+				xengine.$(document).on('mouseup',doUp);
+				xengine.$(document).on('click',doClick);
+				xengine.$(document).on('dblick',doDBClick);
+				xengine.$(document).on('mousewheel',doWheel);
 			}else{
-				document.onmousemove = null;
-				document.onmousedown = null;
-				document.onmouseup = null;
-				document.onclick = null;
-				document.ondblick = null;
-				document.onmousewheel = null;
+				xengine.$(document).unbind('mousemove');
+				xengine.$(document).unbind('mousedown');
+				xengine.$(document).unbind('mouseup');
+				xengine.$(document).unbind('click');
+				xengine.$(document).unbind('dblick');
+				xengine.$(document).unbind('mousewheel');
 			} 	 		 
 		}
 		var doMove = function(e){
@@ -277,7 +237,6 @@
 			_M.dlgEvent.move && _M.dlgEvent.move(e);
 		}
 		var doDown = function(e){
-			//e.preventDefault();
 			setMBtnState(e,1);
 			setTarget(e);
 			_M.ox = e.pageX;
@@ -296,7 +255,7 @@
 			_M.dlgEvent.dbclick && _M.dlgEvent.dbclick(e);  
 		}
 		var doWheel = function(e){
-			_M.w += (e.wheelDelta >= eWeelDelta) ? 1 : -1;
+			_M.w += e.delta;
 			_M.dlgEvent.doWheel && _M.dlgEvent.doWheel(e);  
 		}
 		//初始化
@@ -376,25 +335,26 @@
 		//设置是否可用
 		var setEnabled = function(flag){
 			if(flag){
-				document.ontouchstart = doStart;
-				document.ontouchmove = doMove;
-				document.ontouchend = doEnd;
+				xengine.$(document).on('touchstart',doStart);
+				xengine.$(document).on('touchmove',doMove);
+				xengine.$(document).on('touchend',doEnd);
 			}else{
-				document.ontouchstart = null;
-				document.ontouchmove = null;
-				document.ontouchend = null;
+				xengine.$(document).unbind('touchstart');
+				xengine.$(document).unbind('touchmove');
+				xengine.$(document).unbind('touchend');
 			} 	 		 
 		}
 		var doStart = function(e){
+			e = e.originalEvent.targetTouches[0];
 			setTouchState(1);
 			setTarget(e);
-			var touch = e.touches[0]; //获取第一个触点
-			_T.ox = touch.pageX;
-			_T.oy = touch.pageY;
+			_T.ox = e.pageX;
+			_T.oy = e.pageY;
 			_T.dlgEvent.start && _T.dlgEvent.start(e);
 		}
 		var doMove = function(e){
-			setPos(e.touches[0]);
+			e = e.originalEvent.targetTouches[0];
+			setPos(e);
 			setTarget(e);
 			if(_T.isTouchCacheEnable){
 				addToMPCache(_T.x,_T.y);
@@ -402,6 +362,7 @@
 			_T.dlgEvent.move && _T.dlgEvent.move(e);
 		}
 		var doEnd = function(e){
+			e = e.originalEvent.changedTouches[0];
 			setTouchState(0);
 			setTarget(e);
 			_T.dlgEvent.end && _T.dlgEvent.end(e);
@@ -491,28 +452,27 @@
 			},
 			//设置是否可用
 			setEnabled:function(flag){
-				var self = this;
 				if(flag){
 					var st = this.states;
 					this.clearKeyStates();
 					this.sMode(0);
-					document.onkeydown = function(e){
+					xengine.$(document).on('keydown',xengine.fn.bind(this,function(e){
 						st[e.keyCode] = 1; 
-						if(self.isEnableCache){
-							if(self.cache.length > MAX_KEY_CACHE){
-								self.cache.shift();
+						if(this.isEnableCache){
+							if(this.cache.length > MAX_KEY_CACHE){
+								this.cache.shift();
 							}
-							self.cache.push(e.keyCode);
+							this.cache.push(e.keyCode);
 						}
-						self.dlgEvent.down && self.dlgEvent.down(e);
-					};
-					document.onkeyup = function(e){
+						this.dlgEvent.down && this.dlgEvent.down(e);
+					}));
+					xengine.$(document).on('keyup',xengine.fn.bind(this,function(e){
 						st[e.keyCode] = 0;  
-						self.dlgEvent.up && self.dlgEvent.up(e);
-					}		  
+						this.dlgEvent.up && this.dlgEvent.up(e);
+					}));		  
 				}else{
-					document.onkeydown = null;
-					document.onkeyup = null;
+					xengine.$(document).unbind('keydown');
+					xengine.$(document).unbind('keyup');
 				}
 			},
 			//判断是否按键
@@ -605,7 +565,7 @@
 	// -------------
 
 	var Game = Class.extend();
-	xengine.fn.extend(Game.prototype, Events, {
+	xengine.$.extend(Game.prototype, Events, {
 		init:function(){
 			this.paused = false;
 			this.timer = null;
@@ -620,8 +580,7 @@
 			}
 			//获取当前场景，更新，并渲染
 			var scene = this.sceneManager.getCurrentScene();
-			if(scene)
-			{
+			if(scene){
 				scene.update();
 				scene.render();
 			}
@@ -664,10 +623,10 @@
 	// -------------
 
 	var Scene = xengine.Scene = Class.extend();
-	xengine.fn.extend(Scene.prototype, Events, {
+	xengine.$.extend(Scene.prototype, Events, {
 		init:function(options){
 			var params = {name:xengine.fn.uniqueId('scene'),x:0,y:0,w:320,h:200,color:'black'};
-			options = xengine.fn.extend(params, options || {});
+			options = xengine.$.extend(params, options || {});
 			
 			//场景名称
 			this.name = options.name;
@@ -678,14 +637,12 @@
 			this.h = Math.max(1,options.h);
 			this.color = options.color;
 			//绑定的canvas元素,以后的精灵都在这个canvas上进行绘制
-			this.cvs = document.createElement('canvas');
-			this.cvs.id = "cv_" + this.name;
-			this.cvs.style = "z-index:-1;position:absolute;left:0px;top:0px";
-			this.ctx = this.cvs.getContext("2d");
+			this.cvs = xengine.$("<canvas id='cv_"+this.name+"' style='z-index:-1;position:absolute;left:0px;top:0px'></canvas>");
+			this.ctx = this.cvs[0].getContext("2d");
 			this.setPos();
 			this.setSize();
 			this.setColor(this.color);
-			document.body.appendChild(this.cvs);
+			xengine.$(document.body).append(this.cvs);
 			//记录所有的渲染对象
 			this.rObjs = [];
 			//命名的渲染对象，便于根据名称快速查找对象
@@ -766,27 +723,26 @@
 		setPos:function(x,y){
 			this.x = x||this.x;
 			this.y = y||this.y;
-			this.cvs.style.left = this.x + "px";
-			this.cvs.style.top = this.y + "px";
+			this.cvs.css('left',this.x);
+			this.cvs.css('top',this.y);
 		},
 		//设置大小
 		setSize:function(w,h){
 			this.w = w||this.w;
 			this.h = h||this.h;
-			this.cvs.setAttribute("width",this.w);
-			this.cvs.setAttribute("height",this.h);
+			this.cvs.attr('width',this.w);
+			this.cvs.attr('height',this.h);
 		},
 		//设置canvas背景
 		setColor:function(color){
 			this.color = color  || "black";
-			this.cvs.style.backgroundColor = this.color;
+			this.cvs.css('background-color',this.color);
 		},
 		resize:function(){
-			var pageSize = GetPageSize();
 			var dw = this.w,
 				dh = this.h,
-				cw = pageSize.WinW,
-				ch = pageSize.WinH;
+				cw = xengine.$(window).width(),
+				ch = xengine.$(window).height();
 
 			var bw = cw > dw ? cw / dw : 1 / (dw / cw),
 				bh = ch > dh ? ch / dh : 1 / (dh / ch);
@@ -794,11 +750,19 @@
 			var w = Math.min(dw*bh,cw),
 				h = Math.min(dh*bw,ch);
 		
-			this.cvs.style.width = w+"px";
-			this.cvs.style.height = h+"px";
-			this.cvs.style.top = ch*0.5 - h*0.5 + "px";
-			this.cvs.style.left = cw*0.5 - w*0.5 + "px";
-			this.cvs.style.position="absolute";
+			this.cvs.css('width',w);
+			this.cvs.css('height',h);
+			this.cvs.css('top',ch*0.5 - h*0.5);
+			this.cvs.css('left',cw*0.5 - w*0.5);
+			this.cvs.css('position','absolute');
+		},
+		getCvsRect:function(){
+			return{
+				x:this.cvs.offset().left,
+				y:this.cvs.offset().top,
+				w:this.cvs.outerWidth(),
+				h:this.cvs.outerHeight()
+			};
 		},
 		//清除canvas背景
 		clear:function(){
@@ -806,37 +770,37 @@
 		},
 		//显示
 		show:function(){
-			this.cvs.style.display = 'block';
+			this.cvs.css('display','block');
 		},
 		//隐藏
 		hide:function(){
-			this.cvs.style.display = 'none';
+			this.cvs.css('display','none');
 		},
 		//淡出
 		fadeOut:function(time,fn){
-			//this.cvs.fadeOut(time,fn);
+			this.cvs.fadeOut(time,fn);
 		},
 		//淡入
 		fadeIn:function(time,fn){
-			//this.cvs.fadeIn(time,fn);
+			this.cvs.fadeIn(time,fn);
 		},
 		//设置背景,pattern:0(居中),1(拉伸),默认(平铺)
 		setBGImg:function(imgURL,pattern){
-			this.cvs.style.backgroundImage = "url(" + imgURL + ")";
+			this.cvs.css('background-image','url(" + imgURL + ")');
 			switch(pattern){
 				case 0:
-					this.cvs.style.backgroundRepeat = "no-repeat";
-					this.cvs.style.backgroundPosition = "center";
+					this.cvs.css('background-repeat','no-repeat');
+					this.cvs.css('background-position','center');
 					break;
 				case 1:
-					this.cvs.style.backgroundSize = this.w + "px " + this.h + "px ";
+					this.cvs.css('background-size',this.w+'px '+this.h+'px ');
 					break;
 			}
 		},
 		//清除相关所有资源
 		clean:function(){
 			this.listeners = null;
-			this.cvs.parentNode.removeChild(this.cvs);
+			this.cvs.remove();
 			this.cvs = this.ctx = null;
 		}
 	});
@@ -856,7 +820,7 @@
 		sortSceneIdx:function(){
 			for(var i=0,len=this.scenes.length;i<len;i++){
 				var sc = this.scenes[i];
-				sc.cvs.style.zIndex = i;
+				sc.cvs.css('z-index',i);
 			}
 		},
 		//压入scene场景
@@ -896,7 +860,7 @@
 		},
 		//获取某个场景的索引
 		getIdx:function(scene){		  
-			return scene.cvs.css("z-index");		
+			return scene.cvs.css('z-index');		
 		},
 		//把某个场景移动到最顶部
 		bringToFirst:function(scene){
@@ -955,7 +919,7 @@
 	var RenderObj = Class.extend({
 		init:function(options){
 			var params = {name:xengine.fn.uniqueId('renderObj'),x:0,y:0,w:0,h:0,dx:0,dy:0,vx:0,vy:0,deg:0,zIdx:0,isVisible:true,canRemove:false};
-			options = xengine.fn.extend(params, options || {});
+			options = xengine.$.extend(params, options || {});
 			
 			this.name = options.name;
 			//拥有者,指向场景对象
@@ -1014,16 +978,14 @@
 		isMouseIn:function(){	
 			var x = Mouse.gX() || Touch.gX(),
 				y = Mouse.gY() || Touch.gY();
-			var gx = this.owner.cvs.offsetLeft,
-				gy = this.owner.cvs.offsetTop,
-				gw = this.owner.cvs.offsetWidth,
-				gh = this.owner.cvs.offsetHeight;
+			var sc = this.owner,
+				cr = sc.getCvsRect();
 				
-			var bw = gw > this.owner.w ? gw / this.owner.w : 1 / (this.owner.w / gw),
-				bh = gh > this.owner.h ? gh / this.owner.h : 1 / (this.owner.h / gh);	
+			var bw = cr.w > sc.w ? cr.w / sc.w : 1 / (sc.w / cr.w),
+				bh = cr.h > sc.h ? cr.h / sc.h : 1 / (sc.h / cr.h);	
 				
 			//转换鼠标坐标到游戏窗口坐标系	
-			var cd = [x-gx,y-gy];
+			var cd = [x-cr.x,y-cr.y];
 					
 			var	hw = this.w*bw*0.5,
 				hh = this.h*bh*0.5,
@@ -1041,7 +1003,7 @@
 	var Frames = xengine.Frames = Class.extend({
 		init:function(options){
 			var params = {name:xengine.fn.uniqueId('frames'),duration:50,img:null};
-			options = xengine.fn.extend(params, options || {});
+			options = xengine.$.extend(params, options || {});
 			
 			//帧动画名称
 			this.name = options.name;
@@ -1207,7 +1169,7 @@
 	var Sprite = xengine.Sprite = RenderObj.extend({
 		init:function(options){
 			var params = {isXFlip:false,isYFlip:false,scaleX:1,scaleY:1};
-			options = xengine.fn.extend(params, options || {});
+			options = xengine.$.extend(params, options || {});
 			
 			this._super(options);
 			//帧动画集合对象

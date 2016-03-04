@@ -5,7 +5,7 @@
  * xengine 游戏资源类
  */	
 (function(root,xengine){
-	xengine.fn.extend(xengine, {
+	xengine.$.extend(xengine, {
 		//游戏资源管理类
 		ResManager:{
 			//存储所有定义的资源类型
@@ -116,7 +116,7 @@
 					obj.isLoaded = true;
 					loadedFN && loadedFN();
 				}
-				return  obj;
+				return obj;
 			}
 		},
 		//帧动画资源

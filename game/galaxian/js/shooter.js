@@ -5,7 +5,7 @@
 var Shooter = xengine.Sprite.extend({
 	init:function(options){
 		var params = {bSpeed:0,tags:[]};
-		options = xengine.fn.extend(params, options || {});
+		options = xengine.$.extend(params, options || {});
 		
 		this._super(options);
 

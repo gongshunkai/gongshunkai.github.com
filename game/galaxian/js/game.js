@@ -80,7 +80,7 @@ var Scene = xengine.Scene.extend({
 		var eOffX = 3;
 		var eOffY = 80;
 		for (var i = 0; i < lev.length; i++) {
-			var eColor = ColorUtil.rgb(MathUtil.randInt(100,255),MathUtil.randInt(100,255),MathUtil.randInt(100,255));
+			var eColor = xengine.fn.ColorUtil.rgb(xengine.fn.MathUtil.randInt(100,255),xengine.fn.MathUtil.randInt(100,255),xengine.fn.MathUtil.randInt(100,255));
 			for (var j = 0; j < lev[i].length; j++) {
 				var eData = lev[i][j];
 				if (eData > 0) {

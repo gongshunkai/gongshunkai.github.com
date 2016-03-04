@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<link href="css/main.css" rel="stylesheet" type="text/css" />
+<style>
+table{margin-bottom:10px}
+td span{color:#FFFFFF;font-weight:bold;}
+.title{margin-bottom:0}
+</style>
+</head>
+
+<body>
+  <table id="RBBox" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.RBBox(圆形包围盒)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>x</td>
+		<td>中心坐标x(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>y</td>
+		<td>中心坐标y(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>c</td>
+		<td>颜色(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>r</td>
+		<td>包围盒半径</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>init(x,y) </td>
+		<td>初始化圆形包围盒，x,y是圆形中心坐标</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>collided(tBox) </td>
+		<td>碰撞检测，返回布尔值。参数tBox是一个含向量及半径的对象，如tBox.x,tBox.y,tBox.r</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>show(ctx)</td>
+		<td>把包围盒显示在画布中</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="ABBox" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.ABBox(矩形包围盒)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	 <tr>
+		<td>x</td>
+		<td>中心坐标x(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>y</td>
+		<td>中心坐标y(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>c</td>
+		<td>颜色(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>w</td>
+		<td>宽度</td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>h</td>
+		<td>高度</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>init(x,y,w,h)</td>
+		<td>初始化矩形包围盒，x,y是矩形中心坐标</td>
+		<td></td>
+	  </tr>
+	 <tr>
+		<td>collided(tBox) </td>
+		<td>碰撞检测，返回布尔值。参数tBox是一个含向量及宽高的对象，如tBox.x,tBox.y,tBox.w,tBox.h</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>show(ctx)</td>
+		<td>把包围盒显示在画布中</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="PBBox" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.PBBox(凸多边形包围盒)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	 <tr>
+		<td>x</td>
+		<td>中心坐标x(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>y</td>
+		<td>中心坐标y(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>c</td>
+		<td>颜色(继承自包围盒抽象类)</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>init(x,y,pArr) </td>
+		<td>初始化矩形包围盒，x,y是多边形中心坐标,pArr是一个顶点数组，点的坐标采用相对中心点坐标，按顺时针存放各顶点</td>
+		<td></td>
+	  </tr>
+	 <tr>
+		<td>collided(tBox) </td>
+		<td>碰撞检测，返回布尔值。</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>show(ctx)</td>
+		<td>把包围盒显示在画布中</td>
+		<td></td>
+	  </tr>
+  </table>
+</body>
+</html>

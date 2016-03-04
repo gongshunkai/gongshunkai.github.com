@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="full-screen" content="yes"/>
+<meta name="screen-orientation" content="portrait"/>
+<meta name="x5-fullscreen" content="true"/>
+<meta name="360-fullscreen" content="true"/>
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<title>无标题文档</title>
+<style>
+body, canvas, div {
+-moz-user-select:none;
+-webkit-user-select:none;
+-ms-user-select:none;
+-khtml-user-select:none;
+-webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+}
+body{margin:0px;padding:0px;background:#fff;}
+</style>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="../libs/box2d.js"></script>
+<script src="../engine/xengine.js"></script>
+<script src="../engine/xengine.b2d.js"></script>
+</head>
+
+<body>
+<script>
+xengine.game.run(function(){
+	//刚体基类
+	var bodyBase = xengine.Sprite.extend({
+		init:function(options){
+			options || (options = {});
+			this.type = Math.abs(options.type || 0);
+			this._super(options);
+		},
+		update:function(){
+			var pos = this.b2Obj.body.GetWorldCenter();
+			this.x = xengine.EasyB2D.lenToScn(pos.x);
+			this.y = xengine.EasyB2D.lenToScn(pos.y);
+			this.uData = this.b2Obj.body.GetUserData();
+			this.deg = this.b2Obj.body.GetAngle();
+		},
+		render:function(ctx){
+			ctx.save();		    
+			ctx.beginPath();
+			ctx.strokeStyle = "yellow";
+			ctx.lineWidth = 1;
+			ctx.translate(this.x,this.y);
+			ctx.rotate(this.deg+this.uData.deg);
+			ctx.strokeRect(-this.uData.width*0.5,-this.uData.height*0.5,this.uData.width,this.uData.height);
+			ctx.restore();
+		}
+	});
+	//矩形
+	var Box = bodyBase.extend({
+		init:function(options){
+			this._super(options);
+			this.b2Obj = new xengine.EasyB2D.CreateBox({posX:this.x,posY:this.y,deg:this.deg,width:this.w,height:this.h,type:this.type});
+		}
+	});
+	//组合
+	var Multi = bodyBase.extend({
+		init:function(options){
+			this._super(options);
+			var Car = xengine.EasyB2D.MultiBody.extend({
+				setShape:function(){
+					this.shape.SetAsOrientedBox(this.lenToB2d(this.width*0.5), this.lenToB2d(this.height*0.5), new this.b2Vec2());
+					this.setFixture(0.6,0.3,0.6,this.shape,{x:0,y:0,w:this.width,h:this.height});
+					this.setBody();
+					this.shape.SetAsOrientedBox(this.lenToB2d(this.width*0.5), this.lenToB2d(this.height*0.5), new this.b2Vec2(this.lenToB2d(-this.width,0)));
+					this.setFixture(0.6,0.3,0.6,this.shape,{x:-30,y:0,w:this.width,h:this.height});
+					this.setBody();
+					this.shape.SetAsOrientedBox(this.lenToB2d(this.width*0.5), this.lenToB2d(this.height*0.5), new this.b2Vec2(this.lenToB2d(this.width,0)));
+					this.setFixture(0.6,0.3,0.6,this.shape,{x:30,y:0,w:this.width,h:this.height});
+					this.setBody();
+				}
+			});
+			this.b2Obj = new Car({posX:this.x, posY:this.y, width:this.w,height:this.h,type:this.type});
+		},
+		update:function(){
+			this._super();
+			this.fixture = this.b2Obj.body.GetFixtureList();
+		},
+		render:function(ctx){
+			while(this.fixture){
+				var uData = this.fixture.GetUserData();
+				ctx.save();		    
+				ctx.beginPath();
+				ctx.strokeStyle = "yellow";
+				ctx.lineWidth = 1;
+				ctx.translate(this.x,this.y);
+				ctx.rotate(this.deg+(uData.deg|0));
+				switch(uData.t){				
+					case 'circle':
+						ctx.moveTo(uData.x,uData.y);
+						ctx.arc(uData.x,uData.y,uData.r,0,Math.PI*2);
+						break;
+					case 'polygon':
+						ctx.moveTo(uData.vertices[uData.vertices.length-1].x,uData.vertices[uData.vertices.length-1].y);
+						for(var i=uData.vertices.length-2;i>=0;i--){
+							ctx.lineTo(uData.vertices[i].x,uData.vertices[i].y);
+						}
+						break;
+					default:
+						ctx.strokeRect(-uData.w*0.5+uData.x,-uData.h*0.5+uData.y,uData.w,uData.h);
+						break;	
+				}
+				ctx.stroke();
+				ctx.restore();
+				this.fixture = this.fixture.GetNext();
+			}
+		}
+	});
+	//圆形
+	var Circle = bodyBase.extend({
+		init:function(options){
+			options || (options = {});
+			this.r = options.r || 1;
+			this._super(options);
+			this.b2Obj = new xengine.EasyB2D.CreateCircle({posX:this.x,posY:this.y,radius:this.r,type:this.type});
+		},
+		render:function(ctx){
+			ctx.save();		    
+			ctx.beginPath();
+			ctx.strokeStyle = "yellow";
+			ctx.lineWidth = 1;
+			ctx.translate(this.x,this.y);
+			ctx.moveTo(0,0);
+			ctx.rotate(this.deg);
+			ctx.arc(0,0,this.uData.radius,0,Math.PI*2);			 
+			ctx.stroke();		
+			ctx.restore();
+		}
+	});
+	
+	var Scene = xengine.Scene.extend({
+		init:function(options){
+			this._super(options);
+			
+			this.dynamicBody = xengine.EasyB2D.b2Body.b2_dynamicBody;
+			this.MOTOR_SPEED = Math.PI/10*30;
+			
+			xengine.EasyB2D.createWorld(0,10);
+			xengine.EasyB2D.setDebugDraw(this.ctx,{fillalpha:0.5,alpha:1});
+			//围绕canvas四周的墙体
+			xengine.EasyB2D.createWrapWall({w:this.cvs.outerWidth(),h:this.cvs.outerHeight()});
+
+			var box = new Box({x:300,y:380,w:600,h:50});
+			this.addChild(box);
+			
+			var circle = new Circle({x:300,y:560,r:250});
+			this.addChild(circle);
+			
+			var carBody = new Multi({x:100,y:200,w:30,h:30,type:this.dynamicBody});
+			this.addChild(carBody);
+
+			var circleA = new Circle({x:70,y:230,r:15,type:this.dynamicBody});
+			xengine.EasyB2D.setFixture(circleA.b2Obj.body,{friction:1});
+			this.addChild(circleA);
+			
+			var circleB = new Circle({x:130,y:230,r:15,type:this.dynamicBody});
+			this.addChild(circleB);
+			
+			var anchor = circleA.b2Obj.body.GetWorldCenter();
+			this.revoluteJoint1 = xengine.EasyB2D.createRevoluteJoint(carBody.b2Obj.body,circleA.b2Obj.body,anchor);
+			this.revoluteJoint1.SetMaxMotorTorque(50);
+			
+			anchor = circleB.b2Obj.body.GetWorldCenter();
+			this.revoluteJoint2 = xengine.EasyB2D.createRevoluteJoint(carBody.b2Obj.body,circleB.b2Obj.body,anchor);
+			this.revoluteJoint2.EnableMotor(false);
+			this.revoluteJoint2.SetMaxMotorTorque(0);
+			this.revoluteJoint2.SetMotorSpeed(0);
+			
+			this.resize();
+		}
+	});
+	
+	var sc = new Scene({w:600,h:400,color:'#333'});
+	xengine.director.push(sc);
+	
+	sc.addListener(new xengine.EventListener({
+		"beforeRender":function(){
+			xengine.EasyB2D.updateWorld(60);
+		},
+		"afterRender":function(){
+			
+		}
+	}));
+				
+	xengine.Mouse.sDLG("down",function(e){
+		var cr = sc.getCvsRect();
+		var mousePoint = xengine.EasyB2D.mouseToB2d(e.clientX,e.clientY,cr.x,cr.y,cr.w,cr.h,sc.w,sc.h);
+		var bodyAtMouse = xengine.EasyB2D.getBodyAt(mousePoint.x,mousePoint.y);
+		if(bodyAtMouse != null){
+			xengine.EasyB2D.dragBodyTo(bodyAtMouse,mousePoint.x,mousePoint.y,mousePoint.x,mousePoint.y,20,false);
+		}
+	});
+	xengine.Mouse.sDLG("move",function(e){								  
+		if (xengine.EasyB2D.mouseJoint != null) {
+			var cr = sc.getCvsRect();
+			var mousePoint = xengine.EasyB2D.mouseToB2d(e.clientX,e.clientY,cr.x,cr.y,cr.w,cr.h,sc.w,sc.h);
+			var mouseVector = new xengine.EasyB2D.b2Vec2(
+				xengine.EasyB2D.lenToB2d(mousePoint.x),
+				xengine.EasyB2D.lenToB2d(mousePoint.y)
+			);
+			xengine.EasyB2D.mouseJoint.SetTarget(mouseVector);
+		}
+	});
+	xengine.Mouse.sDLG("up",function(e){
+		xengine.EasyB2D.stopDragBody();
+	});
+	
+	xengine.Key.setDLG("down",function(e){
+		if(e.keyCode == xengine.Key.LEFT){
+			sc.revoluteJoint1.EnableMotor(true);
+			sc.revoluteJoint1.SetMotorSpeed(-sc.MOTOR_SPEED);
+		}else if(e.keyCode == xengine.Key.RIGHT){
+			sc.revoluteJoint1.EnableMotor(true);
+			sc.revoluteJoint1.SetMotorSpeed(sc.MOTOR_SPEED);
+		}else if(e.keyCode == xengine.Key.DOWN){
+			sc.revoluteJoint1.EnableMotor(true);
+			sc.revoluteJoint1.SetMotorSpeed(0);
+		}else if(e.keyCode == xengine.Key.UP){
+			sc.revoluteJoint1.EnableMotor(false);
+		}
+	});
+	
+	window.onresize = function(){ sc.resize(); }
+},60);
+</script>
+</body>
+</html>

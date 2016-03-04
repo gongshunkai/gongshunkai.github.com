@@ -5,7 +5,7 @@
 var Bullet = xengine.Sprite.extend({
 	init:function(options){
 		var params = {color:'black',attack:1,targetID:1,os:null};
-		options = xengine.fn.extend(params, options || {});
+		options = xengine.$.extend(params, options || {});
 
 		this._super(options);
 		this.color = options.color;

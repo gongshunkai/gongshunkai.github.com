@@ -1,0 +1,788 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<link href="css/main.css" rel="stylesheet" type="text/css" />
+<style>
+table{margin-bottom:10px}
+td span{color:#FFFFFF;font-weight:bold;}
+.title{margin-bottom:0}
+</style>
+</head>
+
+<body>
+  <table id="game" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.game(游戏主体类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>run(fun,fps) </td>
+		<td>运行游戏，第一个参数可以传一个方法，第二个参数是游戏的fps，如果不传值该参数默认是60
+	 </td>
+		<td>
+			<p>xengine.game.run(function(){</p>
+			<p>　　//游戏的主逻辑代码....</p>
+			<p>},30);</p>
+		</td>
+	  </tr>
+	  <tr>
+		<td>pause()</td>
+		<td>暂停游戏</td>
+		<td>xengine.game.pause()</td>
+	  </tr>
+	  <tr>
+		<td>resume()</td>
+		<td>继续游戏</td>
+		<td>xengine.game.resume()</td>
+	  </tr>
+	  <tr>
+		<td>stop()</td>
+		<td>终止游戏</td>
+		<td>xengine.game.stop()</td>
+	  </tr>
+	  <tr>
+		<td>addListener(fn)</td>
+		<td>添加监听器</td>
+		<td>xengine.game.addListener(fn)</td>
+	  </tr>
+	  <tr>
+		<td>clearListener()</td>
+		<td>清空监听器列表</td>
+		<td>xengine.game.clearListener()</td>
+	  </tr>
+  </table>
+  <table id="Scene" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.Scene(游戏场景类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>x</td>
+		<td>场景的x坐标</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>y</td>
+		<td>场景的y坐标</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>w</td>
+		<td>场景的宽度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>h</td>
+		<td>场景的高度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>color</td>
+		<td>场景的背景颜色</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>cvs</td>
+		<td>绑定的canvas元素</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>ctx</td>
+		<td>canvas环境</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>rObjs</td>
+		<td>所有的渲染对象</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>namedRObjs</td>
+		<td>命名的渲染对象，便于根据名称快速查找对象</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>addChild(obj) </td>
+		<td>把一个渲染对象添加到场景中</td>
+		<td>
+			<p>var Scene = xengine.Scene.extend({</p>
+			<p>　　init(options){</p>
+			<p>　　　　this._super(options);</p>
+			<p>　　　　this.addChild(obj);</p>
+			<p>　　}</p>
+			<p>});</p>
+		</td>
+	  </tr>
+	  <tr>
+		<td>removeChild(obj)</td>
+		<td>删除对象</td>
+		<td>
+			<p>var sc = new xengine.Scene();</p>
+			<p>sc.removeChild(obj);</p>
+		</td>
+	  </tr>
+	  <tr>
+		<td>clearAll()</td>
+		<td>清除所有渲染对象</td>
+		<td>
+			<p>var sc = new xengine.Scene();</p>
+			<p>sc.clearAll();</p>
+		</td>
+	  </tr>
+	  <tr>
+		<td>resize()</td>
+		<td>自适应屏幕大小，可以在初始化场景的函数中，以及浏览器大小发生改变时调用此方法</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>getCvsRect()</td>
+		<td>返回一个包含画布坐标及尺寸的对象</td>
+		<td>
+			<p>var cr = sc.getCvsRect(),</p>
+			<p>　　x=cr.x,</p>
+			<p>　　y=cr.y,</p>
+			<p>　　w=cr.w,</p>
+			<p>　　h=cr.h; </p>
+		</td>
+	  </tr>
+	  <tr>
+		<td>clear()</td>
+		<td>清除canvas背景</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>show()</td>
+		<td>显示场景</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>hide()</td>
+		<td>隐藏场景</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>fadeOut()</td>
+		<td>场景淡出效果</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>fadeIn()</td>
+		<td>场景淡入效果</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>addListener(fn)</td>
+		<td>添加监听器</td>
+		<td>sc.addListener(fn)</td>
+	  </tr>
+	  <tr>
+		<td>clearListener()</td>
+		<td>清空监听器列表</td>
+		<td>sc.clearListener()</td>
+	  </tr>
+  </table>
+  <table id="director" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.director(游戏场景管理类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>namedScenes</td>
+		<td>以命名方式保存,便于快速通过名称获取场景</td>
+		<td>xengine.director.namedScenes</td>
+	  </tr>
+	  <tr>
+		<td>scenes</td>
+		<td>以堆栈方式保存所有场景，最后的元素为栈顶</td>
+		<td>xengine.director.scenes</td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>push(scene) </td>
+		<td>把一个游戏场景压入游戏场景管理类的堆栈中</td>
+		<td>xengine.director.push(scene); //创建了一个游戏场景必须将它压入游戏场景管理堆栈中才会在画布中显示出来，否则即使创建了场景也看不到。 </td>
+	  </tr>
+	  <tr>
+		<td>pop()</td>
+		<td>移除顶部场景</td>
+		<td>xengine.director.pop()</td>
+	  </tr>
+	  <tr>
+		<td>remove(scene)</td>
+		<td>删除场景</td>
+		<td>xengine.director.remove(scene)</td>
+	  </tr>
+	  <tr>
+		<td>swap(from,to)</td>
+		<td>交换场景位置</td>
+		<td>xengine.director.swap(from,to)</td>
+	  </tr>
+	  <tr>
+		<td>bringToFirst(scene)</td>
+		<td>把某个场景移动到最顶部</td>
+		<td>xengine.director.bringToFirst(scene)</td>
+	  </tr>
+	  <tr>
+		<td>bringToLast(scene)</td>
+		<td>把某个场景移动到最底部</td>
+		<td>xengine.director.bringToLast(scene)</td>
+	  </tr>
+	  <tr>
+		<td>back(scene)</td>
+		<td>场景后移</td>
+		<td>xengine.director.back(scene)</td>
+	  </tr>
+	  <tr>
+		<td>forward(scene)</td>
+		<td>场景前移</td>
+		<td>xengine.director.forward(scene)</td>
+	  </tr>
+	  <tr>
+		<td>getCurrentScene()</td>
+		<td>获取当前场景,顶部场景为当前场景</td>
+		<td>xengine.director.getCurrentScene()</td>
+	  </tr>
+	  <tr>
+		<td>clearAll()</td>
+		<td>清除所有场景</td>
+		<td>xengine.director.clearAll()</td>
+	  </tr>
+  </table>
+  <table id="Sprite" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.Sprite(游戏精灵类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>owner</td>
+		<td>拥有者,指向场景对象</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>x</td>
+		<td>精灵的x坐标</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>y</td>
+		<td>精灵yx坐标</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>x</td>
+		<td>精灵的x坐标</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>w</td>
+		<td>精灵的宽度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>h</td>
+		<td>精灵的高度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>dx</td>
+		<td>精灵的x方向的速度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>dy</td>
+		<td>精灵的y方向的速度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>vx</td>
+		<td>精灵的x方向的加速度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>vy</td>
+		<td>精灵的y方向的加速度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>deg</td>
+		<td>精灵的角度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>zIdx</td>
+		<td>z-index,数字越小越先渲染</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>isVisible</td>
+		<td>是否可见</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>canRemove</td>
+		<td>是否可移除</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>anims</td>
+		<td>帧动画集合对象</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>isXFlip</td>
+		<td>是否水平反向</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>isYFlip</td>
+		<td>是否垂直反向</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>scaleX</td>
+		<td>x缩放比例</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>scaleY</td>
+		<td>y缩放比例</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>bBox</td>
+		<td>包围盒</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>tags</td>
+		<td>tagPoint</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>moveTo(x,y) </td>
+		<td>设置位置</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>move(xOff,yOff)</td>
+		<td>移动</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>moveStep()</td>
+		<td>移动一小步</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>rot(deg)</td>
+		<td>旋转deg度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>update()</td>
+		<td>更新方法，每一帧调用</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>render(ctx)</td>
+		<td>渲染方法，每一帧调用,ctx是canvas环境</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>isMouseIn()</td>
+		<td>判断鼠标当前坐标是否在当前渲染对象区域中</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>setAnims(animations,currAnimName)</td>
+		<td>设置帧动画集合对象</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>addAnim(name,frames,isCurrent)</td>
+		<td>设置动画集</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>removeAnim(name)</td>
+		<td>删除指定名称动作</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>setCAnim(name)</td>
+		<td>按名称设置当前动作</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>setAnimSpeed(sp)</td>
+		<td>设置动画速度</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>getAnim(name)</td>
+		<td>按名称获取动作</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>getCurrentAnim()</td>
+		<td>获取当前运行的动画</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>getCurrFrame()</td>
+		<td>获取当前运行帧</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>getNextFrame()</td>
+		<td>获取下一帧信息</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>offScreenRemove()</td>
+		<td>超出屏幕移除该对象</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="EventListener" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.EventListener(游戏监听类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>enabled</td>
+		<td>布尔值，监听器是否生效</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>onBeforeRender</td>
+		<td>游戏主循环执行渲染操作前触发</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>onAfterRender</td>
+		<td>游戏主循环执行渲染操作后触发</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="FrameState" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.FrameState(游戏系统类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>属性</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>maxFrame</td>
+		<td>最大帧数</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>minFrame</td>
+		<td>最小帧数</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>curFrame</td>
+		<td>即时帧数</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>curTime</td>
+		<td>当前时间</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>elapseTime</td>
+		<td>每帧流逝的时间</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>startTime</td>
+		<td>用于统计每秒开始时间</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>startFrame</td>
+		<td>统计每秒总帧数</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="Mouse" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.Mouse(游戏鼠标类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>gTarget()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gPos(v3)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gX()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gY()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gW()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gBtnState(btn)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gXOff()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>gYOff()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>gCPT()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>cCHE()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>sDLG(eName,fn)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>dDLG(eName)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>sMode(mode)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="Touch" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.Touch(游戏触摸类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>gTarget()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gPos(v3)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gX()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gY()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gState()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>gXOff()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>gYOff()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>gCPT()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>cCHE()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>sDLG(eName,fn)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>dDLG(eName)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	   <tr>
+		<td>sMode(mode)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+  </table>
+   <table id="Key" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.Key(游戏键盘类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>pressed()</td>
+		<td>判断是否按键</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>clearCache()</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>sMode(mode)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="fn" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.fn(游戏帮助类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>bind(object,fun)</td>
+		<td>改变函数内的this指向</td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>has(obj,key)</td>
+		<td></td>
+		<td></td>
+	  </tr>
+	  <tr>
+		<td>uniqueId(prefix)</td>
+		<td>返回一个唯一的标识</td>
+		<td></td>
+	  </tr>
+  </table>
+  <table id="Class" class="title" width="98%" height="50" border="0" align="center" cellpadding="0">
+    <tr>
+      <td><h3>xengine.Class(游戏继承类)</h3></td>
+    </tr>
+  </table>
+  <table width="98%" border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tr>
+		<td width="14%" align="center" bgcolor="#627c9d"><span>方法</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>说明</span></td>
+		<td width="43%" align="center" bgcolor="#627c9d"><span>示例</span></td>
+	  </tr>
+	  <tr>
+		<td>extend(options)</td>
+		<td>函数继承</td>
+		<td></td>
+	  </tr>
+  </table>
+</body>
+</html>

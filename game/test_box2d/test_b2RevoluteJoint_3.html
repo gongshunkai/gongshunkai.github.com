@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="full-screen" content="yes"/>
+<meta name="screen-orientation" content="portrait"/>
+<meta name="x5-fullscreen" content="true"/>
+<meta name="360-fullscreen" content="true"/>
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<title>无标题文档</title>
+<style>
+body, canvas, div {
+-moz-user-select:none;
+-webkit-user-select:none;
+-ms-user-select:none;
+-khtml-user-select:none;
+-webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+}
+body{margin:0px;padding:0px;background:#fff;}
+</style>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="../libs/box2d.js"></script>
+<script src="../engine/xengine.js"></script>
+<script src="../engine/xengine.b2d.js"></script>
+</head>
+
+<body>
+<script>
+xengine.game.run(function(){
+	//刚体基类
+	var bodyBase = xengine.Sprite.extend({
+		init:function(options){
+			options || (options = {});
+			this.type = Math.abs(options.type || 0);
+			this._super(options);
+		},
+		update:function(){
+			var pos = this.b2Obj.body.GetWorldCenter();
+			this.x = xengine.EasyB2D.lenToScn(pos.x);
+			this.y = xengine.EasyB2D.lenToScn(pos.y);
+			this.uData = this.b2Obj.body.GetUserData();
+			this.deg = this.b2Obj.body.GetAngle();
+		},
+		render:function(ctx){
+			ctx.save();		    
+			ctx.beginPath();
+			ctx.strokeStyle = "yellow";
+			ctx.lineWidth = 1;
+			ctx.translate(this.x,this.y);
+			ctx.rotate(this.deg+this.uData.deg);
+			ctx.strokeRect(-this.uData.width*0.5,-this.uData.height*0.5,this.uData.width,this.uData.height);
+			ctx.restore();
+		}
+	});
+	//矩形
+	var Box = bodyBase.extend({
+		init:function(options){
+			this._super(options);
+			this.b2Obj = new xengine.EasyB2D.CreateBox({posX:this.x,posY:this.y,deg:this.deg,width:this.w,height:this.h,type:this.type});
+		}
+	});
+	//圆形
+	var Circle = bodyBase.extend({
+		init:function(options){
+			options || (options = {});
+			this.r = options.r || 1;
+			this._super(options);
+			this.b2Obj = new xengine.EasyB2D.CreateCircle({posX:this.x,posY:this.y,radius:this.r,type:this.type});
+		},
+		render:function(ctx){
+			ctx.save();		    
+			ctx.beginPath();
+			ctx.strokeStyle = "yellow";
+			ctx.lineWidth = 1;
+			ctx.translate(this.x,this.y);
+			ctx.moveTo(0,0);
+			ctx.rotate(this.deg);
+			ctx.arc(0,0,this.uData.radius,0,Math.PI*2);			 
+			ctx.stroke();		
+			ctx.restore();
+		}
+	});
+	
+	var Scene = xengine.Scene.extend({
+		init:function(options){
+			this._super(options);
+			
+			this.dynamicBody = xengine.EasyB2D.b2Body.b2_dynamicBody;
+			this.ASPEED_LIMIT_PLAYER = 15/180*Math.PI*30;
+			
+			xengine.EasyB2D.createWorld(0,10);
+			xengine.EasyB2D.setDebugDraw(this.ctx,{fillalpha:0.5,alpha:1});
+			//围绕canvas四周的墙体
+			xengine.EasyB2D.createWrapWall({w:this.cvs.outerWidth(),h:this.cvs.outerHeight()});
+
+			var box1 = new Box({x:50,y:150,w:100,h:30});
+			this.addChild(box1);
+			
+			var box2 = new Box({x:550,y:150,w:100,h:30});
+			this.addChild(box2);
+			
+			var bodyB = new Box({x:300,y:240,w:280,h:10,type:this.dynamicBody});
+			this.addChild(bodyB);
+			
+			this.circle = new Circle({x:50,y:100,r:20,type:this.dynamicBody});
+			xengine.EasyB2D.setFixture(this.circle.b2Obj.body,{density:10,friction:10});
+			this.addChild(this.circle);
+					
+			var bodyA = xengine.EasyB2D.getEmptyBody();
+			var anchor = bodyB.b2Obj.body.GetWorldCenter();
+			var revoluteJoint = xengine.EasyB2D.createRevoluteJoint(bodyA,bodyB.b2Obj.body,anchor);
+			revoluteJoint.EnableLimit(true);
+			revoluteJoint.SetLimits(-Math.PI/6,Math.PI/6);
+			revoluteJoint.EnableMotor(true);
+			revoluteJoint.SetMaxMotorTorque(10);
+			revoluteJoint.SetMotorSpeed(0);
+			
+			this.resize();
+		}
+	});
+	
+	var sc = new Scene({w:600,h:400,color:'#333'});
+	xengine.director.push(sc);
+	
+	sc.addListener(new xengine.EventListener({
+		"beforeRender":function(){
+			xengine.EasyB2D.updateWorld(60);
+		},
+		"afterRender":function(){
+			
+		}
+	}));
+				
+	xengine.Mouse.sDLG("down",function(e){
+		var cr = sc.getCvsRect();
+		var mousePoint = xengine.EasyB2D.mouseToB2d(e.clientX,e.clientY,cr.x,cr.y,cr.w,cr.h,sc.w,sc.h);
+		var bodyAtMouse = xengine.EasyB2D.getBodyAt(mousePoint.x,mousePoint.y);
+		if(bodyAtMouse != null){
+			xengine.EasyB2D.dragBodyTo(bodyAtMouse,mousePoint.x,mousePoint.y,mousePoint.x,mousePoint.y,20,false);
+		}
+	});
+	xengine.Mouse.sDLG("move",function(e){								  
+		if (xengine.EasyB2D.mouseJoint != null) {
+			var cr = sc.getCvsRect();
+			var mousePoint = xengine.EasyB2D.mouseToB2d(e.clientX,e.clientY,cr.x,cr.y,cr.w,cr.h,sc.w,sc.h);
+			var mouseVector = new xengine.EasyB2D.b2Vec2(
+				xengine.EasyB2D.lenToB2d(mousePoint.x),
+				xengine.EasyB2D.lenToB2d(mousePoint.y)
+			);
+			xengine.EasyB2D.mouseJoint.SetTarget(mouseVector);
+		}
+	});
+	xengine.Mouse.sDLG("up",function(e){
+		xengine.EasyB2D.stopDragBody();
+	});
+	
+	
+	var limitAngularVelocity = function(body,speedMax){
+		var av = body.GetAngularVelocity();
+		if(Math.abs(av) > speedMax){
+			av = Math.abs(av)/av * speedMax;
+			body.SetAngularVelocity(av);
+		}
+	}
+		
+	xengine.Key.setDLG("down",function(e){
+		if(e.keyCode == xengine.Key.LEFT){
+			sc.circle.b2Obj.body.ApplyTorque(-40);
+		}else if(e.keyCode == xengine.Key.RIGHT){
+			sc.circle.b2Obj.body.ApplyTorque(40);
+		}else if(e.keyCode == xengine.Key.DOWN){
+			//sc.circle.b2Obj.body.ApplyImpulse(new xengine.EasyB2D.b2Vec2(0,2),sc.circle.b2Obj.body.GetWorldCenter());
+		}else if(e.keyCode == xengine.Key.UP){
+			var impulse = new xengine.EasyB2D.b2Vec2();
+			impulse.y = -sc.circle.b2Obj.body.GetMass()*2;
+			sc.circle.b2Obj.body.ApplyImpulse(impulse,sc.circle.b2Obj.body.GetWorldCenter());
+			//sc.circle.b2Obj.body.GetPosition().y+=sc.circle.b2Obj.body.GetLinearVelocity().y;
+			//sc.circle.b2Obj.body.ApplyImpulse(new xengine.EasyB2D.b2Vec2(0,-2),sc.circle.b2Obj.body.GetWorldCenter());	
+		}
+		limitAngularVelocity(sc.circle.b2Obj.body,this.ASPEED_LIMIT_PLAYER);
+	});
+	
+	window.onresize = function(){ sc.resize(); }
+},60);
+</script>
+</body>
+</html>

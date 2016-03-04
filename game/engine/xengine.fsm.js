@@ -5,14 +5,14 @@
  * xengine 游戏状态机类
  */
 (function(root,xengine){
-	xengine.fn.extend(xengine, {
+	xengine.$.extend(xengine, {
 		//状态抽象类
 		State:xengine.Class.extend({
 			init:function(type,context){
 				this.ctx = context;
 				this.type = type;
 			},
-			//调用context changeState方法转换到其他状态
+			//调用context change方法转换到其他状态
 			change:function(){
 				return;
 			},

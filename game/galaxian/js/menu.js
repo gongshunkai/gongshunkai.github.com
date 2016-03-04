@@ -5,7 +5,7 @@
 var Menu = xengine.Sprite.extend({
 	init:function(options){
 		var params = {color:'black'};
-		options = xengine.fn.extend(params, options || {});
+		options = xengine.$.extend(params, options || {});
 		
 		this._super(options);
 		this.color = options.color;
@@ -28,7 +28,7 @@ var Menu = xengine.Sprite.extend({
 var Restart = xengine.Sprite.extend({
 	init:function(options){
 		var params = {color:'black',r:0};
-		options = xengine.fn.extend(params, options || {});
+		options = xengine.$.extend(params, options || {});
 		
 		this._super(options);
 		this.color = options.color;
