@@ -143,14 +143,12 @@
 				}
 			});
 			//触摸事件
-			xengine.Touch.sDLG("start",function(e){							  
-				var touch = e.touches[0]; //获取第一个触点
-				posX = touch.clientX - sc.player.x;
+			xengine.Touch.sDLG("start",function(e){
+				posX = e.clientX - sc.player.x;
 			});
-			xengine.Touch.sDLG("move",function(e){								  
-				var touch = e.touches[0]; //获取第一个触点
-				if(xengine.Touch.gState() && touch.clientX-posX > sc.x+sc.player.w && touch.clientX-posX < sc.w-sc.player.w){
-					sc.player.x = touch.clientX-posX;
+			xengine.Touch.sDLG("move",function(e){
+				if(xengine.Touch.gState() && e.clientX-posX > sc.x+sc.player.w && e.clientX-posX < sc.w-sc.player.w){
+					sc.player.x = e.clientX-posX;
 				}
 			});
 			
