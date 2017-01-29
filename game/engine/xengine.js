@@ -312,7 +312,6 @@
 			e = e.originalEvent.targetTouches[0];
 			_T.setTouchState(1);
 			_T.setTarget(e);
-			alert(e.pageX+','+e.pageY);
 			_T.ox = e.pageX;
 			_T.oy = e.pageY;
 			_T.dlgEvent.start && _T.dlgEvent.start(e);
