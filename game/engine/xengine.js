@@ -149,7 +149,7 @@
 			this.curTime = nowTime;
 		}
 	};
-	
+
 	// MagicMouse
 	// -------------
 	var MagicMouse = {
@@ -166,7 +166,7 @@
 			MagicMouse.target = e.target;
 		},
 		//设置位置
-		setMPos:function(e){
+		setPos:function(e){
 			MagicMouse.x = e.pageX;
 			MagicMouse.y = e.pageY;
 		},
@@ -234,7 +234,7 @@
 		}
 		var doMove = function(e){
 			e.preventDefault();
-			_M.setMPos(e);
+			_M.setPos(e);
 			_M.setTarget(e);
 			if(_M.isMoveCacheEnable){
 				_M.addToMPCache(_M.x,_M.y);
@@ -288,11 +288,12 @@
 	var Touch = xengine.Touch = (function(){
 
 		var _T = xengine.$.extend(MagicMouse,{
-			ts:0,//触摸状态
+			ts:[],//触摸状态
 			dlgEvent:{'start':null,'move':null,'end':null},//代理事件处理	
 			//设置触摸状态
-			setTouchState:function(flag){
-				_T.ts = flag;
+			setTouchState:function(targetTouches,flag){
+				for(var i in targetTouches)
+					_T.ts[i] = flag;
 			}
 		});
 
@@ -309,15 +310,16 @@
 			} 	 		 
 		}
 		var doStart = function(e){
-			e = e.originalEvent.targetTouches[0];
-			_T.setTouchState(1);
+			e = e.originalEvent.targetTouches;
+			_T.setTouchState(e,1);
+			e = e[0];
 			_T.setTarget(e);
 			_T.ox = e.pageX;
 			_T.oy = e.pageY;
 			_T.dlgEvent.start && _T.dlgEvent.start(e);
 		}
 		var doMove = function(e){
-			//e.preventDefault();
+			e.preventDefault();
 			e = e.originalEvent.targetTouches[0];
 			_T.setPos(e);
 			_T.setTarget(e);
@@ -327,8 +329,9 @@
 			_T.dlgEvent.move && _T.dlgEvent.move(e);
 		}
 		var doEnd = function(e){
-			e = e.originalEvent.changedTouches[0];
-			_T.setTouchState(0);
+			e = e.originalEvent.changedTouches;
+			_T.setTouchState(e,0);
+			e = e[0];
 			_T.setTarget(e);
 			_T.dlgEvent.end && _T.dlgEvent.end(e);
 		}
