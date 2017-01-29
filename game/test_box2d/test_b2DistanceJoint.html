@@ -203,10 +203,9 @@ xengine.game.run(function(){
 	$(window).on('touchstart',function(e){
 		e.preventDefault();
 	});
-	/*$(document).find('*').on('touchmove',function(e){
-		e = e.originalEvent.targetTouches[0];
+	$(window).find('*').on('touchstart',function(e){
 		e.stopPropagation();
-	});*/
+	});
 
 },60);
 </script>
