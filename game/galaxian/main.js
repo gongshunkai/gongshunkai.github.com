@@ -168,7 +168,7 @@
 			};*/
 			
 			win.onresize = function(){ sc.resize(); }
-		},20);
+		},30);
     });
 
 })(this);
