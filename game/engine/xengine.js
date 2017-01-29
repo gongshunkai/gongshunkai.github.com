@@ -202,7 +202,7 @@
 	//鼠标类
 	var Mouse = xengine.Mouse = (function(){
 
-		var _M = xengine.$.extend(MagicMouse,{
+		var _M = xengine.$.extend({},MagicMouse,{
 			w:0,//鼠标中键滚动次数
 			bs:[0,0,0],//鼠标状态
 			dlgEvent:{'up':null,'down':null,'click':null,'dbclick':null,'move':null,'wheel':null},//代理事件处理
@@ -287,7 +287,7 @@
 	//触摸类
 	var Touch = xengine.Touch = (function(){
 
-		var _T = xengine.$.extend(MagicMouse,{
+		var _T = xengine.$.extend({},MagicMouse,{
 			ts:0,//触摸状态
 			dlgEvent:{'start':null,'move':null,'end':null},//代理事件处理	
 			//设置触摸状态
@@ -312,6 +312,7 @@
 			e = e.originalEvent.targetTouches[0];
 			_T.setTouchState(1);
 			_T.setTarget(e);
+			alert(e.pageX+','+e.pageY);
 			_T.ox = e.pageX;
 			_T.oy = e.pageY;
 			_T.dlgEvent.start && _T.dlgEvent.start(e);
