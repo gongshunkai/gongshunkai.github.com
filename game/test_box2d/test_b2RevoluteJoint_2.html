@@ -238,7 +238,13 @@ xengine.game.run(function(){
 	xengine.Touch.sDLG("move",dragMove);
 	xengine.Touch.sDLG("end",dragEnd);
 	
-	window.onresize = function(){ sc.resize(); }
+	$(window).on('resize',function(){
+		sc.resize();
+	});
+
+	$(window).on('touchstart',function(e){
+		e.preventDefault();
+	});
 },60);
 </script>
 </body>
