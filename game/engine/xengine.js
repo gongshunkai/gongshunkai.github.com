@@ -288,12 +288,11 @@
 	var Touch = xengine.Touch = (function(){
 
 		var _T = xengine.$.extend(MagicMouse,{
-			ts:[],//触摸状态
+			ts:0,//触摸状态
 			dlgEvent:{'start':null,'move':null,'end':null},//代理事件处理	
 			//设置触摸状态
-			setTouchState:function(targetTouches,flag){
-				for(var i in targetTouches)
-					_T.ts[i] = flag;
+			setTouchState:function(flag){
+				_T.ts = flag;
 			}
 		});
 
@@ -310,16 +309,15 @@
 			} 	 		 
 		}
 		var doStart = function(e){
-			e = e.originalEvent.targetTouches;
-			_T.setTouchState(e,1);
-			e = e[0];
+			e = e.originalEvent.targetTouches[0];
+			_T.setTouchState(1);
 			_T.setTarget(e);
 			_T.ox = e.pageX;
 			_T.oy = e.pageY;
 			_T.dlgEvent.start && _T.dlgEvent.start(e);
 		}
 		var doMove = function(e){
-			e.preventDefault();
+			//e.preventDefault();
 			e = e.originalEvent.targetTouches[0];
 			_T.setPos(e);
 			_T.setTarget(e);
@@ -329,9 +327,8 @@
 			_T.dlgEvent.move && _T.dlgEvent.move(e);
 		}
 		var doEnd = function(e){
-			e = e.originalEvent.changedTouches;
-			_T.setTouchState(e,0);
-			e = e[0];
+			e = e.originalEvent.changedTouches[0];
+			_T.setTouchState(0);
 			_T.setTarget(e);
 			_T.dlgEvent.end && _T.dlgEvent.end(e);
 		}
