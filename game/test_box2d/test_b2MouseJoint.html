@@ -128,7 +128,7 @@ xengine.game.run(function(){
 		}
 	}));
 				
-	xengine.Mouse.sDLG("down",function(e){
+	var dragStart = function(e){
 		var cr = sc.getCvsRect();
 		var mousePoint = xengine.EasyB2D.mouseToB2d(e.clientX,e.clientY,cr.x,cr.y,cr.w,cr.h,sc.w,sc.h);
 		var bodyAtMouse = xengine.EasyB2D.getBodyAt(mousePoint.x,mousePoint.y);
@@ -136,8 +136,9 @@ xengine.game.run(function(){
 			var bodyPos = sc.circle.b2Obj.body.GetWorldCenter(); 
 			xengine.EasyB2D.dragBodyTo(sc.circle.b2Obj.body,mousePoint.x,mousePoint.y,xengine.EasyB2D.lenToScn(bodyPos.x),xengine.EasyB2D.lenToScn(bodyPos.y),20,false);
 		}
-	});
-	xengine.Mouse.sDLG("move",function(e){								  
+	};		
+	
+	var dragMove = function(e){
 		if (xengine.EasyB2D.mouseJoint != null) {
 			var cr = sc.getCvsRect();
 			var mousePoint = xengine.EasyB2D.mouseToB2d(e.clientX,e.clientY,cr.x,cr.y,cr.w,cr.h,sc.w,sc.h);
@@ -147,12 +148,24 @@ xengine.game.run(function(){
 			);
 			xengine.EasyB2D.mouseJoint.SetTarget(mouseVector);
 		}
-	});
-	xengine.Mouse.sDLG("up",function(e){
+	};
+
+	var dragEnd = function(){
 		xengine.EasyB2D.stopDragBody();
-	});
+	};
 			
-	window.onresize = function(){ sc.resize(); }
+	//鼠标事件		
+	xengine.Mouse.sDLG("down",dragStart);
+	xengine.Mouse.sDLG("move",dragMove);
+	xengine.Mouse.sDLG("up",dragEnd);
+	//触摸事件
+	xengine.Touch.sDLG("start",dragStart);
+	xengine.Touch.sDLG("move",dragMove);
+	xengine.Touch.sDLG("end",dragEnd);
+
+	$(window).on('resize',function(){
+		sc.resize();
+	});
 },60);
 </script>
 </body>
