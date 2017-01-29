@@ -149,65 +149,70 @@
 			this.curTime = nowTime;
 		}
 	};
-
 	
+	// MagicMouse
+	// -------------
+	var MagicMouse = {
+		x:0,
+		y:0,  
+		ox:0,
+		oy:0,
+		target:null,
+		isMoveCacheEnable:false,//是否启用记录移动点缓存
+		cache:[],//记录移动点缓存
+		_MAX_POINT_CACHE:60,//默认记录30个点的缓存
+		//设置目标
+		setTarget:function(e){
+			MagicMouse.target = e.target;
+		},
+		//设置位置
+		setMPos:function(e){
+			MagicMouse.x = e.pageX;
+			MagicMouse.y = e.pageY;
+		},
+		//添加点到Cache中
+		addToMPCache:function(x,y){
+			if(MagicMouse.cache.length > MagicMouse._MAX_POINT_CACHE){
+				MagicMouse.cache.shift();
+				MagicMouse.cache.shift();
+			}
+			MagicMouse.cache.push(x);
+			MagicMouse.cache.push(y);
+		},
+		//获取缓冲区中最前的坐标，缓冲模式下用
+		get:function(){ 
+			var x = MagicMouse.cache.shift(),
+		 		y = MagicMouse.cache.shift();
+			return [x,y];
+		},
+		//清除所有缓存
+		clearCache:function(){
+			MagicMouse.cache=[];
+		},
+		//设置事件代理
+		setDelegatedEvent:function(eName,fn){
+			MagicMouse.dlgEvent[eName] = fn;
+		},
+		//删除事件代理
+		delDelegatedEvent:function(eName){
+			MagicMouse.dlgEvent[eName] = null;
+		}
+	};
+
 	//鼠标类
 	var Mouse = xengine.Mouse = (function(){
-		var _M = {
-			x:0,
-			y:0,  
-			ox:0,
-			oy:0,
+
+		var _M = xengine.$.extend(MagicMouse,{
 			w:0,//鼠标中键滚动次数
-			bs:[0,0,0],//鼠标状态,
-			target:null,
-			isMoveCacheEnable:false,//是否启用记录移动点缓存
-			cache:[],//记录鼠标移动点缓存
-			dlgEvent:{"up":null,"down":null,"click":null,"dbclick":null,"move":null,"wheel":null}//代理事件处理
-		};   
-		//默认记录30个点的缓存
-		var _MAX_POINT_CACHE = 60;
-		var eWeelDelta = 120;
-		//设置目标
-		var setTarget = function(e){
-			_M.target = e.target;
-		}
-		//设置鼠标位置
-		var setMPos = function(e){
-			_M.x = e.pageX;
-			_M.y = e.pageY;
-		}
-		//设置鼠标按键状态
-		var setMBtnState = function(e,flag){
-			_M.bs[e.button] = flag;
-		}
-		//添加点到Cache中
-		var addToMPCache = function(x,y){
-			if(_M.cache.length > _MAX_POINT_CACHE){
-				_M.cache.shift();
-				_M.cache.shift();
+			bs:[0,0,0],//鼠标状态
+			dlgEvent:{'up':null,'down':null,'click':null,'dbclick':null,'move':null,'wheel':null},//代理事件处理
+			eWeelDelta:120,
+			//设置鼠标按键状态
+			setMBtnState:function(e,flag){
+				_M.bs[e.button] = flag;
 			}
-			_M.cache.push(x);
-			_M.cache.push(y);
-		}
-		//获取缓冲区中最前的坐标，缓冲模式下用
-		var get = function(){ 
-			var x = _M.cache.shift(),
-		 		y = _M.cache.shift();
-			return [x,y];
-		}
-		//清除所有缓存
-		var clearCache = function(){
-			_M.cache=[];
-		}
-		//设置事件代理
-		var setDelegatedEvent = function(eName,fn){
-			_M.dlgEvent[eName] = fn;
-		}
-		//删除事件代理
-		var delDelegatedEvent = function(eName){
-			_M.dlgEvent[eName] = null;
-		}
+		});
+
 		//设置是否可用
 		var setEnabled = function(flag){
 			if(flag){
@@ -229,23 +234,23 @@
 		}
 		var doMove = function(e){
 			e.preventDefault();
-			setMPos(e);
-			setTarget(e);
+			_M.setMPos(e);
+			_M.setTarget(e);
 			if(_M.isMoveCacheEnable){
-				addToMPCache(_M.x,_M.y);
+				_M.addToMPCache(_M.x,_M.y);
 			}
 			_M.dlgEvent.move && _M.dlgEvent.move(e);
 		}
 		var doDown = function(e){
-			setMBtnState(e,1);
-			setTarget(e);
+			_M.setMBtnState(e,1);
+			_M.setTarget(e);
 			_M.ox = e.pageX;
 			_M.oy = e.pageY;
 			_M.dlgEvent.down && _M.dlgEvent.down(e);
 		}
 		var doUp = function(e){
-			setMBtnState(e,0);
-			setTarget(e);
+			_M.setMBtnState(e,0);
+			_M.setTarget(e);
 			_M.dlgEvent.up && _M.dlgEvent.up(e);
 		}
 		var doClick = function(e){	   
@@ -258,8 +263,10 @@
 			_M.w += e.delta;
 			_M.dlgEvent.doWheel && _M.dlgEvent.doWheel(e);  
 		}
+
 		//初始化
 		setEnabled(true);
+
 		return {
 			gTarget:function(){return _M.target;},
 			gPos:function(v3){v3.x = _M.x;v3.y = _M.y;v3.z = _M.w},
@@ -269,69 +276,27 @@
 			gBtnState:function(btn){return _M.bs[btn]; },
 			gXOff:function(){return _M.x-_M.ox},
 			gYOff:function(){return _M.y-_M.oy},
-			gCPT:function(){ return get();},
-			cCHE:function(){ clearCache();},
-			sDLG:function(eName,fn){setDelegatedEvent(eName,fn);},
-			dDLG:function(eName){delDelegatedEvent(eName);},
+			gCPT:function(){ return _M.get();},
+			cCHE:function(){ _M.clearCache();},
+			sDLG:function(eName,fn){_M.setDelegatedEvent(eName,fn);},
+			dDLG:function(eName){_M.delDelegatedEvent(eName);},
 			sMode:function(mode){_M.isMoveCacheEnable = (mode===1);}//0:立即模式，1:缓冲模式
 		};
 	})();
-	
+
 	//触摸类
 	var Touch = xengine.Touch = (function(){
-		var _T = {
-			x:0,
-			y:0,  
-			ox:0,
-			oy:0,
-			ts:0,//触摸状态,
-			target:null,
-			isTouchCacheEnable:false,//是否启用记录移动点缓存
-			cache:[],//记录触摸移动点缓存
-			dlgEvent:{"start":null,"move":null,"end":null}//代理事件处理
-		};   
-		//默认记录30个点的缓存
-		var _MAX_POINT_CACHE = 60;
-		//设置目标
-		var setTarget = function(e){
-			_T.target = e.target;
-		}
-		//设置触摸位置
-		var setPos = function(e){
-			_T.x = e.pageX;
-			_T.y = e.pageY;
-		}
-		//设置触摸状态
-		var setTouchState = function(flag){
-			_T.ts = flag;
-		}
-		//添加点到Cache中
-		var addToMPCache = function(x,y){
-			if(_T.cache.length > _MAX_POINT_CACHE){
-				_T.cache.shift();
-				_T.cache.shift();
+
+		var _T = xengine.$.extend(MagicMouse,{
+			ts:[],//触摸状态
+			dlgEvent:{'start':null,'move':null,'end':null},//代理事件处理	
+			//设置触摸状态
+			setTouchState:function(targetTouches,flag){
+				for(var i in targetTouches)
+					_T.ts[i] = flag;
 			}
-			_T.cache.push(x);
-			_T.cache.push(y);
-		}
-		//获取缓冲区中最前的坐标，缓冲模式下用
-		var get = function(){ 
-			var x = _T.cache.shift(),
-		 		y = _T.cache.shift();
-			return [x,y];
-		}
-		//清除所有缓存
-		var clearCache = function(){
-			_T.cache=[];
-		}
-		//设置事件代理
-		var setDelegatedEvent = function(eName,fn){
-			_T.dlgEvent[eName] = fn;
-		}
-		//删除事件代理
-		var delDelegatedEvent = function(eName){
-			_T.dlgEvent[eName] = null;
-		}
+		});
+
 		//设置是否可用
 		var setEnabled = function(flag){
 			if(flag){
@@ -345,30 +310,35 @@
 			} 	 		 
 		}
 		var doStart = function(e){
-			e = e.originalEvent.targetTouches[0];
-			setTouchState(1);
-			setTarget(e);
+			e = e.originalEvent.targetTouches;
+			_T.setTouchState(e,1);
+			e = e[0];
+			_T.setTarget(e);
 			_T.ox = e.pageX;
 			_T.oy = e.pageY;
 			_T.dlgEvent.start && _T.dlgEvent.start(e);
 		}
 		var doMove = function(e){
+			e.preventDefault();
 			e = e.originalEvent.targetTouches[0];
-			setPos(e);
-			setTarget(e);
+			_T.setPos(e);
+			_T.setTarget(e);
 			if(_T.isTouchCacheEnable){
-				addToMPCache(_T.x,_T.y);
+				_T.addToMPCache(_T.x,_T.y);
 			}
 			_T.dlgEvent.move && _T.dlgEvent.move(e);
 		}
 		var doEnd = function(e){
-			e = e.originalEvent.changedTouches[0];
-			setTouchState(0);
-			setTarget(e);
+			e = e.originalEvent.changedTouches;
+			_T.setTouchState(e,0);
+			e = e[0];
+			_T.setTarget(e);
 			_T.dlgEvent.end && _T.dlgEvent.end(e);
 		}
+
 		//初始化
 		setEnabled(true);
+
 		return {
 			gTarget:function(){return _T.target;},
 			gPos:function(v3){v3.x = _T.x;v3.y = _T.y;},
@@ -377,14 +347,15 @@
 			gState:function(){return _T.ts; },
 			gXOff:function(){return _T.x-_T.ox},
 			gYOff:function(){return _T.y-_T.oy},
-			gCPT:function(){ return get();},
-			cCHE:function(){ clearCache();},
-			sDLG:function(eName,fn){setDelegatedEvent(eName,fn);},
-			dDLG:function(eName){delDelegatedEvent(eName);},
+			gCPT:function(){ return _T.get();},
+			cCHE:function(){ _T.clearCache();},
+			sDLG:function(eName,fn){_T.setDelegatedEvent(eName,fn);},
+			dDLG:function(eName){_T.delDelegatedEvent(eName);},
 			sMode:function(mode){_T.isTouchCacheEnable = (mode===1);}//0:立即模式，1:缓冲模式
 		};
+
 	})();
-   
+	
 	//键盘类
 	var Key = xengine.Key = (function(){
 		var _K = {  
