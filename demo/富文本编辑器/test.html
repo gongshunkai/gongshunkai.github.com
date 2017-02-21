@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-sacle=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/font-awesome.min.css">
+<!--[if IE 7]>
+<link rel="stylesheet" href="bootstrap/css/font-awesome-ie7.min.css">
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="editor.css">
+<title>富文本编辑器</title>
+</head>
+<body>
+
+
+<div id="editor-wrap" class="editor-wrap">
+	<!-- <div class="toolbar">
+	      <ul class="list-inline">
+	        <li><button type="button" class="btn btn-default"><i class="icon-bold"></i></button></li>
+	        <li><button type="button" class="btn btn-default"><i class="icon-italic"></i></button></li>
+	        <li><button type="button" class="btn btn-default"><i class="icon-underline"></i></button></li>
+	        <li><button type="button" class="btn btn-default"><i class="icon-strikethrough"></i></button></li>
+	        <li class="dropdown">
+	          <button type="button" class="btn btn-default"><i class="icon-tint"></i> <i class="caret"></i></button> 
+	          <ul class="dropdown-menu">
+	            <li><a href="#">Action</a></li>
+	            <li><a href="#">Another action</a></li>
+	            <li><a href="#">Something else here</a></li>
+	            <li role="separator" class="divider"></li>
+	            <li><a href="#">Separated link</a></li>
+	            <li role="separator" class="divider"></li>
+	            <li><a href="#">One more separated link</a></li>
+	          </ul>
+	        </li>
+	        <li><i class="separator"></i></li>
+	        <li class="dialog">
+	          <button type="button" class="btn btn-default"><i class="icon-link"></i></button>
+	          <div class="dialog-box">
+	          	  <div class="arrow"></div>
+		          <div class="dialog-content">
+		          	<div class="dialog-header">sdgsg</div>
+		          	<div class="dialog-body">sdgsdfhfdhhhhdfhfdfhdg</div>
+		          	<div class="dialog-footer"><button type="button" class="btn btn-default">Insert</button></div>
+		          </div>
+	          </div>
+	        </li>
+	      </ul>
+	</div>
+	<div class="editor-body" contenteditable="true"></div> -->
+</div>
+
+<pre>
+var editor = Editor('editor-wrap',{
+	height:300,
+	toolbarButtons:'full',
+	oninitialized:function(){
+		this.setSource('< p >toolbarButtons : < strong >full< /strong >  < /p >');
+	}
+});
+</pre>
+<div class="navbar navbar-default">
+	<div class="container-fluid">
+		<form class="navbar-form navbar-left">
+			<button id="btn1" class="btn btn-warning" type="button">获取编辑器的内容</button>
+			<button id="btn2" class="btn btn-warning" type="button">切换全屏</button>
+			<button id="btn3" class="btn btn-warning" type="button">切换源代码</button>
+			<button id="btn4" class="btn btn-warning" type="button">销毁编辑器</button>
+		</form>
+	</div>
+</div>
+
+<div id="editor-wrap2"></div>
+<pre>
+var editor2 = Editor('editor-wrap2',{
+	height:300,
+	toolbarButtons:'simple',
+	oninitialized:function(){
+		this.setSource('toolbarButtons : simple  3秒后更新内容');
+		setTimeout(function(){
+			editor2.setSource('内容被更新啦！！');
+		},3000);
+	}
+});
+</pre>
+<div id="editor-wrap3"></div>
+<pre>
+var editor3 = Editor('editor-wrap3',{
+	height:300,
+	toolbarButtons:'mini',
+	oninitialized:function(){
+		this.setSource('toolbarButtons : mini  迷你模式');
+	}
+});
+</pre>
+
+	
+	<script src="editor.js"></script>
+	<script>
+		var editor = Editor('editor-wrap',{
+			height:300,
+			toolbarButtons:'full',
+			oninitialized:function(){
+				this.setSource('<p>toolbarButtons : <strong>full</strong>  </p>');
+			}
+		});
+
+		var editor2 = Editor('editor-wrap2',{
+			height:300,
+			toolbarButtons:'simple',
+			oninitialized:function(){
+				this.setSource('toolbarButtons : simple  3秒后更新内容');
+				setTimeout(function(){
+					editor2.setSource('内容被更新啦！！');
+				},3000);
+			}
+		});
+
+		var editor3 = Editor('editor-wrap3',{
+			height:300,
+			toolbarButtons:'mini',
+			oninitialized:function(){
+				this.setSource('toolbarButtons : mini  迷你模式');
+			}
+		});
+
+		
+
+		document.getElementById('btn1').onclick = function(){
+			alert(editor.getSource());
+		};
+
+		document.getElementById('btn2').onclick = function(){
+			editor.toggleFullScreen();
+		};
+
+		document.getElementById('btn3').onclick = function(){
+			editor.toggleSource();
+		};
+
+		document.getElementById('btn4').onclick = function(){
+			editor.destroy();
+		};
+	</script>
+</body>
+</html>

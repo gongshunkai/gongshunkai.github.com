@@ -153,13 +153,11 @@
 			});
 			
 			/*document.ontouchstart = function(e){
-				var touch = e.touches[0]; //获取第一个触点
-				posX = touch.pageX - sc.player.x;
+				posX = e.pageX - sc.player.x;
 				
 				document.ontouchmove = function(e){
-					var touch = e.touches[0]; //获取第一个触点
-					if(touch.pageX-posX > sc.x+sc.player.w && touch.pageX-posX < sc.w-sc.player.w){
-						sc.player.x = touch.pageX-posX;
+					if(e.pageX-posX > sc.x+sc.player.w && e.pageX-posX < sc.w-sc.player.w){
+						sc.player.x = e.pageX-posX;
 					}
 				};
 				document.ontouchend = function(){
