@@ -1,5 +1,5 @@
 .full-fix{height:100%;}
-.full-fix body{height:100%;overflow-y:hide;}
+.full-fix body{height:100%;overflow-y:hidden;}
 .full-fix .editor-wrap.full-fix{width:100% !important;height:100% !important;position:fixed;z-index:99999;}
 .full-fix .editor-wrap.full-fix .editor-body{width:100% !important;height:100% !important;position:absolute;top:33px;bottom:0;}
 .full-fix .editor-wrap.full-fix .toolbar i.icon-resize-full:before{content:"\f066";}
@@ -44,4 +44,7 @@
 .dialog-box .dialog-body ul.color li{float:left;}
 .dialog-box .dialog-body ul.color .btn{padding:12px;border:1px solid #ffffff;}
 .dialog-box .dialog-body ul.color .btn:hover{border:1px solid #222222;}
+
+.dialog-box .dialog-body .input-sm{padding:5px;}
+.dialog-box .dialog-body .checkbox{margin:10px;}
 

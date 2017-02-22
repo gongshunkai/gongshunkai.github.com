@@ -42,7 +42,7 @@
 					//页面处于正在加载的状态
 					//只要在doc.write()方法前后加上doc.open(), doc.close()就可以了
 					//IE下有权限问题
-					!isIE() && doc.open();
+					!hasBro.isIE() && doc.open();
 
 					doc.write('<!DOCTYPE html>\
 						<html>\
@@ -54,13 +54,13 @@
 						</html>'
 					);
 
-					!isIE() && doc.close();
+					!hasBro.isIE() && doc.close();
 
 					editorWin = ifr.contentWindow;
 					editorDoc = doc;
 
 					//注册事件
-					isIE() && onBeforedeactivate();
+					hasBro.isIE() && onBeforedeactivate();
 					toolBar.addEscBehaviour(doc);
 
 					//初始化完成之后执行的方法
@@ -104,7 +104,7 @@
 			
 		
 		function createRange(){
-			if(isIE())
+			if(hasBro.isIE())
 				return editorDoc.selection.createRange();
 			else
 				return editorWin.getSelection();
@@ -114,7 +114,7 @@
 
 			this.target = typeof target === 'string' ? document.getElementById(target) : target;
 
-			var params = {width:500,height:200,toolbarButtons:[],skinClassName:null,oninitialized:null};
+			var params = {height:200,toolbarButtons:[],skinClassName:null,oninitialized:null};
 			this.opts = extend(params, options || {});
 
 			//设置容器样式
@@ -211,16 +211,18 @@
 			//IE用pasteHTML，非IE用execCommand
 			_pasteHTML:function(callback) {
 
-				//doc.documentElement.focus();
-				doc.activeElement.focus();
+				if(hasBro.isFF())
+					doc.documentElement.focus();
+				else
+					doc.activeElement.focus();
 
 				var range = createRange(),
-					text = isIE() ? range.htmlText : range.text || range.toString();
+					text = hasBro.isIE() ? range.htmlText : range.text || range.toString();
 
 				//callback可以是回调函数也可以是字符串
 				var str = typeof callback === 'function' ? callback(text) : callback;
 
-				if(isIE())
+				if(hasBro.isIE())
 					range.pasteHTML(str);
 				else
 					doc.execCommand('insertHTML',false,str);
@@ -256,8 +258,11 @@
 				}else{
 
 					doc.execCommand(commandName,false,valueArgument);
-					//doc.documentElement.focus();
-					doc.activeElement.focus();
+
+					if(hasBro.isFF())
+						doc.documentElement.focus();
+					else
+						doc.activeElement.focus();
 				}	
 
 			}
@@ -584,14 +589,17 @@
 						var obj = pasteHTML(function(text){
 							return '<font color="' + valueArgument + '">' + text + '</font>';
 						});
-						if(isIE()){
+						if(hasBro.isIE()){
 							obj.range.moveStart('character',-obj.text.length);
 							obj.range.select();
 						}else{
 							var range = obj.range.getRangeAt(0);
-							range.setStart(range.startContainer,range.startOffset-1);
+							range.setStart(range.startContainer,range.startOffset-obj.text.length);
 
-							obj.doc.documentElement.focus();
+							if(hasBro.isFF())
+								obj.doc.documentElement.focus();
+							else
+								obj.doc.activeElement.focus();
 						}		
 					}
 				});
@@ -637,19 +645,24 @@
 					btn_ok:'Insert',
 					onHide:function(){
 						var input = dialog.dialog.querySelector('#inputLink'),
-							valueArgument = input.value;
+							check = dialog.dialog.querySelector('#checkLink'),
+							valueArgument = input.value,
+							checked = check.checked;
 						
 						var obj = pasteHTML(function(text){
-							return '<a href=' + valueArgument + '>' + text + '</a>';
+							return '<a href="' + valueArgument + '"' + (checked ? ' target="_blank"' : '') + '>' + text + '</a>';
 						});
-						if(isIE()){
+						if(hasBro.isIE()){
 							obj.range.moveStart('character',-obj.text.length);
 							obj.range.select();
 						}else{
 							var range = obj.range.getRangeAt(0);
 							range.setStart(range.startContainer,range.startOffset-1);
 
-							obj.doc.documentElement.focus();
+							if(hasBro.isFF())
+								obj.doc.documentElement.focus();
+							else
+								obj.doc.activeElement.focus();
 						}
 					}
 				});
@@ -660,6 +673,11 @@
 					    <div>\
 					      <input type="text" class="form-control input-sm" id="inputLink" placeholder="http://">\
 					    </div>\
+					  </div>\
+					  <div class="checkbox">\
+					    <label>\
+					      <input type="checkbox" id="checkLink"> open in new tab\
+					    </label>\
 					  </div>'
 				});
 				return dialog.get();
@@ -674,7 +692,7 @@
 						var input = dialog.dialog.querySelector('#inputImage'),
 							valueArgument = input.value;
 						
-						pasteHTML('<img src=' + valueArgument + '>');	
+						pasteHTML('<img src="' + valueArgument + '">');	
 					}
 				});
 				dialog.show({
@@ -973,9 +991,6 @@
 		toString         = ObjProto.toString,
 		hasOwnProperty   = ObjProto.hasOwnProperty;
 
-	function isIE(){
-		return document.all;
-	};
 
 	function createElement(tag,obj){
 		if(typeof tag !== 'string') return;
@@ -1180,6 +1195,44 @@
      };
   
 
+
+	var hasBro = (function() {
+
+    	var ua = null,
+    		cm = null,
+    		bros = {
+		        ie: false,
+		        ff: false,
+		        opera: false,
+		        safari: false,
+		        chrome: false,
+		        unknown: false
+		    };
+
+	    try {
+	        cm = document.compatMode;
+	    } catch(A) {}
+	    try {
+	        ua = navigator.userAgent.toLowerCase();
+	        if (ua.indexOf("msie") != -1) { bros.ie = true; }
+	        else if (ua.indexOf("firefox") != -1) { bros.ff = true; }
+	        else if (ua.indexOf("opera") != -1) { bros.opera = true; }
+	        else if (ua.indexOf("chrome") != -1) { bros.chrome = true; }
+	        else if (ua.indexOf("safari") != -1) { bros.safari = true; }
+	        else { bros.unknown = true; }
+	    } catch(A) {
+	        bros.unknown = true;
+	    }
+
+	    return{
+	    	isIE:function(){ return bros.ie; },
+	    	isFF:function(){ return bros.ff; },
+	    	isOpera:function(){ return bros.opera; },
+	    	isChrome:function(){ return bros.chrome; },
+	    	isSafari:function(){ return bros.safari; }
+	    };
+
+	})();
 
 
 
