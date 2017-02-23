@@ -8,6 +8,7 @@
 
 .toolbar{background:#ffffff;border-bottom:1px solid #ccc;box-shadow: 0 0 2px #999;padding:0 5px;}
 .toolbar ul, .toolbar li{margin:0;padding:0;min-width:auto;}
+.toolbar li.dropdown{margin:0;padding:0;border:none;}
 .toolbar .btn{border-radius:0;border:0;}
 .toolbar .btn[disabled]{cursor:default;}
 .toolbar .separator{border-left:1px solid #ccc;}
