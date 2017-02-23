@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-sacle=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="editor.css">
+<title>angular-editor</title>
+</head>
+<body>
+	<div ng-app="webapp" ng-controller="TestCtrl" class="container-fluid">
+		<ng-editor content="test"></ng-editor>
+		<table class="table">
+			<tr>
+				<td width="150px"><h4>$scope.test = </h4></td>
+				<td><textarea rows="10" cols="80" ng-model="test"></textarea></td>
+			</tr>
+		</table>
+		
+		<h4>使用方法：</h4>
+		<pre>
+&lt;link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"&gt;
+&lt;link rel="stylesheet" href="bootstrap/css/font-awesome.min.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="editor.css"&gt;
+
+&lt;script src="editor.js"&gt;&lt;/script&gt;
+&lt;script src="libs/angular.js"&gt;&lt;/script&gt;
+&lt;script src="libs/angular-editor.js"&gt;&lt;/script&gt;
+		</pre>
+
+		<pre>
+&lt;div ng-app="webapp" ng-controller="TestCtrl"&gt;
+	&lt;ng-editor content="test"&gt;&lt;/ng-editor&gt;
+&lt;/div>
+		</pre>
+
+		<pre>
+&lt;script&gt;
+
+	angular.module('webapp', [
+		'ngEditor'
+	])
+	.config(['editorConfig',function(editorConfig) {
+		editorConfig.height = 200;
+		editorConfig.toolbarButtons = ['bold','italic','fontFamily','fontSize','formatBlock','color','|','align','|','createLink','insertImage','|','fullScreen','codeView'];
+	}])
+	.controller('TestCtrl', ['$scope', function($scope){
+		$scope.test = '&lt;p&gt;test content&lt;/p&gt;';
+	}]);
+
+&lt;/script&gt;
+		</pre>
+	</div>
+
+<script src="editor.js"></script>
+<script src="libs/angular.js"></script>
+<script src="libs/angular-editor.js"></script>
+<script>
+
+	angular.module('webapp', [
+		'ngEditor'
+	])
+	.config(['editorConfig',function(editorConfig) {
+		editorConfig.height = 200;
+		editorConfig.toolbarButtons = ['bold','italic','fontFamily','fontSize','formatBlock','color','|','align','|','createLink','insertImage','|','fullScreen','codeView'];
+	}])
+	.controller('TestCtrl', ['$scope', function($scope){
+		$scope.test = '<p>test content</p>';
+	}]);
+</script>
+</body>
+</html>
