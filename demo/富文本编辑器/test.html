@@ -56,17 +56,18 @@ var editor = Editor('editor-wrap',{
 	height:300,
 	toolbarButtons:'full',
 	oninitialized:function(){
-		this.setSource('< p >toolbarButtons : < strong >full< /strong >  < /p >');
+		this.setSource('&lt;p&gt;toolbarButtons : &lt;strong&gt;full&lt;/strong&gt;  &lt;/p&gt;');
 	}
 });
 </pre>
 <div class="navbar navbar-default">
 	<div class="container-fluid">
 		<form class="navbar-form navbar-left">
-			<button id="btn1" class="btn btn-warning" type="button">获取编辑器的内容</button>
-			<button id="btn2" class="btn btn-warning" type="button">切换全屏</button>
-			<button id="btn3" class="btn btn-warning" type="button">切换源代码</button>
-			<button id="btn4" class="btn btn-warning" type="button">销毁编辑器</button>
+			<button id="btn1" class="btn btn-warning navbar-btn" type="button">获取编辑器的内容</button>
+			<button id="btn2" class="btn btn-warning navbar-btn" type="button">切换全屏</button>
+			<button id="btn3" class="btn btn-warning navbar-btn" type="button">切换源代码</button>
+			<button id="btn4" class="btn btn-warning navbar-btn" type="button">销毁编辑器</button>
+			<p class="navbar-text"><span class="badge" id="badge">0</span> 值发生了改变</p>
 		</form>
 	</div>
 </div>
@@ -105,6 +106,14 @@ var editor3 = Editor('editor-wrap3',{
 				this.setSource('<p>toolbarButtons : <strong>full</strong>  </p>');
 			}
 		});
+
+		var count = 0,
+			badge = document.getElementById('badge');
+
+		editor.on('valuechanged',function(){
+			badge.innerHTML = ++count;
+		});
+		
 
 		var editor2 = Editor('editor-wrap2',{
 			height:300,

@@ -62,10 +62,11 @@
 					//注册事件
 					hasBro.isIE() && onBeforedeactivate();
 					toolBar.addEscBehaviour(doc);
+					onInput();
 
 					//初始化完成之后执行的方法
 					context.opts.oninitialized && context.opts.oninitialized.call(context);
-
+					context.fire('initialized');
 				});
 
 				//自定义编辑器高度
@@ -100,6 +101,12 @@
 				});
 				
 			};
+
+			function onInput(){
+				addEvent(doc,'input',function(){
+					context.fire('valuechanged');
+				});
+			};
 		};
 			
 		
@@ -110,12 +117,16 @@
 				return editorWin.getSelection();
 		};
 
+
 		function Public(){
 
 			this.target = typeof target === 'string' ? document.getElementById(target) : target;
 
 			var params = {height:200,toolbarButtons:[],skinClassName:null,oninitialized:null};
 			this.opts = extend(params, options || {});
+
+			//自定义事件集合
+			this.clients = [];
 
 			//设置容器样式
 			addClass(this.target,'editor-wrap');
@@ -138,6 +149,9 @@
 			//设置源码
 			setSource:function(source){
 				doc.body.innerHTML = source;
+
+				//当编辑器内容改变时触发
+				this.fire('valuechanged');
 			},
 
 			//切换全屏
@@ -205,6 +219,7 @@
 					node.removeChild(this.target);
 					toolBar.removeEscBehaviour();
 					toolBar.buttons.length = 0;
+					this.clients.length = 0;
 				}
 			},
 
@@ -226,7 +241,7 @@
 					range.pasteHTML(str);
 				else
 					doc.execCommand('insertHTML',false,str);
-				
+
 				return {
 					doc:doc,
 					range:range,
@@ -265,6 +280,53 @@
 						doc.activeElement.focus();
 				}	
 
+			},
+
+			//绑定事件
+			on:function(key,fn){
+				if(!this.clients[key])
+					this.clients[key] = [];
+
+				//订阅的消息加进缓存列表
+				this.clients[key].push(fn);
+
+				return this;
+			},
+
+			//触发事件
+			fire:function(){
+				var key = shift.call(arguments),
+					fns = this.clients[key];
+				
+				//如果没有绑定对应的消息
+				if(!fns || fns.length === 0) return this;
+				
+				for(var i =0, fn; fn=fns[i++];)
+					fn.apply(this,arguments);
+
+				return this;
+			},
+
+			//移除事件
+			off:function(key,fn){
+				var fns = this.clients[key];
+				
+				//如果key对应的消息没有被人订阅，则直接返回
+				if(!fns) return this;
+
+				//如果没有传入具体的回调函数，表示需要取消key对应的所有订阅
+				if(!fn){
+					fns && (fns.length = 0);
+				}else{
+					for(var i=fns.length - 1; i>=0;i--){
+						var _fn = fns[i];
+						if(_fn === fn){
+							//删除订阅者的回调函数
+							fns.splice(i,1);
+						}
+					}
+				}
+				return this;
 			}
 
 		};
@@ -567,7 +629,7 @@
 	ToolBar.toolbarDialog = function(context){
 
 		var editor = context.editor,
-			pasteHTML = editor._pasteHTML;
+			pasteHTML = editor._pasteHTML.bind(editor);
 
 		return {
 			//字体颜色
