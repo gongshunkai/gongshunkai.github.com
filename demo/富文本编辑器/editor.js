@@ -29,12 +29,19 @@
 
 				var editorBody = createElement('div',{
 					'class':'editor-body',
-					'html':'<iframe frameborder="0"></iframe>'
+					'html':'<iframe frameborder="0" src="iframe.html" style="width:0;height:0;"></iframe>'
 				});
 
 				var ifr = editorBody.querySelector('iframe');
 
 				addEvent(ifr,'load',function(){
+
+					//Chrome Safari Opera执行速度过快，导致onload事件同步执行
+					//为iframe标签src属性指定一个不存在的页面，因为后面的doc.write会把页面重写
+					//防止瞬间显示404页面，为iframe设置宽高为0，在onload事件中改为100%
+					ifr.style.width = '100%';
+					ifr.style.height = '100%';
+
 					doc = ifr.contentDocument || ifr.contentWindow.document;
 					doc.designMode = 'on';
 					doc.contentEditable = true;
