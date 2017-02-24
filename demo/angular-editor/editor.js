@@ -62,7 +62,7 @@
 					//注册事件
 					hasBro.isIE() && onBeforedeactivate();
 					toolBar.addEscBehaviour(doc);
-					onInput();
+					oninput();
 
 					//初始化完成之后执行的方法
 					context.opts.oninitialized && context.opts.oninitialized.call(context);
@@ -102,10 +102,28 @@
 				
 			};
 
-			function onInput(){
-				addEvent(doc,'input',function(){
-					context.fire('valuechanged');
+			//oninput事件IE不兼容，用自定义方法模拟
+			function oninput(){
+
+				var oldValue = context.getSource(), newValue;
+
+				context.on('oninput',fn);
+
+				['blur','keyup','mouseup'].forEach(function(type){
+					addEvent(doc,type,fn);
 				});
+
+				function fn(){
+					newValue = context.getSource();
+					if(oldValue != newValue){
+						context.fire('valuechanged');
+						oldValue = newValue;
+					}
+				};
+
+				/*addEvent(doc,'input',function(){
+					context.fire('valuechanged');
+				});*/
 			};
 		};
 			
@@ -151,7 +169,7 @@
 				doc.body.innerHTML = source;
 
 				//当编辑器内容改变时触发
-				this.fire('valuechanged');
+				this.fire('oninput');
 			},
 
 			//切换全屏
@@ -242,6 +260,9 @@
 				else
 					doc.execCommand('insertHTML',false,str);
 
+				//当编辑器内容改变时触发
+				this.fire('oninput');
+
 				return {
 					doc:doc,
 					range:range,
@@ -278,6 +299,9 @@
 						doc.documentElement.focus();
 					else
 						doc.activeElement.focus();
+
+					//当编辑器内容改变时触发
+					this.fire('oninput');
 				}	
 
 			},
@@ -553,8 +577,9 @@
 
 		//移除取消菜单的事件行为
 		removeEscBehaviour: function(){
-			removeEvent(document,'click',this.removeFn);
-			removeEvent(document,'keydown',this.removeFn);
+			['click','keydown'].forEach(function(type){
+				removeEvent(document,type,this.removeFn);
+			}.bind(this));
 		},
 
 		//安装按钮
