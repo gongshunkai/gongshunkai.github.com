@@ -9,7 +9,7 @@
     	skinClassName:null,
     	oninitialized: null       	
 	});
-    ngEditor.directive('ngEditor', ['editorConfig', function(editorConfig) {
+    ngEditor.directive('ngEditor', ['$timeout', 'editorConfig', function($timeout, editorConfig) {
 
         return {
             scope: {
@@ -37,7 +37,7 @@
 
                 editor.on('valuechanged', function(){
                     if($scope.content != editor.getSource()){
-                    	$scope.$apply(function(){  
+                    	$timeout(function(){
 							$scope.content = nowContent = editor.getSource();
 						});
                     }
