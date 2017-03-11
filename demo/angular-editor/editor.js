@@ -29,19 +29,12 @@
 
 				var editorBody = createElement('div',{
 					'class':'editor-body',
-					'html':'<iframe frameborder="0" src="iframe.html" style="width:0;height:0;"></iframe>'
+					'html':'<iframe frameborder="0"></iframe>'
 				});
 
 				var ifr = editorBody.querySelector('iframe');
 
 				addEvent(ifr,'load',function(){
-
-					//Chrome Safari Opera执行速度过快，导致onload事件同步执行
-					//为iframe标签src属性指定一个不存在的页面，因为后面的doc.write会把页面重写
-					//防止瞬间显示404页面，为iframe设置宽高为0，在onload事件中改为100%
-					ifr.style.width = '100%';
-					ifr.style.height = '100%';
-
 					doc = ifr.contentDocument || ifr.contentWindow.document;
 					doc.designMode = 'on';
 					doc.contentEditable = true;
@@ -69,7 +62,7 @@
 					//注册事件
 					hasBro.isIE() && onBeforedeactivate();
 					toolBar.addEscBehaviour(doc);
-					oninput();
+					onInput();
 
 					//初始化完成之后执行的方法
 					context.opts.oninitialized && context.opts.oninitialized.call(context);
@@ -109,28 +102,10 @@
 				
 			};
 
-			//oninput事件IE不兼容，用自定义方法模拟
-			function oninput(){
-
-				var oldValue = context.getSource(), newValue;
-
-				context.on('oninput',fn);
-
-				['blur','keyup','mouseup'].forEach(function(type){
-					addEvent(doc,type,fn);
-				});
-
-				function fn(){
-					newValue = context.getSource();
-					if(oldValue != newValue){
-						context.fire('valuechanged');
-						oldValue = newValue;
-					}
-				};
-
-				/*addEvent(doc,'input',function(){
+			function onInput(){
+				addEvent(doc,'input',function(){
 					context.fire('valuechanged');
-				});*/
+				});
 			};
 		};
 			
@@ -173,10 +148,11 @@
 
 			//设置源码
 			setSource:function(source){
-				doc.body.innerHTML = source;
 
 				//当编辑器内容改变时触发
-				this.fire('oninput');
+				this.fire('valuechanged');
+
+				doc.body.innerHTML = source;
 			},
 
 			//切换全屏
@@ -267,9 +243,6 @@
 				else
 					doc.execCommand('insertHTML',false,str);
 
-				//当编辑器内容改变时触发
-				this.fire('oninput');
-
 				return {
 					doc:doc,
 					range:range,
@@ -306,9 +279,6 @@
 						doc.documentElement.focus();
 					else
 						doc.activeElement.focus();
-
-					//当编辑器内容改变时触发
-					this.fire('oninput');
 				}	
 
 			},
@@ -584,9 +554,8 @@
 
 		//移除取消菜单的事件行为
 		removeEscBehaviour: function(){
-			['click','keydown'].forEach(function(type){
-				removeEvent(document,type,this.removeFn);
-			}.bind(this));
+			removeEvent(document,'click',this.removeFn);
+			removeEvent(document,'keydown',this.removeFn);
 		},
 
 		//安装按钮
