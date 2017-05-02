@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模态窗示例</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<style>
+		.modal.loading .modal-dialog{max-width:124px;}
+		.modal.loading .modal-content{background:#000000;opacity:0.8;}
+		.modal.loading .modal-body{padding:10px;}
+		.modal.loading .modal-body img{width:100%;}
+
+		.modal-dialog.loading .modal-body{background:url(images/loading.gif) no-repeat center center;}
+		.next-image,.previous-image{font-size:40px;height:100%;position:absolute;top:0;opacity:0;background:rgba(0,0,0,0);
+		transition:opacity 0.5s ease-out;
+		-moz-transition:opacity 0.5s ease-out;
+		-webkit-transition:opacity 0.5s ease-out;
+		-o-transition:opacity 0.5s ease-out;}
+		.next-image{width:64%;right:0;}
+		.previous-image{width:36%;left:0;}
+
+		.next-image span,.previous-image span{height:42px;color:#ffffff;text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);position:absolute;top:50%;margin-top:-21px;}
+		.next-image span{right:20px;}
+		.previous-image span{left:20px;}
+
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+
+		<h4>模态窗示例：</h4>
+		<button type="button" id="mymodal1" class="btn btn-default">Alert</button>
+		<button type="button" id="mymodal2" class="btn btn-default">Confirm</button>
+		<button type="button" id="mymodal3" class="btn btn-default">Message</button>
+		<button type="button" id="mymodal4" class="btn btn-default">Html</button>
+		<button type="button" id="mymodal5" class="btn btn-default">LightBox</button>
+		<button type="button" id="mymodal6" class="btn btn-default">AutoClose</button>
+		<button type="button" id="mymodal7" class="btn btn-default">Loading</button>
+		<button type="button" id="mymodal8" class="btn btn-default">本地Flash</button>
+		<button type="button" id="mymodal9" class="btn btn-default">远程Flash</button>
+		<button type="button" id="mymodal10" class="btn btn-default">本地视频</button>
+		<button type="button" id="mymodal11" class="btn btn-default">远程视频</button>
+
+
+
+
+		<h3>提示框</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal1').on('click',function(){
+		var sm = new SuperModal({			
+			width:300,
+			center:true,
+			backdrop:false,
+			btn_ok:'确定',			
+			onShow:function(){
+				console.log('窗口创建前');
+			},
+			onShown:function(){
+				console.log('窗口创建后');
+			},
+			onHide:function(){
+				console.log('窗口关闭前');
+			},
+			onHidden:function(){
+				console.log('窗口关闭后');
+			}
+		});
+		sm.show({
+			model:'modal-alert',
+			title:'提示消息',
+			contents:'<p>这是一条提示信息！</p>'
+		});
+	});
+		</pre>
+		<h3>确认框</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal2').on('click',function(){
+		var sm = new SuperModal({				
+			width:300,
+			center:true,
+			btn_ok:'确定',
+			btn_cancel:'取消'
+		});
+		sm.show({
+			model:'modal-confirm',
+			title:'确认操作',
+			contents:'<p>是否确认将该商品从购物车移除？</p>',
+			callback:function(){
+				alert('按下了确定按钮');
+			}
+		});
+	});
+		</pre>
+		<h3>消息框</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal3').on('click',function(){
+		var sm = new SuperModal({				
+			width:300,
+			btn_ok:'确定'	
+		});
+		sm.show({
+			model:'modal-message',
+			contents:'<p>这是一条 ' + Date() + ' 的消息</p>'
+		});
+	});
+		</pre>
+		<h3>ajax</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal4').on('click',function(){
+		var sm = new SuperModal({
+			center:true,			
+			width:600
+		});
+		sm.addButton('取消','btn btn-default',function(){
+			sm.hide();
+		});
+		sm.addButton('保存','btn btn-success',function(){
+			console.log('保存成功');
+			sm.hide();
+		});			
+		sm.show({
+			model:'modal-ajax',
+			title:'ajax加载html',
+			param:{
+				'url':'data/goods.html',
+				'onRequestReady':function(){
+					console.log('ajax准备');
+				},
+				'onRequestComplete':function(){
+					console.log('ajax完成');
+				},
+				'onError':function(){
+					console.log('ajax错误');
+				}
+			}
+		});
+	});
+		</pre>
+		<h3>LightBox</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal5').on('click',function(){
+		var sm = new SuperModal({				
+			width:300,
+			center:true,
+			hideFooter:true
+		});
+		sm.show({
+			model:'modal-lightbox',
+			title:'图片1',
+			param:{
+				'url':'data/2180723028-1.jpg',
+				'onRequestReady':function(){
+					console.log('lightbox准备');
+				},
+				'onRequestComplete':function(){
+					console.log('lightbox完成');
+				}
+			},
+			lightbox:{
+				'group':[
+					{'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB20GAGaFXXXXaIXpXXXXXXXXXX_!!2180723028.jpg','title':'图片1'},
+					{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB20UQIaFXXXXc5XXXXXXXXXXXX_!!2180723028.jpg','title':'图片2'},
+					{'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB2sKsIaFXXXXXrXpXXXXXXXXXX_!!2180723028.jpg','title':'图片3'},
+					{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB2f9UGaFXXXXXVXpXXXXXXXXXX_!!2180723028.jpg','title':'图片4'},
+					{'url':'https://img.alicdn.com/imgextra/i4/2180723028/TB2KT3OaFXXXXXIXXXXXXXXXXXX_!!2180723028.jpg','title':'图片5'},
+					{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB2ImMFaFXXXXaWXpXXXXXXXXXX_!!2180723028.jpg','title':'图片6'}
+				],
+				'order':0
+			}
+		});
+	});
+		</pre>
+		<h3>本地Flash</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal6').on('click',function(){
+		var sm = new SuperModal({				
+			width:600,
+			center:true,
+			hideFooter:true
+		});
+		sm.show({
+			model:'modal-ajax',
+			title:'flash',
+			param:{
+				'url':'data/fc.swf',
+				'onRequestReady':function(){
+					console.log('flash准备');
+				},
+				'onRequestComplete':function(){
+					console.log('flash完成');
+				}
+			}
+		});	
+	});
+		</pre>
+		<h3>远程Flash</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal7').on('click',function(){
+		var sm = new SuperModal({				
+			width:600,
+			hideFooter:true,
+			onShown:function(){
+				sm.modal.find('.modal-body').animate({height:500});
+			}
+		});
+		sm.show({
+			model:'modal-ajax',
+			title:'远程flash',
+			param:{
+				'url':'http://player.youku.com/player.php/sid/XMTg4ODg2NTI3Ng==/v.swf',
+				'onRequestReady':function(){
+					console.log('flash准备');
+				},
+				'onRequestComplete':function(){
+					console.log('flash完成');
+				}
+			}
+		});	
+	});
+		</pre>
+		<h3>本地视频</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal8').on('click',function(){
+		var sm = new SuperModal({				
+			width:600,
+			center:true,
+			hideFooter:true
+		});
+		sm.show({
+			model:'modal-ajax',
+			title:'video',
+			param:{
+				'url':'data/Bing.mp4',
+				'onRequestReady':function(){
+					console.log('video准备');
+				},
+				'onRequestComplete':function(){
+					console.log('video完成');
+				}
+			}
+		});	
+	});
+		</pre>
+		<h3>远程视频</h3>
+		<pre class="pre-scrollable">
+	$('#mymodal9').on('click',function(){
+		var sm = new SuperModal({				
+			width:600,
+			hideFooter:true,
+			onShown:function(){
+				var iframe = sm.createElement('iframe',{
+					width:'100%',
+					height:'400',
+					src:'http://player.youku.com/embed/XMTg4ODg2NTI3Ng==',
+					frameborder:'0'
+				}).hide().slideDown('slow',function(){
+					sm.modal.find('.modal-dialog').removeClass('loading');
+				});
+				sm.modal.find('.modal-body').append(iframe);
+				sm.modal.find('.modal-dialog').addClass('loading');
+			}
+		});
+		sm.show({
+			title:'远程视频'
+		});
+	});
+		</pre>
+	</div>
+
+
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/supermodal1.0.js"></script>
+
+	<script>
+		$('#mymodal1').on('click',function(){
+			var sm = new SuperModal({			
+				width:300,
+				center:true,
+				btn_ok:'确定',			
+				onShow:function(){
+					console.log('窗口创建前');
+				},
+				onShown:function(){
+					console.log('窗口创建后');
+				},
+				onHide:function(){
+					console.log('窗口关闭前');
+				},
+				onHidden:function(){
+					console.log('窗口关闭后');
+				}
+			});
+			sm.on('show',function(){
+				console.log('窗口创建前的自定义事件');
+			}).on('shown',function(){
+				console.log('窗口创建后的自定义事件');
+			}).on('hide',function(){
+				console.log('窗口关闭前的自定义事件');
+			}).on('hidden',function(){
+				console.log('窗口关闭后的自定义事件');
+			}).show({
+				model:'modal-alert',
+				title:'提示消息',
+				contents:'<p>这是一条提示信息！</p>'
+			});	
+		});
+		$('#mymodal2').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				center:true,
+				btn_ok:'确定',
+				btn_cancel:'取消'
+			});
+			sm.show({
+				model:'modal-confirm',
+				title:'确认操作',
+				contents:'<p>是否确认将该商品从购物车移除？</p>',
+				callback:function(){
+					alert('按下了确定按钮');
+				}
+			});
+		});
+		$('#mymodal3').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				btn_ok:'确定'	
+			});
+			sm.show({
+				model:'modal-message',
+				contents:'<p>这是一条 ' + Date() + ' 的消息</p>'
+			});
+		});
+		$('#mymodal4').on('click',function(){
+			var sm = new SuperModal({
+				center:true,			
+				width:600
+			});
+			sm.addButton('取消','btn btn-default',function(){
+				sm.hide();
+			});
+			sm.addButton('保存','btn btn-success',function(){
+				console.log('保存成功');
+				sm.hide();
+			});			
+			sm.show({
+				model:'modal-ajax',
+				title:'ajax加载html',
+				param:{
+					'url':'data/goods.html',
+					'onRequestReady':function(){
+						console.log('ajax准备');
+					},
+					'onRequestComplete':function(){
+						console.log('ajax完成');
+					},
+					'onError':function(){
+						console.log('ajax错误');
+					}
+				}
+			});
+		});
+		$('#mymodal5').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				center:true,
+				hideFooter:true
+			});
+			sm.show({
+				model:'modal-lightbox',
+				title:'图片1',
+				param:{
+					'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB20GAGaFXXXXaIXpXXXXXXXXXX_!!2180723028.jpg',
+					'onRequestReady':function(){
+						console.log('lightbox准备');
+					},
+					'onRequestComplete':function(){
+						console.log('lightbox完成');
+					}
+				},
+				lightbox:{
+					'group':[
+						{'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB20GAGaFXXXXaIXpXXXXXXXXXX_!!2180723028.jpg','title':'图片1'},
+						{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB20UQIaFXXXXc5XXXXXXXXXXXX_!!2180723028.jpg','title':'图片2'},
+						{'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB2sKsIaFXXXXXrXpXXXXXXXXXX_!!2180723028.jpg','title':'图片3'},
+						{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB2f9UGaFXXXXXVXpXXXXXXXXXX_!!2180723028.jpg','title':'图片4'},
+						{'url':'https://img.alicdn.com/imgextra/i4/2180723028/TB2KT3OaFXXXXXIXXXXXXXXXXXX_!!2180723028.jpg','title':'图片5'},
+						{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB2ImMFaFXXXXaWXpXXXXXXXXXX_!!2180723028.jpg','title':'图片6'}
+					],
+					'order':0
+				}
+			});
+		});
+		$('#mymodal6').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				center:true,
+				hideFooter:true,
+				autoClose:true,
+				onHidden:function(){
+					window.location.href = 'http://www.baidu.com';
+				}
+			});
+			sm.show({
+				title:'提示消息',
+				contents:'<p>欢迎您回来，现在将转入登录前页面</p>\
+				<p><a href="http://www.baidu.com">如果您的浏览器没有自动跳转，请点击此链接</a></p>'
+			});	
+		});
+		$('#mymodal7').on('click',function(){
+			var sm = new SuperModal({				
+				width:'20%',
+				skinClassName:'loading',
+				center:true,
+				show:true,
+				backdrop:false,
+				hideHeader:true,
+				hideFooter:true,
+				autoClose:true
+			});
+			sm.show({
+				contents:'<img src="images/loader.gif">'
+			});	
+		});
+		$('#mymodal8').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				center:true,
+				hideFooter:true
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'flash',
+				param:{
+					'url':'data/fc.swf',
+					'onRequestReady':function(){
+						console.log('flash准备');
+					},
+					'onRequestComplete':function(){
+						console.log('flash完成');
+					}
+				}
+			});	
+		});
+		$('#mymodal9').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				hideFooter:true,
+				onShown:function(){
+					sm.modal.find('.modal-body').animate({height:500});
+				}
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'远程flash',
+				param:{
+					'url':'http://player.youku.com/player.php/sid/XMTg4ODg2NTI3Ng==/v.swf',
+					'onRequestReady':function(){
+						console.log('flash准备');
+					},
+					'onRequestComplete':function(){
+						console.log('flash完成');
+					}
+				}
+			});	
+		});
+		$('#mymodal10').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				center:true,
+				hideFooter:true
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'video',
+				param:{
+					'url':'data/Bing.mp4',
+					'onRequestReady':function(){
+						console.log('video准备');
+					},
+					'onRequestComplete':function(){
+						console.log('video完成');
+					}
+				}
+			});	
+		});
+		$('#mymodal11').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				hideFooter:true,
+				onShown:function(){
+					var iframe = sm.createElement('iframe',{
+						width:'100%',
+						height:'400',
+						src:'http://player.youku.com/embed/XMTg4ODg2NTI3Ng==',
+						frameborder:'0'
+					}).hide().slideDown('slow',function(){
+						sm.modal.find('.modal-dialog').removeClass('loading');
+					});
+					sm.modal.find('.modal-body').append(iframe);
+					sm.modal.find('.modal-dialog').addClass('loading');
+				}
+			});
+			sm.show({
+				title:'远程视频'
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模态窗示例</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<!--[if IE 7]>
+	<link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+	<![endif]-->
+	<style>
+		.modal{display:none;position:absolute;top:auto;left:auto;right:auto;bottom:auto;overflow:visible;}
+		.modal-dialog{width:auto;position:relative;margin:0;}
+        .modal-content{position:relative;}
+        .modal-header{position:relative;}
+        .modal-body{position:relative;overflow-y:auto;}
+        .modal-footer{position:relative;}
+
+        .modal-header button{font-family:'FontAwesome';background:none;border:none;cursor:pointer;padding:0;color:#000;float:right;font-size:18px;line-height:1;opacity:0.2;text-shadow:0 1px 0 #fff;}
+        button.close span:before{content:"\f00d";}
+        button.min span:before{content:"\f068";}
+		button.max span:before{content:"\f066";}
+
+		.modal .minimize .min span:before{content:"\f0c9";}
+		.modal .maximize .max span:before{content:"\f065";}
+
+		.close:focus,.close:hover,.min:focus,.min:hover,.max:focus,.max:hover{color:#000;cursor:pointer;opacity:0.5;text-decoration:none;}
+
+		/* iconType图标 */
+		.modal-title i{font-family:'FontAwesome';font-style:normal;}
+		.modal .warning .modal-title i:before{content:"\f071";}
+		.modal .confirm .modal-title i:before{content:"\f059";}
+		.modal .question .modal-title i:before{content:"\f059";}
+		.modal .error .modal-title i:before{content:"\f057";}
+		.modal .info .modal-title i:before{content:"\f05a";}
+
+		/* listbox */
+		.modal-dialog.loading .modal-body{background:url(images/loading.gif) no-repeat center center;}
+		.next-image,.previous-image{font-size:40px;height:100%;position:absolute;top:0;opacity:0;background:rgba(0,0,0,0);
+		transition:opacity 0.5s ease-out;
+		-moz-transition:opacity 0.5s ease-out;
+		-webkit-transition:opacity 0.5s ease-out;
+		-o-transition:opacity 0.5s ease-out;}
+		.next-image{width:64%;right:0;}
+		.previous-image{width:36%;left:0;}
+
+		.next-image span,.previous-image span{height:42px;color:#ffffff;text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);position:absolute;top:50%;margin-top:-21px;}
+		.next-image span{right:20px;}
+		.previous-image span{left:20px;}
+
+
+		/* 自定义皮肤样式名 */
+		.modal.loading .modal-dialog{max-width:124px;}
+		.modal.loading .modal-content{background:#000000;opacity:0.8;}
+		.modal.loading .modal-body{padding:10px;}
+		.modal.loading .modal-body img{width:100%;}
+
+		.modal.no-radius .modal-content{border-radius:0;box-shadow:none;}
+		.modal.no-radius .modal-header,.modal.no-radius .modal-footer{background:#ccd9e8;}
+
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+
+		<h4>模态窗示例：</h4>
+		<button type="button" id="mydialog1" class="btn btn-default">Alert</button>
+		<button type="button" id="mydialog2" class="btn btn-default">Confirm ( 无遮罩层 )</button>
+		<button type="button" id="mydialog3" class="btn btn-default">Message</button>
+		<button type="button" id="mydialog4" class="btn btn-default">Html ( 无遮罩层 )</button>
+		<button type="button" id="mydialog5" class="btn btn-default">LightBox</button>
+		<button type="button" id="mydialog6" class="btn btn-default">AutoClose</button>
+		<button type="button" id="mydialog7" class="btn btn-default">AutoMin</button>
+		<button type="button" id="mydialog8" class="btn btn-default">AutoMax</button>
+		<button type="button" id="mydialog9" class="btn btn-default">默认最小化</button>
+		<button type="button" id="mydialog10" class="btn btn-default">默认最大化</button>
+		<button type="button" id="mydialog11" class="btn btn-default">右下角 ( 无遮罩层 )</button>
+		<button type="button" id="mydialog12" class="btn btn-default">Loading</button>
+		<button type="button" id="mydialog13" class="btn btn-default">本地Flash</button>
+		<button type="button" id="mydialog14" class="btn btn-default">远程Flash</button>
+		<button type="button" id="mydialog15" class="btn btn-default">本地视频 ( HTML5 视频 )</button>
+		<button type="button" id="mydialog16" class="btn btn-default">远程视频 ( iframe )</button>
+
+	</div>
+
+
+
+	<script src="js/jquery.min.js"></script>
+	
+	<script src="js/supermodal2.0.js"></script>
+
+	<!-- <script src="js/source/dialogmanage.js"></script>
+	<script src="js/source/supermodal.js"></script>
+	<script src="js/source/buttons.js"></script>	
+	<script src="js/source/drag.js"></script>
+	<script src="js/source/layer.js"></script>
+	<script src="js/source/lightbox.js"></script>
+	<script src="js/source/loadcontents.js"></script>
+	<script src="js/source/event.js"></script>
+	<script src="js/source/dialog.js"></script>
+	<script src="js/source/help.js"></script> -->
+
+	<!--[if lt IE 9]>
+	  <script src="js/html5shiv.min.js"></script>
+	  <script src="js/respond.min.js"></script>
+	<![endif]-->
+	<script>
+		$('#mydialog1').on('click',function(){
+			var sm = new SuperModal({			
+				width:300,
+				height:200,
+				zindex:555,
+				position:5,
+				leftX:100,
+				topY:100,
+				iconType:'warning',
+				clickBgClose:'click',		
+				overlayOpacity:0.1,
+				overlayColor:'red',			
+				btn_ok:'确定',
+				onShow:function(){
+					alert('窗口创建前');
+				},
+				onShown:function(){
+					alert('窗口创建后');
+				},
+				onHide:function(){
+					alert('窗口关闭前');
+				},
+				onHidden:function(){
+					alert('窗口关闭后');
+				}
+			});
+			sm.on('show',function(){
+				alert('窗口创建前的自定义事件');
+			}).on('shown',function(){
+				alert('窗口创建后的自定义事件');
+			}).on('hide',function(){
+				alert('窗口关闭前的自定义事件');
+			}).on('hidden',function(){
+				alert('窗口关闭后的自定义事件');
+			}).show({
+				model:'modal-alert',
+				title:'提示消息',
+				contents:'<p>这是一条提示信息！</p>'
+			});	
+		});
+		$('#mydialog2').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				height:200,
+				iconType:'confirm',
+				backdrop:false,
+				btn_ok:'确定',
+				btn_cancel:'取消',
+				callback:function(){
+					alert('按下了确定按钮');
+				}
+			});
+			sm.show({
+				model:'modal-confirm',
+				title:'确认操作',
+				contents:'<p>是否确认将该商品从购物车移除？</p>'
+			});
+		});
+		$('#mydialog3').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				clickBoxClose:true,
+				height:'auto',
+				btn_ok:'确定',
+				callback:function(){
+					sm.hide();
+				}
+			});
+			sm.show({
+				model:'modal-message',
+				contents:'<p>这是一条 ' + Date() + ' 的消息</p>'
+			});
+		});
+		$('#mydialog4').on('click',function(){
+			var sm = new SuperModal({	
+				id:4,		
+				width:600,
+				height:500,
+				keyEsc:false,
+				iconType:'info',
+				backdrop:false,
+				position:5,
+				closeType:'hide',
+				minButton:true,
+				maxButton:true,
+				skinClassName:'no-radius',
+				onMinimize:function(){
+					//alert('窗口最小化前');
+				},
+				onMinimized:function(){
+					//alert('窗口最小化后');
+				},
+				onMaximize:function(){
+					//alert('窗口最大化前');
+				},
+				onMaximized:function(){
+					//alert('窗口最大化后');
+				},
+				onNormalize:function(){
+					//alert('窗口标准化前');
+				},
+				onNormalized:function(){
+					//alert('窗口标准化后');
+				}
+			});
+			sm.addButton('取消','btn btn-default',65,function(){
+				sm.hide();
+			});
+			sm.addButton('保存','btn btn-success',66,function(){
+				console.log('保存成功');
+				sm.hide();
+			});		
+			sm.show({
+				model:'modal-ajax',
+				title:'ajax加载html',
+				param:{
+					'url':'data/goods.html',
+					'onRequestReady':function(){
+						console.log('ajax准备');
+					},
+					'onRequestComplete':function(){
+						console.log('ajax完成');
+					},
+					'onError':function(){
+						console.log('ajax错误');
+					}
+				}
+			});
+		});
+		$('#mydialog5').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				position:5
+			});
+			sm.show({
+				model:'modal-lightbox',
+				title:'图片1',
+				param:{
+					'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB20GAGaFXXXXaIXpXXXXXXXXXX_!!2180723028.jpg',
+					'onRequestReady':function(){
+						console.log('lightbox准备');
+					},
+					'onRequestComplete':function(){
+						console.log('lightbox完成');
+					}
+				},
+				lightbox:{
+					'group':[
+						{'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB20GAGaFXXXXaIXpXXXXXXXXXX_!!2180723028.jpg','title':'图片1'},
+						{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB20UQIaFXXXXc5XXXXXXXXXXXX_!!2180723028.jpg','title':'图片2'},
+						{'url':'https://img.alicdn.com/imgextra/i3/2180723028/TB2sKsIaFXXXXXrXpXXXXXXXXXX_!!2180723028.jpg','title':'图片3'},
+						{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB2f9UGaFXXXXXVXpXXXXXXXXXX_!!2180723028.jpg','title':'图片4'},
+						{'url':'https://img.alicdn.com/imgextra/i4/2180723028/TB2KT3OaFXXXXXIXXXXXXXXXXXX_!!2180723028.jpg','title':'图片5'},
+						{'url':'https://img.alicdn.com/imgextra/i1/2180723028/TB2ImMFaFXXXXaWXpXXXXXXXXXX_!!2180723028.jpg','title':'图片6'}
+					],
+					'order':0
+				}
+			});
+		});
+		$('#mydialog6').on('click',function(){
+			var sm = new SuperModal({				
+				width:300,
+				height:'auto',
+				position:5,
+				iconType:'warning',
+				hideFooter:true,
+				autoClose:true,
+				onHidden:function(){
+					window.location.href = 'http://www.baidu.com';
+				}
+			});
+			sm.show({
+				title:'提示消息',
+				contents:'<p>欢迎您回来，现在将转入登录前页面</p>\
+				<p><a href="http://www.baidu.com">如果您的浏览器没有自动跳转，请点击此链接</a></p>'
+			});	
+		});
+		$('#mydialog7').on('click',function(){
+			var sm = new SuperModal({	
+				width:300,
+				height:'auto',
+				position:5,
+				minButton:true,
+				autoMin:true,
+				timeout:1000,
+				skinClassName:'no-radius',
+				onMinimize:function(){
+					console.log('窗口最小化前');
+				},
+				onMinimized:function(){
+					console.log('窗口最小化后');
+				},
+				onNormalize:function(){
+					console.log('窗口标准化前');
+				},
+				onNormalized:function(){
+					console.log('窗口标准化后');
+				}
+			});
+			sm.addButton('取消','btn btn-default',65,function(){
+				sm.hide();
+			});	
+			sm.show({
+				title:'自动最小化',
+				contents:'<p>自动最小化内容</p>\
+					<p>自动最小化内容</p>\
+					<p>自动最小化内容</p>'
+			});
+		});
+		$('#mydialog8').on('click',function(){
+			var sm = new SuperModal({	
+				width:300,
+				height:'auto',
+				position:5,
+				maxButton:true,
+				autoMax:true,
+				timeout:1000,
+				skinClassName:'no-radius',
+				onMaximize:function(){
+					console.log('窗口最大化前');
+				},
+				onMaximized:function(){
+					console.log('窗口最大化后');
+				},
+				onNormalize:function(){
+					console.log('窗口标准化前');
+				},
+				onNormalized:function(){
+					console.log('窗口标准化后');
+				}
+			});
+			sm.addButton('取消','btn btn-default',65,function(){
+				sm.hide();
+			});	
+			sm.show({
+				title:'自动最大化',
+				contents:'<p>自动最大化内容</p>\
+					<p>自动最大化内容</p>\
+					<p>自动最大化内容</p>'
+			});
+		});
+		$('#mydialog9').on('click',function(){
+			var sm = new SuperModal({	
+				width:300,
+				height:'auto',
+				position:5,
+				minButton:true,
+				min:true,
+				show:true,
+				skinClassName:'no-radius'
+			});
+			sm.addButton('取消','btn btn-default',65,function(){
+				sm.hide();
+			});	
+			sm.show({
+				title:'默认最小化',
+				contents:'<p>默认最小化内容</p>\
+					<p>默认最小化内容</p>\
+					<p>默认最小化内容</p>'
+			});
+		});
+		$('#mydialog10').on('click',function(){
+			var sm = new SuperModal({
+				id:10,
+				width:300,
+				height:'auto',
+				position:5,
+				max:true,
+				show:true,
+				backdrop:false,
+				btn_close_type:'text',
+				clickBoxClose:true,
+				skinClassName:'no-radius'
+			});
+			sm.addButton('取消','btn btn-default',65,function(){
+				sm.hide();
+			});	
+			sm.show({
+				title:'默认最大化',
+				contents:'<p>默认最大化内容</p>\
+					<p>默认最大化内容</p>\
+					<p>默认最大化内容</p>'
+			});
+		});
+		$('#mydialog11').on('click',function(){
+			var sm = new SuperModal({
+				id:11,	
+				width:200,
+				height:'auto',
+				position:9,
+				iconType:'question',
+				closeType:'hide',
+				hideFooter:true,
+				backdrop:false,
+				dragAble:false,
+				skinClassName:'no-radius'
+			});
+			sm.show({
+				title:'右下角弹窗',
+				contents:'<p>右下角弹窗内容</p>\
+					<p>右下角弹窗内容</p>\
+					<p>右下角弹窗内容</p>\
+					<p>右下角弹窗内容</p>\
+					<p>右下角弹窗内容</p>'
+			});
+		});
+		$('#mydialog12').on('click',function(){
+			var sm = new SuperModal({
+				width:'20%',
+				height:'auto',
+				skinClassName:'loading',
+				position:5,
+				show:true,
+				overlayOpacity:0,
+				hideHeader:true,
+				hideFooter:true,
+				autoClose:true,
+				dragAble:false
+			});
+			sm.show({
+				contents:'<img src="images/loader.gif">'
+			});	
+		});
+		$('#mydialog13').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				height:'auto',
+				position:5,
+				hideFooter:true
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'本地flash',
+				param:{
+					'url':'data/fc.swf',
+					'onRequestReady':function(){
+						console.log('flash准备');
+					},
+					'onRequestComplete':function(){
+						console.log('flash完成');
+					}
+				}
+			});	
+		});
+		$('#mydialog14').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				height:450,
+				position:5,
+				hideFooter:true,
+				onShown:function(){
+					//sm.modal.find('.modal-body').animate({height:500});
+				}
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'远程flash',
+				param:{
+					'url':'http://player.youku.com/player.php/sid/XMTg4ODg2NTI3Ng==/v.swf',
+					'onRequestReady':function(){
+						console.log('flash准备');
+					},
+					'onRequestComplete':function(){
+						console.log('flash完成');
+					}
+				}
+			});	
+		});
+		$('#mydialog15').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				height:450,
+				position:5,
+				hideFooter:true,
+				maxButton:true
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'本地视频',
+				param:{
+					'url':'data/Bing.mp4',
+					'onRequestReady':function(){
+						console.log('video准备');
+					},
+					'onRequestComplete':function(){
+						console.log('video完成');
+					}
+				}
+			});	
+		});
+		$('#mydialog16').on('click',function(){
+			var sm = new SuperModal({				
+				width:600,
+				height:450,
+				hideFooter:true,
+				maxButton:true
+			});
+			sm.show({
+				model:'modal-ajax',
+				title:'远程视频',
+				param:{
+					'url':'http://player.youku.com/embed/XMTg4ODg2NTI3Ng==',
+					'onRequestReady':function(){
+						console.log('ajax准备');
+					},
+					'onRequestComplete':function(){
+						console.log('ajax完成');
+					},
+					'onError':function(){
+						console.log('ajax错误');
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>
