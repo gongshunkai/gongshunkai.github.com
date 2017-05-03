@@ -1,37 +1,201 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>多级联动下拉菜单</title>
-<script src="../libs/jutil.js"></script>
-<script src="select.js"></script>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		div, p, ul, ol, dl, dt, dd, form{padding:0;margin:0;list-style-type:none;}
+		.area li{float:left;margin:0 2px;}
+	</style>
 </head>
-
 <body>
-<div class="sel">
-<select id="sel1"></select>
-<select id="sel2"></select>
-<select id="sel3"></select>
-<select id="sel4"></select>
-<select id="sel5"></select>
-</div>
-<script>
-var unit = [  
-{id:1,pid:0,text:"A"},  
-{id:2,pid:4,text:"E[父C]"},  
-{id:3,pid:7,text:"G[父F]"},  
-{id:4,pid:1,text:"C[父A]"},  
-{id:5,pid:6,text:"D[父B]"},  
-{id:6,pid:0,text:"B"},  
-{id:7,pid:4,text:"F[父C]"}];
-var sel=["sel1", "sel2", "sel3", "sel4", "sel5"];
-var val=["1","4","7","3"];
-var cs = new CascadeSelect(sel,unit,{
-    Default:val,
-    Visible:2,
-    ShowEmpty:true,
-    EmptyText:["请选择洲","请选择国家","请选择省","请选择市","请选择区"]
-});
-</script>
+	<ul class="area" value-field="id" text-field="text" children-field="children">
+		<li><select empty-text="洲" default-value="1"></select></li>
+		<li><select empty-text="国家" default-value="2"></select></li>
+		<li><select empty-text="省" default-value="3"></select></li>
+		<li><select empty-text="市" default-value="6"></select></li>
+		<li><select empty-text="区" default-value="14"></select></li>
+	</ul>
+
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.select.js"></script>
+	<script>
+
+		function buildTree(data){
+			var pos={},  //保存tree的节点位置信息
+				tree=[], //树对象
+				i=0;  
+			while(data.length!=0){  
+				if(data[i].pid==0){  
+					tree.push({  
+						id:data[i].id,  
+						text:data[i].text,
+						pid:data[i].pid,
+						children:[]  
+					});  
+					pos[data[i].id]=[tree.length-1];      
+					data.splice(i,1);  
+					i--;  
+				}else{  
+					var posArr=pos[data[i].pid];  
+					if(posArr!=undefined){  
+						  
+						var obj=tree[posArr[0]];  
+						for(var j=1;j<posArr.length;j++){  
+							obj=obj.children[posArr[j]];  
+						}  
+		  
+						obj.children.push({  
+							id:data[i].id,  
+							text:data[i].text,
+							pid:data[i].pid,
+							children:[]  
+						});  
+						pos[data[i].id]=posArr.concat([obj.children.length-1]);  
+						data.splice(i,1);  
+						i--;  
+					}else{
+						data.splice(i,1);  
+						i--; 
+					} 
+				}  
+				i++;  
+				if(i>data.length-1){  
+					i=0;  
+				}  
+			}  
+			return{
+				tree:tree,
+				pos:pos
+			}
+		};
+		
+	var unit = [  
+		{id:1,pid:0,text:"亚洲"},  
+		{id:2,pid:1,text:"中国"},  
+		{id:3,pid:2,text:"上海"},  
+		{id:4,pid:2,text:"北京"},  
+		{id:5,pid:2,text:"广东"},  
+		{id:6,pid:3,text:"上海市"},  
+		{id:9,pid:6,text:"黄浦"},
+		{id:10,pid:6,text:"徐汇"},
+		{id:11,pid:6,text:"长宁"},
+		{id:12,pid:6,text:"静安"},
+		{id:13,pid:6,text:"普陀"},
+		{id:14,pid:6,text:"虹口"},
+		{id:15,pid:6,text:"杨浦"},
+		{id:16,pid:6,text:"闵行"}
+	];
+
+	unit = buildTree(unit).tree;
+	
+
+
+	/*本地数据必须是下面的json格式
+	如果后端的数据是上面的格式可以用buildTree转换*/
+
+	/*var unit =     [  
+        {  
+            "id": 1,  
+            "text": "亚洲",  
+            "children": [  
+                {  
+                    "id": 2,  
+                    "text": "中国",  
+                    "children": [  
+                        {  
+                            "id": 3,  
+                            "text": "上海",  
+                            "children": [  
+                                {  
+                                    "id": 6,  
+                                    "text": "上海市",  
+                                    "children": [
+                                    	{
+											"id":9,
+											"text":"黄浦",
+											"children": []
+										},
+										{
+											"id":10,
+											"text":"徐汇",
+											"children": []
+										},
+										{
+											"id":11,
+											"text":"长宁",
+											"children": []
+										},
+										{
+											"id":12,
+											"text":"静安",
+											"children": []
+										},
+										{
+											"id":13,
+											"text":"普陀",
+											"children": []
+										},
+										{
+											"id":14,
+											"text":"虹口",
+											"children": []
+										},
+										{
+											"id":15,
+											"text":"杨浦",
+											"children": []
+										},
+										{
+											"id":16,
+											"text":"闵行",
+											"children": []
+										}
+                                    ]  
+                                } 
+                            ]  
+                        },
+                        {  
+                            "id": 4,  
+                            "text": "北京",  
+                            "children": []  
+                        },
+                        {  
+                            "id": 5,  
+                            "text": "广东",  
+                            "children": []  
+                        }
+                    ]  
+                }  
+            ]  
+        }
+    ];  */
+
+	var sel = $('.area').select({
+		dataMenu:unit,
+		selects:$('.area select'),
+		visible:2,
+		showEmpty:true,
+		async:true,
+		url:function(id){
+			return 'data/data' + id + '.json';
+		},
+		beforeLoad:function(elem,value,opts){
+			elem.attr('empty-text','正在加载中...');
+			sel.select.setSelect(elem,[],opts);
+			elem.show();
+		},
+		afterLoad:function(elem,value,opts,data){
+			elem.attr('empty-text',elem.attr('original-text'));
+			sel.select.setSelect(elem,data,opts);
+		},
+		onError:function(elem,value,opts,data){
+			elem.attr('empty-text','数据加载失败了');
+			sel.select.setSelect(elem,[],opts);
+			elem.show();
+		}
+	});
+
+	</script>
 </body>
 </html>
