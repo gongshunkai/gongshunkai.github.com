@@ -83,7 +83,7 @@
 
 	</div>
 
-
+	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 
 	<script src="js/jquery.min.js"></script>
 	
@@ -166,6 +166,7 @@
 		$('#mydialog3').on('click',function(){
 			var sm = new SuperModal({				
 				width:300,
+				fixed:false,
 				clickBoxClose:true,
 				height:'auto',
 				btn_ok:'确定',
@@ -454,7 +455,10 @@
 				width:600,
 				height:450,
 				position:5,
-				hideFooter:true
+				hideFooter:true,
+				onShown:function(){
+					//sm.modal.find('.modal-body').animate({height:500});
+				}
 			});
 			sm.show({
 				model:'modal-ajax',

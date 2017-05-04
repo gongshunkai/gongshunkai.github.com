@@ -37,6 +37,251 @@
 	})();
 
 
+	//全局快捷键
+	var shortcutKey = {
+		'27':function(){ this.hide(); }
+	};
+
+	//遮罩层
+	var overlay;
+
+	//全局自定义事件
+	var Event = {
+
+		//事件集合
+		__clients__:[],
+
+		//绑定事件
+		on:function(key,fn){
+			if(!this.__clients__[key])
+				this.__clients__[key] = [];
+
+			//订阅的消息加进缓存列表
+			this.__clients__[key].push(fn);
+
+			return this;
+		},
+
+		//触发事件
+		fire:function(){
+			var key = [].shift.call(arguments),
+				fns = this.__clients__[key];
+			
+			//如果没有绑定对应的消息
+			if(!fns || fns.length === 0) return this;
+			
+			for(var i =0, fn; fn=fns[i++];)
+				fn.apply(this,arguments);
+
+			return this;
+		},
+
+		//移除事件
+		off:function(key,fn){
+			var fns = this.__clients__[key];
+		
+			//如果key对应的消息没有被人订阅，则直接返回
+			if(!fns) return this;
+
+			//如果没有传入具体的回调函数，表示需要取消key对应的所有订阅
+			if(!fn){
+				fns && (fns.length = 0);
+			}else{
+				for(var i=fns.length - 1; i>=0;i--){
+					var _fn = fns[i];
+					if(_fn === fn){
+						//删除订阅者的回调函数
+						fns.splice(i,1);
+					}
+				}
+			}
+			return this;
+		}
+	};
+
+
+	/*------------------- 请在此处扩展自定义事件 ----------------------------*/
+
+	//全局自定义事件集合clients将拷贝到SuperModal的属性clients上面
+	//
+
+	//固定位置
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.fixed && this.target.css('position','fixed');
+	});
+
+	//动画速度
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.speed = this.__opts__.show ? 0 : 'slow';
+	});
+
+	//加入遮罩层
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.backdrop && Dialog.overlay.show(this,this.__opts__);
+	});
+
+	//加入拖拽
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.dragAble && new DragDrop(this,this.target,$.extend(this.__opts__,{
+			handle:this.target.find('.modal-' + (this.__opts__.hideHeader ? 'body' : 'header'))
+		}));
+	});
+
+	//加入ESC键盘事件
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.keyEsc && $.extend(this.__shortcutKey__,shortcutKey);
+	});
+
+	//添加皮肤样式名
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.skinClassName && this.target.addClass(this.__opts__.skinClassName);
+	});
+
+	//添加标题图标样式名
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.iconType && this.target.find('.modal-header').addClass(this.__opts__.iconType);
+	});
+
+	//加入模态框按钮
+	Event.on('__DISPLAY__',function(){
+
+		var temp = this.__btnObjs__[0];
+
+		var hbs = new HeaderButtons(this,this.target.find('.modal-header'),this.__opts__);
+		var fbs = new FooterButtons(this,this.target.find('.modal-footer'),this.__opts__);
+
+		this.__btnObjs__ = [hbs,fbs];
+
+		fbs.__buttons__ = temp.__buttons__;
+		
+	});
+
+	Event.on('__DISPLAY__',function(){
+		//加入最小化按钮
+		this.__opts__.minButton && this.__addMinButton__();
+		//加入最大化按钮
+		this.__opts__.maxButton && this.__addMaxButton__();	
+		//加入关闭按钮
+		this.__opts__.closeButton && this.__addCloseButton__();
+	});
+
+	Event.on('__DISPLAY__',function(){
+		//加入对话框
+		this.__layers__['modal'] = new Modal(this,this.target,this.__opts__);
+		//加入对话框
+		this.__layers__['modal-dialog'] = new Layer(this,this.target.find('.modal-dialog'),this.__opts__);
+		//加入模态框头部
+		this.__layers__['modal-header'] = new Layer(this,this.target.find('.modal-header'),this.__opts__);
+		//加入模态框主体
+		this.__layers__['modal-body'] = new Layer(this,this.target.find('.modal-body'),this.__opts__);
+		//加入模态框底部
+		this.__layers__['modal-footer'] = new Layer(this,this.target.find('.modal-footer'),this.__opts__);
+	});
+
+	//把对话框对象添加到对话框管理
+	Event.on('__DISPLAY__',function(){
+		manage.add(this.__layers__['modal']);
+	});
+
+	//隐藏模态框头部
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.hideHeader && this.__hideHeader__();
+	});
+
+	//隐藏模态框底部
+	Event.on('__DISPLAY__',function(){
+		this.__opts__.hideFooter && this.__hideFooter__();
+	});
+
+
+	//注册关闭
+	Event.on('__CLOSE__',function(){
+		this.hide();
+	});
+
+	//注册最小化
+	Event.on('__MIN__',function(){
+		this.min();
+	});
+
+	//注册最大化
+	Event.on('__MAX__',function(){
+		this.max();
+	});
+
+	//注册确认
+	Event.on('__CONFIRM__',function(){
+		this.__opts__.callback && this.__opts__.callback();
+	});
+
+	//注册取消
+	Event.on('__CANCEL__',function(){
+		this.hide();
+	});
+
+	//注册模态框显示前
+	Event.on('show',function(){
+		this.__opts__.onShow && this.__opts__.onShow();
+	});
+
+	//注册模态框显示后
+	Event.on('shown',function(){
+		this.__opts__.onShown && this.__opts__.onShown();
+		//自动关闭模态窗
+		this.__opts__.autoClose && setTimeout(this.hide.bind(this),this.__opts__.timeout);
+		//自动最小化模态窗
+		this.__opts__.autoMin && setTimeout(this.min.bind(this,true),this.__opts__.timeout);
+		//自动最大化模态窗
+		this.__opts__.autoMax && setTimeout(this.max.bind(this,true),this.__opts__.timeout);
+		//默认最小化
+		this.__opts__.min && this.min(true);
+		//默认最大化
+		this.__opts__.max && this.max(true);
+	});
+
+	//注册模态框隐藏前
+	Event.on('hide',function(){
+		this.__opts__.onHide && this.__opts__.onHide();
+	});
+
+	//注册模态框隐藏后
+	Event.on('hidden',function(){
+		this.__opts__.onHidden && this.__opts__.onHidden();
+	});
+
+	//注册模态框最小化前
+	Event.on('minimize',function(){
+		this.target.find('.modal-dialog').addClass('minimize');
+		this.__opts__.onMinimize && this.__opts__.onMinimize();
+	});
+
+	//注册模态框最小化后
+	Event.on('minimized',function(){
+		this.__opts__.onMinimized && this.__opts__.onMinimized();
+	});
+
+	//注册模态框最大化前
+	Event.on('maximize',function(){
+		this.target.find('.modal-dialog').addClass('maximize');
+		this.__opts__.onMaximize && this.__opts__.onMaximize();
+	});
+
+	//注册模态框最大化后
+	Event.on('maximized',function(){
+		this.__opts__.onMaximized && this.__opts__.onMaximized();
+	});
+
+	//注册模态框标准化前
+	Event.on('normalize',function(type){
+		this.target.find('.modal-dialog').removeClass(type);
+		this.__opts__.onNormalize && this.__opts__.onNormalize(type);
+	});
+
+	//注册模态框标准化后
+	Event.on('normalized',function(type){
+		this.__opts__.onNormalized && this.__opts__.onNormalized(type);
+	});
+
 
 	/*********************** 对话框管理类 *******************************/
 
@@ -520,8 +765,8 @@
 			var w = node.outerHeight(true),
 				h = node.outerHeight(true);
 
-			this.__opts__.w = this.__opts__.width === 'auto' ? w : this.__opts__.width;
-			this.__opts__.h = this.__opts__.height === 'auto' ? h : this.__opts__.height;
+			this.__opts__.w = node.width(this.__opts__.width).width();
+			this.__opts__.h = node.height(this.__opts__.height).height();
 
 			var bodyHeight = node.find('.modal-body').height();
 
@@ -786,6 +1031,7 @@
 				modalBody.height('auto').append($(this));
 				height = modalBody.outerHeight(true);
 
+				//重新设置模态框高度
 				supermodal.setSize(undefined,'auto');
 				var size = supermodal.getSize();
 				supermodal.setSize(size.w,size.h);
@@ -1018,13 +1264,16 @@
 			//防止重复创建
 			opts.draw = opts.draw == undefined ? true : opts.draw;
 
+			//防止重复创建
 			this.__opts__.draw = true;
 
+			//设置id
 			this.__opts__.id = this.__opts__.id || Dialog.getTimeTick();
 
 			//渲染模态框
 			var appendWindow = this.__drawWindow__(opts);
 
+			//触发自定义事件
 			this.fire('__DISPLAY__',opts);
 
 			//切换不同的模式
@@ -1146,11 +1395,10 @@
 	Dialog.defaults = {
 		width:         600, //模态框宽度
 		height:        300, //模态框高度
-		zindex:        9999,
+		zindex:        9999, //层级
 		position: '5', //窗体初始位置 1-左上角 2-中上 3-右上角 4-左中 5-居中 6-右中 7-左下角 8-中下 9-右下角 'custom'-自定义
 		leftX: 0, //自定义位置 x
 		topY: 0, //自定义位置 y
-		loading:       '正在加载，请稍候...',
 		iconType: '', //'warning','confirm','question','error','info'
 		autoClose:     false, //是否自动关闭
 		autoMin:     false, //是否自动最小化
@@ -1173,13 +1421,13 @@
 	    backdrop:      true, //是否遮罩
 	    btn_ok:        '确定', // Label
 	    btn_cancel:    '取消', // Label
-	    btn_close:     '关闭',
+	    btn_close:     '关闭', // Label
 	    btn_close_type: 'img', //关闭按钮类型样式 'img','text'
-	    btn_ok_shortcutKey:null,
-	    btn_cancel_shortcutKey:null,
-	    btn_close_shortcutKey:null,
-	    btn_min_shortcutKey:null,
-	    btn_max_shortcutKey:null,
+	    btn_ok_shortcutKey:null, //确定按钮快捷键
+	    btn_cancel_shortcutKey:null, //取消按钮快捷键
+	    btn_close_shortcutKey:null, //关闭按钮快捷键
+	    btn_min_shortcutKey:null, //最小化按钮快捷键
+	    btn_max_shortcutKey:null, //最大化按钮快捷键
 	    skinClassName: null, //皮肤样式名
 	    callback:null, //确认框回调函数
 
@@ -1191,21 +1439,14 @@
 		mxTop: 0, //上边限制
 		mxBottom: 9999, //下边限制
 		mxContainer: $(window), //指定限制在容器内
-		dragAnchor: 200, //当窗体被拖离200px时，锚定拖动位置作为窗体起始位置
-		anchor: false, //窗体是否被锚定
 		fixed: true, //是否固定位置
 		lockX: false, //是否锁定水平方向拖放
 		lockY: false, //是否锁定垂直方向拖放
 		lock: false, //是否锁屏
-		topMost: false, //是否允许显示在其它窗体最上面
-		topMostType: 1, //顶层窗体交换方式：1-冒泡排序，2-直接交换
-		build: 'new', //当存在重复的ID时重建新的窗体 'new','rebuild','refurbish','append','show'
-		reload: true, //是否重新加载内容，若不需要重新加载内容 reload:false 与 build:'show' 组合使用
-		memory: false, //是否记录上次的位置
-		dlgEvent: {  //事件代理
+		topMost: true, //是否允许显示在其它窗体最上面
+		dlgEvent: {  //拖拽事件代理
 			'onStart':null,'onMove':null,'onStop':null
-		},
-			
+		},		
 	    onShow:    null, //模态框显示前立即触发该事件
 	    onShown:     null, //模态框已经显示出来（并且同时在动画效果完成）之后被触发
 	    onHide:    null, //模态框隐藏前立即触发该事件
@@ -1306,7 +1547,7 @@
 
 	//是否最小化
 	Dialog.prototype.__isMinimize__ = function(){
-		return this.target.find('.modal-dialog').hasClass('minimize');
+		return this.target.find('.modal-body').is(':hidden') && this.target.find('.modal-footer').is(':hidden');
 	};
 
 	//最小化
@@ -1362,7 +1603,9 @@
 		var isMax = false, //是否最大化标识
 			lastSize = {}, //缓存模态窗尺寸
 			lastPos = {}, //缓存模态窗位置
-			lastBodyHeight;//缓存主体高度
+			lastBodyHeight, //缓存主体高度
+			normalModalHeight, //标准化模态框高度
+			maxBodyHeight; //最大化主体高度
 
 		return function(mode){
 
@@ -1375,11 +1618,11 @@
 				//保存主体高度
 				lastBodyHeight = this.getBodyHeight();
 
-				//获取最大化主体高度
-				var maxBodyHeight = this.__getMaxBodyHeight__();
+				//获取标准化模态框高度
+				normalModalHeight = this.__getNormalModalHeight__();
 
-				//是否最小化
-				var isMin = this.__isMinimize__();
+				//获取最大化主体高度
+				maxBodyHeight = this.__getMaxBodyHeight__();
 
 				//设置最大化窗口resize事件
 				this.__setMaxResize__();
@@ -1387,7 +1630,7 @@
 				this.fire('maximize');
 
 				//设置尺寸和位置
-				this.__animateModal__({'width':$(window).width(),'height':isMin ? lastSize.h : $(window).height(),'top':0,'left':0},function(){
+				this.__animateModal__({'width':$(window).width(),'height':this.__isMinimize__() ? lastSize.h : $(window).height(),'top':0,'left':0},function(){
 					this.fire('maximized');
 				}.bind(this));
 				this.__animateBody__({'height':maxBodyHeight});
@@ -1400,14 +1643,10 @@
 				this.fire('normalize','maximize');
 
 				//还原尺寸和位置
-				this.__animateModal__({'width':lastSize.w,'height':'auto','left':lastPos.x,'top':lastPos.y},function(){
+				this.__animateModal__({'width':lastSize.w,'height':this.__isMinimize__() ? lastSize.h : normalModalHeight,'left':lastPos.x,'top':lastPos.y},function(){
 					this.fire('normalized','maximize');
 				}.bind(this));
-				this.__animateBody__({'height':lastBodyHeight},function(){
-					this.setSize(lastSize.w,'auto');
-					var size = this.getSize();
-					this.setSize(size.w,size.h);
-				}.bind(this));
+				this.__animateBody__({'height':lastBodyHeight});
 
 			}
 
@@ -1496,6 +1735,23 @@
 		this.__layers__['modal-footer'].show();
 	};
 
+	//获取标准化模态框高度
+	Dialog.prototype.__getNormalModalHeight__ = function(){
+
+		var height = 0;
+
+		Layer.cloneNode.call(this.__layers__['modal'],function(node){
+
+			node.find('.modal-body').show();
+			node.find('.modal-footer').show();
+			height = node.height('auto').outerHeight(true);
+
+		});
+
+		return height;
+
+	};
+
 	//获取最大化主体高度
 	Dialog.prototype.__getMaxBodyHeight__ = function(){
 
@@ -1531,7 +1787,13 @@
 
 	//主体向上滑动
 	Dialog.prototype.__slideUpBody__ = function(callback){
-		this.__layers__['modal-body'].slideUp(this.__opts__.speed,callback);
+
+		var func = function(){
+			this.setSize(undefined,this.getSize().h);
+			callback && callback();
+		}.bind(this);
+
+		this.__layers__['modal-body'].slideUp(this.__opts__.speed,func);
 	};
 
 	//底部向上滑动
@@ -1541,7 +1803,13 @@
 
 	//模态窗动画
 	Dialog.prototype.__animateModal__ = function(params,callback){
-		this.__layers__['modal'].animate(params,this.__opts__.speed,callback);
+
+		var func = function(){
+			this.setSize(params.width,params.height);
+			callback && callback();
+		}.bind(this);
+
+		this.__layers__['modal'].animate(params,this.__opts__.speed,func);
 	};
 
 	//主体动画
@@ -1578,6 +1846,7 @@
 
 		}
 
+		//执行方法
 		loadContentFn.call(loadContents);
 		
 	};
@@ -1622,6 +1891,7 @@
 		this.__layers__['modal-body'].setSize(undefined,h);
 	};
 
+	//添加listbox的左右箭头
 	Dialog.prototype.addArrows = function(){
 
 		var supermodal = this,
@@ -1742,253 +2012,6 @@
 	};
 
 
-	//全局快捷键
-	var shortcutKey = {
-		'27':function(){ this.hide(); }
-	};
-
-	//遮罩层
-	var overlay;
-
-	//对话框管理
-	var manage = new DialogManage();
-
-
-
-
-	//全局自定义事件
-	var Event = {
-
-		//事件集合
-		__clients__:[],
-
-		//绑定事件
-		on:function(key,fn){
-			if(!this.__clients__[key])
-				this.__clients__[key] = [];
-
-			//订阅的消息加进缓存列表
-			this.__clients__[key].push(fn);
-
-			return this;
-		},
-
-		//触发事件
-		fire:function(){
-			var key = [].shift.call(arguments),
-				fns = this.__clients__[key];
-			
-			//如果没有绑定对应的消息
-			if(!fns || fns.length === 0) return this;
-			
-			for(var i =0, fn; fn=fns[i++];)
-				fn.apply(this,arguments);
-
-			return this;
-		},
-
-		//移除事件
-		off:function(key,fn){
-			var fns = this.__clients__[key];
-		
-			//如果key对应的消息没有被人订阅，则直接返回
-			if(!fns) return this;
-
-			//如果没有传入具体的回调函数，表示需要取消key对应的所有订阅
-			if(!fn){
-				fns && (fns.length = 0);
-			}else{
-				for(var i=fns.length - 1; i>=0;i--){
-					var _fn = fns[i];
-					if(_fn === fn){
-						//删除订阅者的回调函数
-						fns.splice(i,1);
-					}
-				}
-			}
-			return this;
-		}
-	};
-
-
-	/*------------------- 请在此处扩展自定义事件 ----------------------------*/
-
-	//全局自定义事件集合clients将拷贝到SuperModal的属性clients上面
-	//
-
-	//动画速度
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.speed = this.__opts__.show ? 0 : 'slow';
-	});
-
-	//加入遮罩层
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.backdrop && Dialog.overlay.show(this,this.__opts__);
-	});
-
-	//加入拖拽
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.dragAble && new DragDrop(this,this.target,$.extend(this.__opts__,{
-			handle:this.target.find('.modal-' + (this.__opts__.hideHeader ? 'body' : 'header'))
-		}));
-	});
-
-	//加入ESC键盘事件
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.keyEsc && $.extend(this.__shortcutKey__,shortcutKey);
-	});
-
-	//添加皮肤样式名
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.skinClassName && this.target.addClass(this.__opts__.skinClassName);
-	});
-
-	//添加标题图标样式名
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.iconType && this.target.find('.modal-header').addClass(this.__opts__.iconType);
-	});
-
-	//加入模态框按钮
-	Event.on('__DISPLAY__',function(){
-
-		var temp = this.__btnObjs__[0];
-
-		var hbs = new HeaderButtons(this,this.target.find('.modal-header'),this.__opts__);
-		var fbs = new FooterButtons(this,this.target.find('.modal-footer'),this.__opts__);
-
-		this.__btnObjs__ = [hbs,fbs];
-
-		fbs.__buttons__ = temp.__buttons__;
-		
-	});
-
-	Event.on('__DISPLAY__',function(){
-		//加入最小化按钮
-		this.__opts__.minButton && this.__addMinButton__();
-		//加入最大化按钮
-		this.__opts__.maxButton && this.__addMaxButton__();	
-		//加入关闭按钮
-		this.__opts__.closeButton && this.__addCloseButton__();
-	});
-
-	Event.on('__DISPLAY__',function(){
-		//加入对话框
-		this.__layers__['modal'] = new Modal(this,this.target,this.__opts__);
-		//加入对话框
-		this.__layers__['modal-dialog'] = new Layer(this,this.target.find('.modal-dialog'),this.__opts__);
-		//加入模态框头部
-		this.__layers__['modal-header'] = new Layer(this,this.target.find('.modal-header'),this.__opts__);
-		//加入模态框主体
-		this.__layers__['modal-body'] = new Layer(this,this.target.find('.modal-body'),this.__opts__);
-		//加入模态框底部
-		this.__layers__['modal-footer'] = new Layer(this,this.target.find('.modal-footer'),this.__opts__);
-	});
-
-	Event.on('__DISPLAY__',function(){
-		manage.add(this.__layers__['modal']);
-	});
-
-	//隐藏模态框头部
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.hideHeader && this.__hideHeader__();
-	});
-
-	//隐藏模态框底部
-	Event.on('__DISPLAY__',function(){
-		this.__opts__.hideFooter && this.__hideFooter__();
-	});
-
-
-	//注册关闭
-	Event.on('__CLOSE__',function(){
-		this.hide();
-	});
-
-	//注册最小化
-	Event.on('__MIN__',function(){
-		this.min();
-	});
-
-	//注册最大化
-	Event.on('__MAX__',function(){
-		this.max();
-	});
-
-	//注册确认
-	Event.on('__CONFIRM__',function(){
-		this.__opts__.callback && this.__opts__.callback();
-	});
-
-	//注册取消
-	Event.on('__CANCEL__',function(){
-		this.hide();
-	});
-
-	//注册模态框显示前
-	Event.on('show',function(){
-		this.__opts__.onShow && this.__opts__.onShow();
-	});
-
-	//注册模态框显示后
-	Event.on('shown',function(){
-		this.__opts__.onShown && this.__opts__.onShown();
-		//自动关闭模态窗
-		this.__opts__.autoClose && setTimeout(this.hide.bind(this),this.__opts__.timeout);
-		//自动最小化模态窗
-		this.__opts__.autoMin && setTimeout(this.min.bind(this,true),this.__opts__.timeout);
-		//自动最大化模态窗
-		this.__opts__.autoMax && setTimeout(this.max.bind(this,true),this.__opts__.timeout);
-		//默认最小化
-		this.__opts__.min && this.min(true);
-		//默认最大化
-		this.__opts__.max && this.max(true);
-	});
-
-	//注册模态框隐藏前
-	Event.on('hide',function(){
-		this.__opts__.onHide && this.__opts__.onHide();
-	});
-
-	//注册模态框隐藏后
-	Event.on('hidden',function(){
-		this.__opts__.onHidden && this.__opts__.onHidden();
-	});
-
-	//注册模态框最小化前
-	Event.on('minimize',function(){
-		this.target.find('.modal-dialog').addClass('minimize');
-		this.__opts__.onMinimize && this.__opts__.onMinimize();
-	});
-
-	//注册模态框最小化后
-	Event.on('minimized',function(){
-		this.__opts__.onMinimized && this.__opts__.onMinimized();
-	});
-
-	//注册模态框最大化前
-	Event.on('maximize',function(){
-		this.target.find('.modal-dialog').addClass('maximize');
-		this.__opts__.onMaximize && this.__opts__.onMaximize();
-	});
-
-	//注册模态框最大化后
-	Event.on('maximized',function(){
-		this.__opts__.onMaximized && this.__opts__.onMaximized();
-	});
-
-	//注册模态框标准化前
-	Event.on('normalize',function(type){
-		this.target.find('.modal-dialog').removeClass(type);
-		this.__opts__.onNormalize && this.__opts__.onNormalize(type);
-	});
-
-	//注册模态框标准化后
-	Event.on('normalized',function(type){
-		this.__opts__.onNormalized && this.__opts__.onNormalized(type);
-	});
-
-
-
 	/*********************** 工具方法 *******************************/
 
 	function createElement(tag,obj){
@@ -2061,5 +2084,9 @@
 	            fun.call(thisp, this[i], i, this);  
 	    }
 	};
+
+
+	//对话框管理
+	var manage = new DialogManage();
 
 })(this);
