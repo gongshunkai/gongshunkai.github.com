@@ -391,7 +391,7 @@
 				else
 					obj && this.addButton(obj);
 
-			}.bind(this));
+			},this);
 		},
 
 		//添加分隔元素
@@ -875,7 +875,7 @@
 					e.currentTarget = el;
 				this.editor._execCommand(e);
 			}));
-		}.bind(this));
+		},this);
 
 		//返回菜单容器
 		return wrap;
@@ -1000,7 +1000,7 @@
 		_injectAllButtons: function(){
 			this.buttons.forEach(function(e){
 				this.dialog.querySelector('.dialog-footer').appendChild(e);
-			}.bind(this));
+			},this);
 	    },
 
 		//设置对话框位置
