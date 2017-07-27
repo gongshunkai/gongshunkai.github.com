@@ -82,6 +82,14 @@
 		//设置空值文本
 		if(opts.showEmpty) elem.append('<option value="0">' + elem.attr('empty-text') + '</option>');
 
+		//交换默认值
+		if(typeof elem.attr('original-value') == 'undefined'){
+			elem.attr({
+				'original-value':elem.attr('default-value'),
+				'original-text':elem.attr('empty-text')
+			});
+		}
+
 		//隐藏空值
 		if(menu.length <= 0){
 			elem.attr({'disabled':'disabled'});
@@ -95,14 +103,8 @@
 			elem.append(op).val(elem.attr('default-value'));
 		});
 
-		//交换默认值
-		if(!elem.attr('original-value')){
-			elem.attr({
-				'original-value':elem.attr('default-value'),
-				'original-text':elem.attr('empty-text')
-			});
-			elem.attr('default-value','0');
-		}
+		//重置默认值
+		elem.attr('default-value') != 0 && elem.attr('default-value','0');
 	};
 
 	$.fn.select.async = function(elem,value,opts){

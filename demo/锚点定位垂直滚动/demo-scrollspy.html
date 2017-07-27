@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>滚动监听</title>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="jquery.scrollspy.js"></script>
+<style>
+body{position:relative;}
+div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
+.nav{top:0;left: 0;}
+.nav-tabs{height:50px;background-color:#ffff00;}
+.nav li{float:left;margin:5px;}
+.nav li.active{background:#ff00ff;}
+
+#a1,#b1{height:400px;background-color:#999933;}
+#a2,#b2{height:auto;background-color:#336699;}
+#a3,#b3{height:500px;background-color:#FFCC99;}
+#a4,#b4{height:600px;background-color:#9966CC;}
+#a5,#b5{height:400px;background-color:#999999;}
+
+.jumbotron{width:800px;height:500px;background:#f2f2f2;text-align:center;line-height:500px;}
+
+#navbar-example{position:fixed;}
+#navbar-example2{position:relative;width:800px;}
+#content2{position:relative;width:800px;height:500px;overflow-y:auto;}
+</style>
+</head>
+<body data-spy="scroll" data-target="#navbar-example" data-offset="0">
+
+<div id="navbar-example">
+	<ul class="nav nav-tabs">
+		<li><a href="#a1">标题1</a></li>
+		<li><a href="#a2">标题2</a></li>
+		<li><a href="#a3">标题3</a></li>
+		<li><a href="#a4">标题4</a></li>
+		<li><a href="#a5">标题5</a></li>
+	</ul>
+</div>
+
+<div class="content">
+	<div id="a1">
+		<h2>标题1</h2>
+	</div>
+	<div id="a2">
+		<h2>标题2</h2>
+		<img src="http://www.lens-me.com/lensme/cl/cl-265s1.jpg">
+	</div>
+	<div id="a3">
+		<h2>标题3</h2>
+	</div>
+	<div id="a4">
+		<h2>标题4</h2>
+	</div>
+	<div id="a5">
+		<h2>标题5</h2>
+	</div>
+</div>
+
+<div class="jumbotron">
+	<h1><a href="javascript:;">删除DOM元素会重新计算锚点的位置</a></h1>
+</div>
+
+
+<div id="navbar-example2">
+	<ul class="nav nav-tabs">
+		<li><a href="#b1">标题1</a></li>
+		<li><a href="#b2">标题2</a></li>
+		<li><a href="#b3">标题3</a></li>
+		<li><a href="#b4">标题4</a></li>
+		<li><a href="#b5">标题5</a></li>
+	</ul>
+</div>
+<div id="content2" class="content" data-spy="scroll" data-target="#navbar-example2">
+	<div id="b1">
+	<h2>标题1</h2>
+	</div>
+	<div id="b2">
+		<h2>标题2</h2>
+		<img src="http://www.lens-me.com/lensme/cl/cl-267s1.jpg">
+	</div>
+	<div id="b3">
+		<h2>标题3</h2>
+	</div>
+	<div id="b4">
+		<h2>标题4</h2>
+	</div>
+	<div id="b5">
+		<h2>标题5</h2>
+	</div>
+
+	<div class="jumbotron">
+		<h1><a href="javascript:;">删除DOM元素会重新计算锚点的位置</a></h1>
+	</div>
+
+</div>
+
+
+<script>
+//初始化
+$('body').scrollspy();
+
+//每当一个新条目被激活后都将由滚动监听插件触发此事件。
+$('#a1').on('activate.scrollspy',function(){
+	console.log('#a1');
+});
+$('#a2').on('activate.scrollspy',function(){
+	console.log('#a2');
+});
+$('#a3').on('activate.scrollspy',function(){
+	console.log('#a3');
+});
+$('#a4').on('activate.scrollspy',function(){
+	console.log('#a4');
+});
+$('#a5').on('activate.scrollspy',function(){
+	console.log('#a5');
+});
+
+//当使用滚动监听插件的同时在 DOM 中添加或删除元素后，你需要像下面这样调用此刷新方法：
+$('.jumbotron a').on('click',function(){
+
+	$(this).parents('.jumbotron').remove();
+
+	//重新计算锚点位置
+	$('[data-spy="scroll"]').each(function () {
+		var $spy = $(this).scrollspy('refresh');
+	});
+});
+
+
+$('#content2').scrollspy();
+
+</script>
+</body>
+</html>

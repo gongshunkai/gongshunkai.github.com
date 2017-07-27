@@ -1,10 +1,13 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>锚点定位垂直滚动</title>
-<script src="../libs/jutil.js"></script>
+<script src="../libs/jquery1.12.0.min.js"></script>
+<script src="../libs/jquery.mousewheel.js"></script>
+<script src="jquery.scrollify.js"></script>
 <style>
+body{overflow-y:hidden;}
 div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
 #tab{position:fixed; top:0; left: 0;height:50px;background-color:#ffff00;}
 #tab li{float:left;margin:5px;}
@@ -115,66 +118,13 @@ div, p, ul, ol, dl, dt, dd, form{padding:0; margin:0;list-style-type: none;}
 </div>
 
 <script>
-var Scrollify = jutil.Class.create();
-jutil.extend(Scrollify.prototype,{
-	initialize:function(arrAnchor){
-		this.arrTop = [];
-		this.scroll = jutil.scrollTo();
-			
-		//遍历获取锚点绝对位置的y坐标
-		for(var i=0,j;j=arrAnchor[i++];){
-			var element = document.getElementById(j);
-			var y = jutil.position(element).top;
-			this.arrTop.push(y);
-		}
-	},
-	wheelCtrl:function(e){
-        e.preventDefault();
-		e.stopPropagation();
-		
-		if(e.delta > 0){
-			this.moveDown();
-		}else{
-			this.moveUp();
-		}
-	},
-	moveUp:function(){
-		for(var i=this.arrTop.length-1,j;j=this.arrTop[i--];){
-			if(jutil.getPageScroll().y > j){
-				this.moveTo(j);
-				break;
-			} 
-		}	
-	},
-	moveDown:function(){
-		for(var i=0,j;j=this.arrTop[i++];){
-			if(jutil.getPageScroll().y < j){
-				this.moveTo(j);
-				break;
-			} 
-		}
-	},
-	moveTo:function(pos){
-		var pageSize = jutil.getPageSize();
-		pos = Math.min(pos,pageSize.PageH - pageSize.WinH);
-		this.scroll.play(pos);
-	}
+$('.container').scrollify({
+	beforeLoad:function(pageIndex){ console.log('准备开始',pageIndex); },
+	afterLoad:function(pageIndex){ console.log('滚动完成',pageIndex); },
+	finished:function(pageIndex){ console.log('滚动到底部了',pageIndex); },
+	scrollAnchor:$('#a1,#a2,#a3,#a4,#a5'),
+	scrollTab:$('#tab a')
 });
-
-
-var run = function(fn){	
-	var tab = document.getElementById('tab').getElementsByTagName('a');
-	jutil.each(tab,function(o,i){
-		o.onclick = function(){
-			fn.moveTo(fn.arrTop[i]);
-		}
-	});
-	
-	jutil.addEvent(document, "mousewheel", jutil.bindAsEventListener(this, function(e){ fn.wheelCtrl(e);}));
-};
-
-var fn = new Scrollify(["a1","a2","a3","a4","a5"]);
-run(fn);
 </script>
 </body>
 </html>
