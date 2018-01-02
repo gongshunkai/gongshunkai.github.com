@@ -4,12 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-sacle=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
-<title>list-row-group</title>
+<title>demo</title>
 <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/3.2.1/css/font-awesome.min.css">
 <script src="https://cdn.bootcss.com/angular.js/1.5.7/angular.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../styles/list-row-group.css">
-<script src="../scripts/list-row-group.min.js"></script>
+<link rel="stylesheet" type="text/css" href="styles/list-row-group.css">
+<script src="scripts/list-row-group.min.js"></script>
 <style>
 .jumbotron{margin:20px 0;}
 </style>
@@ -63,7 +63,7 @@
 				sourcelist:[],
 				targetlist:[],
 				search:function(){
-					$http.get('../data/list.json')
+					$http.get('data/list.json')
 					.success(function(data){
 						$scope.groupgoods.sourcelist = data;
 					});
@@ -86,7 +86,7 @@
 				dropItem:function(values){
 					var deferred = $q.defer();
 					
-					$http.get('../data/delete.json')
+					$http.get('data/delete.json')
 					.success(function(data){
 						alert('删除的id: ' + values);
 						deferred.resolve(data);
@@ -108,7 +108,7 @@
 				targetlist:[],
 				isSingle:0,
 				search:function(){
-					$http.get('../data/list.json')
+					$http.get('data/list.json')
 					.success(function(data){
 						$scope.linkgoods.sourcelist = data;
 					});
@@ -122,7 +122,7 @@
 						item.is_single = $scope.linkgoods.isSingle;
 					});
 
-					$http.get('../data/insert.json')
+					$http.get('data/insert.json')
 					.success(function(data){
 						alert(angular.toJson(items));
 						deferred.resolve(data);
@@ -136,7 +136,7 @@
 				dropItem:function(values){
 					var deferred = $q.defer();
 					
-					$http.get('../data/delete.json')
+					$http.get('data/delete.json')
 					.success(function(data){
 						alert('删除的id: ' + values);
 						deferred.resolve(data);
