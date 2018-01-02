@@ -4,12 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-sacle=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
-<title>demo</title>
+<title>list-row-group</title>
 <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/3.2.1/css/font-awesome.min.css">
 <script src="https://cdn.bootcss.com/angular.js/1.5.7/angular.min.js"></script>
-<link rel="stylesheet" type="text/css" href="styles/list-row-group.css">
-<script src="scripts/list-row-group.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../styles/list-row-group.css">
+<script src="../scripts/list-row-group.min.js"></script>
 <style>
 .jumbotron{margin:20px 0;}
 </style>
@@ -29,7 +29,7 @@
 							<input class="form-control" type="text" placeholder="价格" ng-model="groupgoods.price">
 						</div>
 					</form-group-extra>
-					<list-group-target header="该商品的配件" source="groupgoods.targetlist"  multiple="true"></list-group-target>
+					<list-group-target header="该商品的配件" source="groupgoods.targetlist" multiple="true"></list-group-target>
 				</list-row-group>
 			</div>
 			
@@ -63,7 +63,7 @@
 				sourcelist:[],
 				targetlist:[],
 				search:function(){
-					$http.get('data/list.json')
+					$http.get('../data/list.json')
 					.success(function(data){
 						$scope.groupgoods.sourcelist = data;
 					});
@@ -86,7 +86,7 @@
 				dropItem:function(values){
 					var deferred = $q.defer();
 					
-					$http.get('data/delete.json')
+					$http.get('../data/delete.json')
 					.success(function(data){
 						alert('删除的id: ' + values);
 						deferred.resolve(data);
@@ -101,14 +101,14 @@
 
 			$scope.linkgoods = {
 				singlelist:[
-					{text:'单向关联',value:1},
-					{text:'双向关联',value:0}
+					{text:'单向关联',value:0},
+					{text:'双向关联',value:1}
 				],
 				sourcelist:[],
 				targetlist:[],
-				isSingle:1,
+				isSingle:0,
 				search:function(){
-					$http.get('data/list.json')
+					$http.get('../data/list.json')
 					.success(function(data){
 						$scope.linkgoods.sourcelist = data;
 					});
@@ -117,17 +117,12 @@
 
 					var deferred = $q.defer();
 
-					var map = {
-						0:$scope.linkgoods.singlelist[1],
-						1:$scope.linkgoods.singlelist[0],
-					};
-
 					angular.forEach(items,function(item){
-						item.goods_name = item.goods_name + ' -- [' + map[$scope.linkgoods.isSingle].text + ']';
+						item.goods_name = item.goods_name + ' -- [' + vm.linkgoods.singlelist[$scope.linkgoods.isSingle].text + ']';
 						item.is_single = $scope.linkgoods.isSingle;
 					});
 
-					$http.get('data/insert.json')
+					$http.get('../data/insert.json')
 					.success(function(data){
 						alert(angular.toJson(items));
 						deferred.resolve(data);
@@ -141,7 +136,7 @@
 				dropItem:function(values){
 					var deferred = $q.defer();
 					
-					$http.get('data/delete.json')
+					$http.get('../data/delete.json')
 					.success(function(data){
 						alert('删除的id: ' + values);
 						deferred.resolve(data);
