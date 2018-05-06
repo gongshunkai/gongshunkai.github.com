@@ -410,6 +410,7 @@
 					z: l.zoom(),
 					v: f(),
 					iframe: !(window === top),
+					cpuClass:navigator.cpuClass,
 					oscpu:navigator.oscpu
 				};
 			return $.when(w(), s(), h()).then(function(n, t, o) {
