@@ -409,7 +409,8 @@
 					la: r(),
 					z: l.zoom(),
 					v: f(),
-					iframe: !(window === top)
+					iframe: !(window === top),
+					oscpu:navigator.oscpu
 				};
 			return $.when(w(), s(), h()).then(function(n, t, o) {
 				v.f = JSON.stringify(n), v.cFp = t, v.h5 = JSON.stringify({
