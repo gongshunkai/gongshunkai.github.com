@@ -381,7 +381,7 @@
 			var e = new $.Deferred,
 				o = ["width", "height", "availWidth", "availHeight", "availTop", "availLeft", "colorDepth", "pixelDepth"],
 				v = {
-					l: navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || "",
+					l: navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || "undefined",
 					tZ: (new Date).getTimezoneOffset(),
 					iDB: !! (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB),
 					ls: n("localStorage"),
@@ -390,13 +390,13 @@
 					eL: eval.toString().length,
 					e2S: t(),
 					c: !! navigator.cookieEnabled,
-					dNT: navigator.doNotTrack ? navigator.doNotTrack : navigator.msDoNotTrack ? navigator.msDoNotTrack : window.doNotTrack ? window.doNotTrack : "unknown",
+					dNT: navigator.doNotTrack ? navigator.doNotTrack : navigator.msDoNotTrack ? navigator.msDoNotTrack : window.doNotTrack ? window.doNotTrack : "undefined",
 					p: i(),
 					adb: a(),
-					pS: navigator.productSub,
+					pS: navigator.productSub || 'undefined',
 					j: !! navigator.javaEnabled,
-					pf: navigator.platform,
-					cc: navigator.hardwareConcurrency || 'unknown',
+					pf: navigator.platform || 'undefined',
+					cc: navigator.hardwareConcurrency || 'undefined',
 					t: d(),
 					cam: !(!navigator.getUserMedia && !navigator.mozGetUserMedia),
 					loc: !! navigator.geolocation,
@@ -410,8 +410,8 @@
 					z: l.zoom(),
 					v: f(),
 					iframe: !(window === top),
-					cpuClass:navigator.cpuClass,
-					oscpu:navigator.oscpu
+					cpuClass:navigator.cpuClass || 'undefined',
+					oscpu:navigator.oscpu || 'undefined'
 				};
 			return $.when(w(), s(), h()).then(function(n, t, o) {
 				v.f = JSON.stringify(n), v.cFp = t, v.h5 = JSON.stringify({
