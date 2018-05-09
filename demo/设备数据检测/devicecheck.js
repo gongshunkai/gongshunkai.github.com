@@ -157,6 +157,7 @@
 					}
 				},
 				o = function() {
+alert(1)
 					var n = Math.round(window.outerWidth / window.innerWidth * 100) / 100;
 					return {
 						zoom: n,
@@ -164,6 +165,7 @@
 					}
 				},
 				r = function() {
+alert(2)
 					var n = Math.round(document.documentElement.clientWidth / window.innerWidth * 100) / 100;
 					return {
 						zoom: n,
