@@ -143,6 +143,7 @@
 					}
 				},
 				t = function() {
+alert(9)
 					var n = Math.round(screen.deviceXDPI / screen.logicalXDPI * 100) / 100;
 					return {
 						zoom: n,
@@ -150,6 +151,7 @@
 					}
 				},
 				i = function() {
+alert(1)
 					var n = Math.round(document.documentElement.offsetHeight / window.innerHeight * 100) / 100;
 					return {
 						zoom: n,
@@ -157,7 +159,7 @@
 					}
 				},
 				o = function() {
-alert(1)
+alert(2)
 					var n = Math.round(window.outerWidth / window.innerWidth * 100) / 100;
 					return {
 						zoom: n,
@@ -165,7 +167,7 @@ alert(1)
 					}
 				},
 				r = function() {
-alert(2)
+alert(3)
 					var n = Math.round(document.documentElement.clientWidth / window.innerWidth * 100) / 100;
 					return {
 						zoom: n,
@@ -173,6 +175,7 @@ alert(2)
 					}
 				},
 				d = function() {
+alert(4)
 					var n = 90 == Math.abs(window.orientation) ? screen.height : screen.width,
 						t = n / window.innerWidth;
 					return {
@@ -181,6 +184,7 @@ alert(2)
 					}
 				},
 				a = function() {
+alert(5)
 					var n = function(e) {
 							return e.replace(/;/g, " !important;")
 						},
@@ -195,6 +199,7 @@ alert(2)
 					}
 				},
 				u = function() {
+alert(8)
 					var e = m("min--moz-device-pixel-ratio", "", 0, 10, 20, 1e-4);
 					return e = Math.round(100 * e) / 100, {
 						zoom: e,
@@ -202,12 +207,14 @@ alert(2)
 					}
 				},
 				c = function() {
+alert(7)
 					return {
 						zoom: u().zoom,
 						devicePxPerCssPx: e()
 					}
 				},
 				s = function() {
+alert(6)
 					var n = window.top.outerWidth / window.top.innerWidth;
 					return n = Math.round(100 * n) / 100, {
 						zoom: n,
