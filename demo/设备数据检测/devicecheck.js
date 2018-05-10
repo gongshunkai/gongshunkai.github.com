@@ -390,6 +390,7 @@ alert(6)
 			var e = new $.Deferred,
 				o = ["width", "height", "availWidth", "availHeight", "availTop", "availLeft", "colorDepth", "pixelDepth"],
 				v = {
+                                        ua:navigator.userAgent,
 					l: navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || "undefined",
 					tZ: (new Date).getTimezoneOffset(),
 					iDB: !! (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB),
