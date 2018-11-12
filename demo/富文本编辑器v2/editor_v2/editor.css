@@ -1,0 +1,71 @@
+.full-fix{height:100%;}
+.full-fix body{height:100%;overflow-y:hidden;}
+.full-fix .editor-wrap.full-fix{width:100% !important;height:100% !important;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:99999;}
+.full-fix .editor-wrap.full-fix .editor-content{width:100% !important;height:100% !important;}
+.full-fix .editor-wrap.full-fix .toolbar i.fa-expand:before{content:"\f066";}
+
+.editor-wrap{display:none;position:relative;margin:0;border:1px solid #ccc;}
+
+.toolbar{width:100%;position:relative;top:0;left:0;background:#ffffff;border-bottom:1px solid #eeeeee;padding:0 5px;z-index:1;}
+.toolbar ul, .toolbar li{
+	-moz-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    margin:0;padding:0;}
+.toolbar li.dropdown{}
+.toolbar li.dropdown.open .btn{opacity:1;background:#ffffff;box-shadow:0 0 4px rgba(0,0,0,0.3);}
+.toolbar .btn{width:46px;background:none;border-radius:0;border:0;opacity:0.6;outline:0;}
+.toolbar .btn[disabled], .toolbar .btn[disabled]:hover{opacity:0.2;cursor:default;}
+.toolbar .btn:hover{opacity:1;}
+.toolbar .btn:active{background:none;box-shadow:none;outline:0;}
+.toolbar .btn.active{box-shadow:none;background:#eeeeee;opacity:1;}
+.toolbar .btn i{display:block;}
+.toolbar .rotate-90{
+transform:rotate(90deg);
+-ms-transform:rotate(90deg);
+-webkit-transform:rotate(90deg);
+-o-transform:rotate(90deg);
+-moz-transform:rotate(90deg);}
+
+.toolbar li.dropdown ul.dropdown-menu:before{background:#ffffff;content:"";display:block;height:5px;left:0;position:absolute;top:-4px;width:46px;}
+.toolbar li.dropdown ul.dropdown-menu{border:none;border-radius:0;text-align:left;padding:10px 1px;box-shadow:0 0 4px rgba(0,0,0,0.3);}
+.toolbar li.dropdown ul.dropdown-menu li.active a{background:#dddddd;color:#000000;}
+
+.toolbar li.dropdown ul.align-list, .toolbar li.dropdown ul.align-list li{min-width:auto;}
+.toolbar li.dropdown ul.align-list li a{padding:3px 15px;}
+.toolbar li.dropdown ul.color-list{min-width:114px;padding:8px;}
+.toolbar li.dropdown ul.color-list li{float:left;}
+.toolbar li.dropdown ul.color-list li a{padding:0;margin:2px;}
+.toolbar li.dropdown ul.color-list li span{width:20px;height:20px;display:block;border-radius:4px;}
+.toolbar li.dropdown ul.table-list{min-width:118px;padding:4px;}
+.toolbar li.dropdown ul.table-list li{float:left;}
+.toolbar li.dropdown ul.table-list li a{padding:0;border:1px solid #ffffff;width:18px;height:18px;display:block;background:#f3f3f3;}
+.toolbar li.dropdown ul.table-list li.active a{background:#cfcfcf;}
+
+.editor-content{width:100%;position:relative;background:#ffffff;overflow:auto;}
+
+.editor-table{width:100%;min-height:100%;position:relative;background:#ffffff;padding:10px;outline:0;word-wrap:break-word;}
+.editor-table a.selected{background:#b3d4fd;}
+.editor-table img.selected{box-shadow:0 0 0 4px #cccccc;cursor:pointer;}
+.editor-table table{margin-bottom:15px;}
+.editor-table table th{background:#e6e6e6;}
+.code-table{display:none;width:100%;height:100%;position:relative;background:#000000;color:#ffffff;border:0px;margin:0px;padding:10px;overflow:auto;font-family:'Courier New',Courier,monospace !important;font-size:10pt;resize:none;outline:0;}
+.editor-wrap.source-mode .editor-table{display:none;}
+.editor-wrap.source-mode .code-table{display:block;}
+
+
+.plugins-wrap{box-shadow:0 0 4px rgba(0,0,0,0.3);}
+.plugins-wrap .toolbar{z-index:auto;}
+.plugins-wrap .editor-content{overflow:visible;}
+.plugins-wrap .form-body{padding:8px;}
+.plugins-wrap .form-group{margin:0 0 8px 0;}
+.plugins-wrap .form-group .control-label{font-size:12px;font-weight:normal;padding:0;margin:0 5px 0 0;}
+.plugins-wrap .form-group .form-control{width:auto;display:inline;border-radius:0;}
+.plugins-wrap .form-group .form-control:focus{box-shadow:none;border-color:#ccc;}
+.plugins-wrap .form-group .input-sm{width:200px;height:25px;padding:0 4px;}
+
+.plugins-wrap .form-group .btn-unlink, .plugins-wrap .form-group .btn-trash, .plugins-wrap .form-group .btn-upload{color:#333333;display:inline-block;font-size:14px;margin:0 0 0 5px;outline:none;text-decoration:none;}
+
+.plugins-wrap .form-group .image-size{width:92px;}
+
+

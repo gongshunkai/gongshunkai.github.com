@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-sacle=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<link rel="stylesheet" type="text/css" href="../vendor/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="editor.css">
+<script src="../vendor/jquery/jquery.min.js"></script>
+<!-- <script src="source/core.js"></script>
+<script src="source/util.js"></script>
+<script src="source/toolbar.js"></script>
+<script src="source/dialog.js"></script>
+<script src="source/editor.js"></script>
+
+<script src="plugins/link.js"></script>
+<script src="plugins/image.js"></script>
+<script src="plugins/table.js"></script> -->
+
+<script src="editor_v2.js"></script>
+
+<title>富文本编辑器</title>
+</head>
+<body>
+
+
+<div id="editor-wrap" class="editor-wrap">
+	<!-- <div class="toolbar">
+	      <ul class="list-inline">
+	        <li><button type="button" class="btn btn-default"><i class="icon-bold"></i></button></li>
+	        <li><button type="button" class="btn btn-default"><i class="icon-italic"></i></button></li>
+	        <li><button type="button" class="btn btn-default"><i class="icon-underline"></i></button></li>
+	        <li><button type="button" class="btn btn-default"><i class="icon-strikethrough"></i></button></li>
+	        <li class="dropdown">
+	          <button type="button" class="btn btn-default"><i class="icon-tint"></i> <i class="caret"></i></button> 
+	          <ul class="dropdown-menu">
+	            <li><a href="#">Action</a></li>
+	            <li><a href="#">Another action</a></li>
+	            <li><a href="#">Something else here</a></li>
+	            <li role="separator" class="divider"></li>
+	            <li><a href="#">Separated link</a></li>
+	            <li role="separator" class="divider"></li>
+	            <li><a href="#">One more separated link</a></li>
+	          </ul>
+	        </li>
+	        <li><i class="separator"></i></li>
+	        <li class="dialog">
+	          <button type="button" class="btn btn-default"><i class="icon-link"></i></button>
+	          <div class="dialog-box">
+	          	  <div class="arrow"></div>
+		          <div class="dialog-content">
+		          	<div class="dialog-header">sdgsg</div>
+		          	<div class="dialog-body">sdgsdfhfdhhhhdfhfdfhdg</div>
+		          	<div class="dialog-footer"><button type="button" class="btn btn-default">Insert</button></div>
+		          </div>
+	          </div>
+	        </li>
+	      </ul>
+	</div>
+	<div class="editor-body" contenteditable="true"></div> -->
+</div>
+
+<script>
+	var editor = new Editor('editor-wrap',{
+		height:300,
+		toolbarButtons:'full',
+		upload:true,
+		imageUpload:{
+			url: 'data/data.json',//'http://192.168.1.105:8090/api/MessageTem/UploadPicture',
+		    params: null,
+		    fileKey: 'file',
+		    connectionCount: 5
+		},
+		imageButton:['upload','external']
+	});
+
+	editor.on('initialized',function(){
+		console.log('初始化完毕')
+	})
+
+	editor.on('valuechanged',function(){
+		console.log('值发生了改变')
+	})
+	
+</script>
+</body>
+</html>
